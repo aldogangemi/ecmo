@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri id="Imports Wizard Entry" name="http://www.ontologydesignpatterns.org/ont/dul/DUL.owl" uri="http://www.ontologydesignpatterns.org/ont/dul/DUL.owl"/>
+    <uri id="core" name="http://data.europa.eu/h8v/ecmo/core" uri="ecmo-core.ttl"/>
+    <uri id="foundation" name="http://data.europa.eu/h8v/ecmo/core/foundation" uri="ecmo-foundation.ttl"/>
+    <uri id="hazard" name="http://data.europa.eu/h8v/ecmo/core/hazard" uri="ecmo-hazard.ttl"/>
+    <uri id="disaster" name="http://data.europa.eu/h8v/ecmo/core/disaster" uri="ecmo-disaster.ttl"/>
+    <uri id="risk" name="http://data.europa.eu/h8v/ecmo/core/risk" uri="ecmo-risk.ttl"/>
+    <uri id="impact" name="http://data.europa.eu/h8v/ecmo/core/impact" uri="ecmo-impact.ttl"/>
+    <uri id="expvuln" name="http://data.europa.eu/h8v/ecmo/core/expvuln" uri="ecmo-expvuln.ttl"/>
+    <uri id="capacity" name="http://data.europa.eu/h8v/ecmo/core/capacity" uri="ecmo-capacity.ttl"/>
+    <uri id="drivers" name="http://data.europa.eu/h8v/ecmo/core/drivers" uri="ecmo-drivers.ttl"/>
+    <uri id="governance" name="http://data.europa.eu/h8v/ecmo/core/governance" uri="ecmo-governance.ttl"/>
+    <uri id="response" name="http://data.europa.eu/h8v/ecmo/core/response" uri="ecmo-response.ttl"/>
+    <uri id="instruments" name="http://data.europa.eu/h8v/ecmo/core/instruments" uri="ecmo-instruments.ttl"/>
+    <uri id="bio" name="http://data.europa.eu/h8v/ecmo/bio" uri="ecmo-bio.ttl"/>
+    <uri id="ph" name="http://data.europa.eu/h8v/ecmo/public-health" uri="ecmo-ph.ttl"/>
+    <uri id="hera" name="http://data.europa.eu/h8v/ecmo/hera" uri="ecmo-hera.ttl"/>
+</catalog>

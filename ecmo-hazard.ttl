@@ -1,0 +1,1573 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix disaster: <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix d0: <http://www.ontologydesignpatterns.org/ont/d0.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln: <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix impact: <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response: <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix spec: <http://www.ontologydesignpatterns.org/cp/owl/specialization.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:hazard a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Hazard typology (Natural, Anthropogenic, Socionatural, Biological, Geological, Hydrometeorological, Environmental, Technological), HazardousEvent and event subtypes, MultiHazardContext, and observation/pathogen-characteristic infrastructure."@en ;
+    owl:imports ecmocore:foundation ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Hazard Module (F2)"@en .
+
+hazard:AdvancedPersistentThreat a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0103> ;
+    skos:prefLabel "Advanced Persistent Threat"@en .
+
+hazard:AirTransportationAccident a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0401> ;
+    skos:prefLabel "Air Transportation Accident"@en .
+
+hazard:AnthropogenicEvent a owl:Class ;
+    rdfs:comment "Hazards induced entirely or predominantly by human activities and choices."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:AnthropogenicHazard ] ;
+    skos:prefLabel "Anthropogenes Ereignis"@de,
+        "Anthropogenic Event"@en,
+        "Evento antropogénico"@es,
+        "Événement anthropique"@fr,
+        "Evento antropogenico"@it,
+        "Evento antropogénico"@pt .
+
+hazard:Avalanche a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0801> ;
+    skos:prefLabel "Avalanche"@en .
+
+hazard:BiologicalEvent a owl:Class ;
+    rdfs:comment "Hazards of organic origin or conveyed by biological vectors, including pathogenic microorganisms, toxins and bioactive substances."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:BiologicalHazard ] ;
+    skos:prefLabel "Biologisches Ereignis"@de,
+        "Biological Event"@en,
+        "Evento biológico"@es,
+        "Événement biologique"@fr,
+        "Evento biologico"@it,
+        "Evento biológico"@pt .
+
+hazard:Blizzard a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0403> ;
+    skos:prefLabel "Blizzard"@en .
+
+hazard:BridgeFailure a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0204> ;
+    skos:prefLabel "Bridge Failure"@en .
+
+hazard:BuildingCollapse a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0201> ;
+    skos:prefLabel "Building Collapse"@en .
+
+hazard:BuildingHighriseCladding a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0202> ;
+    skos:prefLabel "Building, highrise, cladding"@en .
+
+hazard:ChemicalEvent a owl:Class ;
+    rdfs:comment "A hazardous event that is a manifestation of a Chemical Hazard."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:ChemicalHazard ] ;
+    skos:prefLabel "Chemisches Ereignis"@de,
+        "Chemical Event"@en,
+        "Evento químico"@es,
+        "Événement chimique"@fr,
+        "Evento chimico"@it,
+        "Evento químico"@pt .
+
+hazard:ColdWave a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0502> ;
+    skos:prefLabel "Cold Wave"@en .
+
+hazard:CostalFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0601> ;
+    skos:prefLabel "Coastal Flooding"@en .
+
+hazard:CriticalInfrastructureFailure a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0207> ;
+    skos:prefLabel "Critical Infrastructure Failure"@en .
+
+hazard:Cyberbullying a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0106> ;
+    skos:prefLabel "Cyberbullying"@en .
+
+hazard:DamFailure a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0205> ;
+    skos:prefLabel "Dam Failure"@en .
+
+hazard:DataBreach a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0102> ;
+    skos:prefLabel "Data Breach & PII Breach"@en .
+
+hazard:DenialOfService a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0104> ;
+    skos:prefLabel "Denial of Service"@en .
+
+hazard:Depression a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0306> ;
+    skos:prefLabel "Depression or Cyclone (Low Pressure Area)"@en .
+
+hazard:Derecho a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0302> ;
+    skos:prefLabel "Derecho"@en .
+
+hazard:DisasterAndConflictWaste a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0501> ;
+    skos:prefLabel "Disaster and Conflict Waste"@en .
+
+hazard:Downburst a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0101> ;
+    skos:prefLabel "Downburst"@en .
+
+hazard:DrainAndSewerFlooding a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0214> ;
+    skos:prefLabel "Drain and Sewer Flooding"@en .
+
+hazard:Drought a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0401> ;
+    skos:prefLabel "Drought"@en .
+
+hazard:DustStorm a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0201> ;
+    skos:prefLabel "Dust storm or Sandstorm"@en .
+
+hazard:Dzud a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0503> ;
+    skos:prefLabel "Dzud"@en .
+
+hazard:ElectronicWaste a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0507> ;
+    skos:prefLabel "Electronic Waste (E-Waste)"@en .
+
+hazard:EmergencyTelecommunicationsFailure a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0211> ;
+    skos:prefLabel "Emergency Telecommunications Failure"@en .
+
+hazard:EnvironmentalEvent a owl:Class ;
+    rdfs:comment "Hazards that may include chemical, natural and biological hazards, created by environmental degradation or physical or chemical pollution in the air, water and soil."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:EnvironmentalHazard ] ;
+    skos:prefLabel "Umweltereignis"@de,
+        "Environmental Event"@en,
+        "Evento ambiental"@es,
+        "Événement environnemental"@fr,
+        "Evento ambientale"@it,
+        "Evento ambiental"@pt .
+
+hazard:EstuarineFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0602> ;
+    skos:prefLabel "Estuarine (Coastal) Flooding"@en .
+
+hazard:Explosion a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0304> ;
+    skos:prefLabel "Explosion"@en .
+
+hazard:ExplosiveAgents a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0306> ;
+    skos:prefLabel "Explosive agents"@en .
+
+hazard:ExtraTropicalCyclone a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:DepressionCyclone ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0307> ;
+    skos:prefLabel "Extra-tropical Cyclone"@en .
+
+hazard:ExtraterrestrialEvent a owl:Class ;
+    rdfs:comment "A hazardous event that is a manifestation of an Extraterrestrial Hazard."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:ExtraterrestrialHazard ] ;
+    skos:prefLabel "Extraterrestrisches Ereignis"@de,
+        "Extraterrestrial Event"@en,
+        "Evento extraterrestre"@es,
+        "Événement extraterrestre"@fr,
+        "Evento extraterrestre"@it,
+        "Evento extraterrestre"@pt .
+
+hazard:Fire a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0305> ;
+    skos:prefLabel "Fire"@en .
+
+hazard:FlashFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0603> ;
+    skos:prefLabel "Flash Flooding"@en .
+
+hazard:FluvialFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0604> ;
+    skos:prefLabel "Fluvial (Riverine) Flooding"@en .
+
+hazard:Fog a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0202> ;
+    skos:prefLabel "Fog"@en .
+
+hazard:Freeze a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0504> ;
+    skos:prefLabel "Freeze"@en .
+
+hazard:FreezingRain a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0506> ;
+    skos:prefLabel "Freezing Rain (Ice storm)"@en .
+
+hazard:Frost a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0505> ;
+    skos:prefLabel "Frost (Hoar Frost)"@en .
+
+hazard:Gale a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0303> ;
+    skos:prefLabel "Gale (Strong Gale)"@en .
+
+hazard:GeologicalEvent a owl:Class ;
+    rdfs:comment "Hazards originating from internal earth processes. Examples are earthquakes, volcanic activity and emissions, and related geophysical processes such as mass movements, landslides, rockslides, surface collapses and debris or mud flows."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:GeologicalHazard ] ;
+    skos:prefLabel "Geologisches Ereignis"@de,
+        "Geological Event"@en,
+        "Evento geológico"@es,
+        "Événement géologique"@fr,
+        "Evento geologico"@it,
+        "Evento geológico"@pt .
+
+hazard:GlacialLakeOutburstFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0607> ;
+    skos:prefLabel "Glacial Lake Outburst Flooding"@en .
+
+hazard:Glaze a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0507> ;
+    skos:prefLabel "Glaze"@en .
+
+hazard:GroundFrost a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0508> ;
+    skos:prefLabel "Ground Frost"@en .
+
+hazard:GroundwaterFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0605> ;
+    skos:prefLabel "Groundwater Flooding"@en .
+
+hazard:Hail a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0404> ;
+    skos:prefLabel "Hail"@en .
+
+hazard:HazardousWaste a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0504> ;
+    skos:prefLabel "Hazardous Waste"@en .
+
+hazard:Haze a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0203> ;
+    skos:prefLabel "Haze"@en .
+
+hazard:HealthcareWaste a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0508> ;
+    skos:prefLabel "Health-care Waste"@en .
+
+hazard:Heatwave a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0501> ;
+    skos:prefLabel "Heatwave"@en .
+
+hazard:HydrometeorologicalEvent a owl:Class ;
+    rdfs:comment "Hazards of atmospheric, hydrological or oceanographic origin. Examples are tropical cyclones, floods, drought, heatwaves and cold spells, and coastal storm surges."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:HydrometeorologicalHazard ] ;
+    skos:prefLabel "Hydrometeorologisches Ereignis"@de,
+        "Hydrometeorological Event"@en,
+        "Evento hidrometeorológico"@es,
+        "Événement hydrométéorologique"@fr,
+        "Evento idrometeorologico"@it,
+        "Evento hidrometeorológico"@pt .
+
+hazard:IceFlow a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0707> ;
+    skos:prefLabel "Ice Flow"@en .
+
+hazard:IceJamFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0608> ;
+    skos:prefLabel "Ice-Jam Flooding Including Debris"@en .
+
+hazard:Icing a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0509> ;
+    skos:prefLabel "Icing (Including Ice)"@en .
+
+hazard:InlandWaterWaysTransportationAccident a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0402> ;
+    skos:prefLabel "Inland Water Ways Transportation Accident"@en .
+
+hazard:Landfilling a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0509> ;
+    skos:prefLabel "Landfilling"@en .
+
+hazard:LeaksAndSpills a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0301> ;
+    skos:prefLabel "Leaks and Spills"@en .
+
+hazard:Lightning a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0102> ;
+    skos:prefLabel "Lightning (Electrical Storm)"@en .
+
+hazard:Malware a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0101> ;
+    skos:prefLabel "Malware"@en .
+
+hazard:MarineDebris a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0506> ;
+    skos:prefLabel "Marine Debris"@en .
+
+hazard:MarineHeatwave a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0708> ;
+    skos:prefLabel "Marine Heatwave"@en .
+
+hazard:MaritimeAccident a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0403> ;
+    skos:prefLabel "Maritime Accident"@en .
+
+hazard:MiningHazards a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0307> ;
+    skos:prefLabel "Mining Hazards"@en .
+
+hazard:Natech a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0309> ;
+    skos:prefLabel "Natech"@en .
+
+hazard:NaturalEvent a owl:Class ;
+    rdfs:comment "Hazards predominantly associated with natural processes and phenomena."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:NaturalHazard ] ;
+    skos:prefLabel "Naturereignis"@de,
+        "Natural Event"@en,
+        "Evento natural"@es,
+        "Événement naturel"@fr,
+        "Evento naturale"@it,
+        "Evento natural"@pt .
+
+hazard:NuclearAgents a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0603> ;
+    skos:prefLabel "Nuclear Agents"@en .
+
+hazard:NuclearEvent a owl:Class ;
+    rdfs:comment "A hazardous event that is a manifestation of a Nuclear Hazard."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:NuclearHazard ] ;
+    skos:prefLabel "Nukleares Ereignis"@de,
+        "Nuclear Event"@en,
+        "Evento nuclear"@es,
+        "Événement nucléaire"@fr,
+        "Evento nucleare"@it,
+        "Evento nuclear"@pt .
+
+hazard:NuclearPlantFailure a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0208> ;
+    skos:prefLabel "Nuclear Plant Failure"@en .
+
+hazard:PlasticWaste a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0505> ;
+    skos:prefLabel "Plastic Waste"@en .
+
+hazard:Pollution a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0302> ;
+    skos:prefLabel "Pollution"@en .
+
+hazard:PondingFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0609> ;
+    skos:prefLabel "Ponding (Drainage) Flooding"@en .
+
+hazard:PowerOutage a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0209> ;
+    skos:prefLabel "Power Outage/ or Blackout"@en .
+
+hazard:RadioTelecommunicationFailures a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0212> ;
+    skos:prefLabel "Radio and Other Telecommunication Failures"@en .
+
+hazard:RadioactiveAgents a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0602> ;
+    skos:prefLabel "Radioactive Agents & Material"@en .
+
+hazard:RadioactiveWaste a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0601> ;
+    skos:prefLabel "Radioactive Waste"@en .
+
+hazard:RadiologicalEvent a owl:Class ;
+    rdfs:comment "A hazardous event that is a manifestation of a Radiological Hazard."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:RadiologicalHazard ] ;
+    skos:prefLabel "Radiologisches Ereignis"@de,
+        "Radiological Event"@en,
+        "Evento radiológico"@es,
+        "Événement radiologique"@fr,
+        "Evento radiologico"@it,
+        "Evento radiológico"@pt .
+
+hazard:RailAccident a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0404> ;
+    skos:prefLabel "Rail Accident"@en .
+
+hazard:Rain a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0402> ;
+    skos:prefLabel "Rain"@en .
+
+hazard:ReservoirFlooding a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0215> ;
+    skos:prefLabel "Reservoir Flooding"@en .
+
+hazard:RoadTrafficAccident a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0405> ;
+    skos:prefLabel "Road Traffic Accident"@en .
+
+hazard:RogueWave a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0701> ;
+    skos:prefLabel "Rogue Wave"@en .
+
+hazard:SafetyHazardsOilAndGas a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0308> ;
+    skos:prefLabel "Safety Hazards Associated with Oil and Gas"@en .
+
+hazard:SandHaze a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0204> ;
+    skos:prefLabel "Sand haze"@en .
+
+hazard:SeaIce a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0706> ;
+    skos:prefLabel "Sea Ice (Icebergs)"@en .
+
+hazard:Seiche a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0702> ;
+    skos:prefLabel "Seiche"@en .
+
+hazard:Smoke a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0205> ;
+    skos:prefLabel "Smoke"@en .
+
+hazard:Snow a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0405> ;
+    skos:prefLabel "Snow"@en .
+
+hazard:SnowStorm a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0406> ;
+    skos:prefLabel "Snow Storm"@en .
+
+hazard:SnowmeltFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0610> ;
+    skos:prefLabel "Snowmelt Flooding"@en .
+
+hazard:SocialEngineeringPhishing a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0107> ;
+    skos:prefLabel "Social Engineering - Phishing"@en .
+
+hazard:SocietalEvent a owl:Class ;
+    rdfs:comment "A hazardous event that is a manifestation of a Societal Hazard."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:SocietalHazard ] ;
+    skos:prefLabel "Gesellschaftliches Ereignis"@de,
+        "Societal Event"@en,
+        "Evento societal"@es,
+        "Événement sociétal"@fr,
+        "Evento sociale"@it,
+        "Evento societal"@pt .
+
+hazard:SocionaturalEvent a owl:Class ;
+    rdfs:comment "Hazards associated with a combination of natural and anthropogenic factors, including environmental degradation and climate change."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:SocionaturalHazard ] ;
+    skos:prefLabel "Sozionaturales Ereignis"@de,
+        "Socionatural Event"@en,
+        "Evento socionatural"@es,
+        "Événement socio-naturel"@fr,
+        "Evento socio-naturale"@it,
+        "Evento socio-natural"@pt .
+
+hazard:SoilPollution a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0303> ;
+    skos:prefLabel "Soil Pollution"@en .
+
+hazard:SolidWaste a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0502> ;
+    skos:prefLabel "Solid Waste"@en .
+
+hazard:Squall a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0304> ;
+    skos:prefLabel "Squall"@en .
+
+hazard:StormSurge a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0703> ;
+    skos:prefLabel "Storm Surge"@en .
+
+hazard:StormTides a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0704> ;
+    skos:prefLabel "Storm Tides"@en .
+
+hazard:StructuralFailure a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0203> ;
+    skos:prefLabel "Structural Failure"@en .
+
+hazard:SubTropicalCyclone a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:DepressionCyclone ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0308> ;
+    skos:prefLabel "Sub-Tropical Cyclone"@en .
+
+hazard:SupplyChainAttack a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0105> ;
+    skos:prefLabel "Supply Chain Attack"@en .
+
+hazard:SupplyChainFailure a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0206> ;
+    skos:prefLabel "Supply Chain Failure"@en .
+
+hazard:SurfaceWaterFlooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0606> ;
+    skos:prefLabel "Surface Water Flooding"@en .
+
+hazard:Tailings a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0511> ;
+    skos:prefLabel "Tailings"@en .
+
+hazard:TechnologicalEvent a owl:Class ;
+    rdfs:comment "Hazards originating from technological or industrial conditions, dangerous procedures, infrastructure failures or specific human activities. Examples include industrial pollution, nuclear radiation, toxic wastes, dam failures, transport accidents, factory explosions, fires and chemical spills."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:TechnologicalHazard ] ;
+    skos:prefLabel "Technologisches Ereignis"@de,
+        "Technological Event"@en,
+        "Evento tecnológico"@es,
+        "Événement technologique"@fr,
+        "Evento tecnologico"@it,
+        "Evento tecnológico"@pt .
+
+hazard:Thaw a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0510> ;
+    skos:prefLabel "Thaw"@en .
+
+hazard:Thunderstorm a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0103> ;
+    skos:prefLabel "Thunderstorm"@en .
+
+hazard:Tornado a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0305> ;
+    skos:prefLabel "Tornado"@en .
+
+hazard:TropicalCyclone a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0309> ;
+    skos:prefLabel "Tropical Cyclone"@en .
+
+hazard:Tsunami a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0705> ;
+    skos:prefLabel "Tsunami"@en .
+
+hazard:TunnelFailure a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0213> ;
+    skos:prefLabel "Tunnel Failure"@en .
+
+hazard:WasteTreatmentLagoons a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0510> ;
+    skos:prefLabel "Waste Treatment Lagoons"@en .
+
+hazard:Wastewater a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0503> ;
+    skos:prefLabel "Wastewater"@en .
+
+hazard:WaterSupplyFailure a hazard:TechnologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:TechnologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/tl0210> ;
+    skos:prefLabel "Water Supply Failure"@en .
+
+hazard:Wind a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:HydrometeorologicalHazard ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0301> ;
+    skos:prefLabel "Wind"@en .
+
+hazard:hasConfidenceLevel a owl:DatatypeProperty ;
+    rdfs:comment "The confidence level (0–1) associated with a reified observation value."@en ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has confidence level"@en,
+        "ha livello di confidenza"@it .
+
+hazard:hasDoseResponse a owl:DatatypeProperty ;
+    rdfs:comment "Characterization of the relationship between dose and biological effect."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
+                        owl:hasValue hazard:BiologicalHazard ;
+                        owl:onProperty dul:hasRole ] ) ] ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has dose-response"@en,
+        "ha dose-risposta"@it .
+
+hazard:hasDurationValue a owl:DatatypeProperty ;
+    rdfs:comment "The temporal duration datum of a reified observation (e.g. the median incubation period)."@en ;
+    rdfs:range xsd:duration ;
+    skos:prefLabel "has duration value"@en,
+        "ha valore di durata"@it .
+
+hazard:hasFrequency a owl:DatatypeProperty ;
+    rdfs:comment "Return period or recurrence interval of a hazard."@en ;
+    rdfs:domain hazard:Hazard ;
+    rdfs:range xsd:decimal ;
+    skos:editorialNote "to be discussed with subject matter experts"@en ;
+    skos:prefLabel "has frequency"@en,
+        "ha frequenza"@it .
+
+hazard:hasIntensity a owl:DatatypeProperty ;
+    rdfs:comment "Specifies the physical intensity of a HazardousEvent (e.g. peak ground acceleration, wind speed, flood depth). Can be used as a shortcut on HazardousEvent directly or as the literal-carrying property on a reified IntensityObservation."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( hazard:HazardousEvent hazard:IntensityObservation ) ] ;
+    rdfs:range xsd:decimal ;
+    rdfs:seeAlso hazard:IntensityObservation ;
+    skos:editorialNote "Shortcut property — for fully qualified observations use hasIntensityObservation → IntensityObservation."@en,
+        "necessary to specify quantitative scale"@en,
+        "same as magnitude?"@en,
+        "to be discussed with subject matter experts"@en ;
+    skos:prefLabel "has intensity"@en,
+        "ha intensità"@it .
+
+hazard:hasLowerBound a owl:DatatypeProperty ;
+    rdfs:comment "Lower bound of a range or confidence interval for a reified observation."@en ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has lower bound"@en,
+        "ha limite inferiore"@it .
+
+hazard:hasMagnitude a owl:DatatypeProperty ;
+    rdfs:comment "Specifies the magnitude of a HazardousEvent on an appropriate quantitative scale (e.g. Richter, Saffir-Simpson). Can be used as a shortcut on HazardousEvent directly or as the literal-carrying property on a reified MagnitudeObservation."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( hazard:HazardousEvent hazard:MagnitudeObservation ) ] ;
+    rdfs:range xsd:decimal ;
+    rdfs:seeAlso hazard:MagnitudeObservation ;
+    skos:editorialNote "Shortcut property — for fully qualified observations use hasMagnitudeObservation → MagnitudeObservation."@en,
+        "necessary to specify quantitative scale"@en,
+        "same as intensity?"@en,
+        "to be discussed with subject matter experts"@en ;
+    skos:prefLabel "has magnitude"@en,
+        "ha magnitudo"@it .
+
+hazard:hasManifestationEvent a owl:ObjectProperty ;
+    rdfs:comment "Inverse of ecmocore:isManifestationOf. Dual role: (1) subPropertyOf dul:isQualityOf — the hazard inheres in the event as a contextual quality; (2) subPropertyOf dul:isSatisfiedBy — the hazard (Description) is satisfied by the event (Situation)."@en ;
+    rdfs:domain hazard:Hazard ;
+    rdfs:range hazard:HazardousEvent ;
+    rdfs:subPropertyOf dul:isSatisfiedBy ;
+    owl:inverseOf hazard:isManifestationOf ;
+    skos:prefLabel "has manifestation event"@en,
+        "ha evento di manifestazione"@it .
+
+hazard:hasProbabilityValue a owl:DatatypeProperty ;
+    rdfs:comment "Specifies the probability value (0–1) of a Risk or HazardousEvent frequency profile."@en ;
+    rdfs:range xsd:decimal ;
+    skos:editorialNote "to be discussed with subject matter experts"@en ;
+    skos:prefLabel "has probability"@en,
+        "ha probabilità"@it .
+
+hazard:hasSeverityLevel a owl:DatatypeProperty ;
+    rdfs:comment "Specifies the severity level of a HazardousEvent on a standardised classification scale. Can be used as a shortcut on HazardousEvent directly or as the literal-carrying property on a reified SeverityAssessment."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( hazard:HazardousEvent hazard:SeverityAssessment ) ] ;
+    rdfs:range xsd:string ;
+    rdfs:seeAlso hazard:SeverityAssessment ;
+    skos:editorialNote "Shortcut property — for fully qualified assessments use hasSeverityAssessment → SeverityAssessment."@en ;
+    skos:prefLabel "has severity level"@en,
+        "ha livello di gravità"@it .
+
+hazard:hasUnit a owl:DatatypeProperty ;
+    rdfs:comment "The unit of measurement for a reified observation value (e.g. 'm/s²', 'km/h', 'days', 'CFR %')."@en ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has unit"@en,
+        "ha unità"@it .
+
+hazard:hasUpperBound a owl:DatatypeProperty ;
+    rdfs:comment "Upper bound of a range or confidence interval for a reified observation."@en ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has upper bound"@en,
+        "ha limite superiore"@it .
+
+hazard:triggers a owl:ObjectProperty ;
+    rdfs:comment "Relates a HazardousEvent to the Disaster it initiates when its impacts exceed community coping capacity."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range hazard:HazardousEvent ;
+    skos:prefLabel "triggers"@en,
+        "innesca"@it .
+
+hazard:AnthropogenicOrigin a hazard:HazardOrigin,
+        owl:NamedIndividual ;
+    skos:prefLabel "Anthropogenic"@en .
+
+hazard:BiologicalTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Biological"@en .
+
+hazard:ChemicalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:EnvironmentalHazard ;
+    rdfs:comment "A hazard arising from chemical processes or substances: toxic releases, spills, contamination. Frame-level subsumed under ecmocore:EnvironmentalHazard."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:ChemicalTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Chemische Gefahr"@de,
+        "Chemical Hazard"@en,
+        "Amenaza química"@es,
+        "Aléa chimique"@fr,
+        "Pericolo chimico"@it,
+        "Ameaça química"@pt .
+
+hazard:ChemicalTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Chemical"@en .
+
+hazard:EnvironmentalTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Environmental"@en .
+
+hazard:ExtraterrestrialHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:NaturalHazard ;
+    rdfs:comment "Hazards of extraterrestrial origin, including asteroids, comets, meteorites, and space weather events (solar flares, geomagnetic storms)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:ExtraterrestrialTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Extraterrestrische Gefahr"@de,
+        "Extraterrestrial Hazard"@en,
+        "Amenaza extraterrestre"@es,
+        "Aléa extraterrestre"@fr,
+        "Pericolo extraterrestre"@it,
+        "Ameaça extraterrestre"@pt .
+
+hazard:ExtraterrestrialTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Extraterrestrial"@en .
+
+hazard:GeologicalTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Geological"@en .
+
+hazard:HydrometeorologicalTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Hydrometeorological"@en .
+
+hazard:MultiHazardContext a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A context where hazardous events may occur simultaneously, cascadingly or cumulatively over time, taking into account potential interrelated effects."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+            owl:onClass hazard:Hazard ;
+            owl:onProperty hazard:involvesHazard ],
+        dul:Situation ;
+    skos:prefLabel "Mehrgefahrenkontext"@de,
+        "Multi-Hazard Context"@en,
+        "Contexto multi-amenaza"@es,
+        "Contexte multi-aléas"@fr,
+        "Contesto multi-pericolo"@it,
+        "Contexto multi-ameaça"@pt .
+
+hazard:NaturalOrigin a hazard:HazardOrigin,
+        owl:NamedIndividual ;
+    skos:prefLabel "Natural"@en .
+
+hazard:NuclearHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:TechnologicalHazard ;
+    rdfs:comment "A technological hazard arising from nuclear material or installations."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:NuclearTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Nukleare Gefahr"@de,
+        "Nuclear Hazard"@en,
+        "Amenaza nuclear"@es,
+        "Aléa nucléaire"@fr,
+        "Pericolo nucleare"@it,
+        "Ameaça nuclear"@pt .
+
+hazard:NuclearTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Nuclear"@en .
+
+hazard:ObservationSource a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "The provenance of an observation: a scientific study, monitoring station, database, report, or expert assessment from which a measured value is drawn."@en ;
+    rdfs:subClassOf dul:InformationObject ;
+    skos:prefLabel "Quelle der Beobachtung"@de,
+        "Observation Source"@en,
+        "Fuente de observación"@es,
+        "Source d'observation"@fr,
+        "Fonte dell'osservazione"@it .
+
+hazard:RadiologicalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:TechnologicalHazard ;
+    rdfs:comment "A technological hazard arising from radioactive materials outside nuclear installations."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:RadiologicalTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Radiologische Gefahr"@de,
+        "Radiological Hazard"@en,
+        "Amenaza radiológica"@es,
+        "Aléa radiologique"@fr,
+        "Pericolo radiologico"@it,
+        "Ameaça radiológica"@pt .
+
+hazard:RadiologicalTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Radiological"@en .
+
+hazard:SocietalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:AnthropogenicHazard ;
+    rdfs:comment "Hazards associated with conflicts, terrorism, displacement, civil unrest and other social phenomena that threaten human well-being and societal functioning."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:SocietalTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Gesellschaftliche Gefahr"@de,
+        "Societal Hazard"@en,
+        "Amenaza societal"@es,
+        "Aléa sociétal"@fr,
+        "Pericolo sociale"@it,
+        "Ameaça societal"@pt .
+
+hazard:SocietalTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Societal"@en .
+
+hazard:SocionaturalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "Hazards associated with a combination of natural and anthropogenic factors, including environmental degradation and climate change."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:SocionaturalOrigin ;
+            owl:onProperty hazard:hasHazardOrigin ],
+        hazard:Hazard ;
+    skos:prefLabel "Sozionaturale Gefahr"@de,
+        "Socionatural Hazard"@en,
+        "Amenaza socionatural"@es,
+        "Aléa socio-naturel"@fr,
+        "Pericolo socio-naturale"@it,
+        "Ameaça socionatural"@pt .
+
+hazard:SocionaturalOrigin a hazard:HazardOrigin,
+        owl:NamedIndividual ;
+    skos:prefLabel "Socionatural"@en .
+
+hazard:TechnologicalTarget a foundation:HazardCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Technological"@en .
+
+hazard:affectsPopulation a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the AffectedPopulation whose lives, health, livelihoods or assets are directly or indirectly impacted."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range disaster:AffectedPopulation ;
+    owl:inverseOf hazard:isAffectedBy ;
+    skos:prefLabel "affects population"@en,
+        "colpisce la popolazione"@it .
+
+hazard:hasAffectedAsset a owl:ObjectProperty ;
+    rdfs:comment "Relates a HazardousEvent to the ExposedElement (asset, infrastructure, population group) that it has affected."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range expvuln:ExposedElement ;
+    owl:inverseOf hazard:isAffectedAssetOf ;
+    skos:prefLabel "has affected asset"@en,
+        "ha bene colpito"@it .
+
+hazard:hasCascadingEffect a owl:ObjectProperty ;
+    rdfs:comment "Links a hazardous event to a subsequent event it triggers in cascade."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range hazard:HazardousEvent ;
+    owl:inverseOf hazard:isCascadingEffectOf ;
+    skos:editorialNote "also, a cascading effect is potentially also an impact",
+        "it might be implemented as a transitive version of hasImpact, possibly as a transitive reduction pattern",
+        "consider generalization"@en,
+        "this is a possible specialization of a more general property such as 'involvesEvent'. Consider that cascading effects may not be proven and you need a 'softer' link."@en ;
+    skos:prefLabel "has cascading effect"@en,
+        "ha effetto a cascata"@it .
+
+hazard:hasExposureContext a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the Exposure condition — presence of people and assets in the affected area — that contributed to its impacts."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range expvuln:Exposure ;
+    owl:inverseOf hazard:isExposureContextOf ;
+    skos:prefLabel "has exposure context"@en,
+        "ha contesto di esposizione"@it .
+
+hazard:hasImpact a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster or hazardous process to the broader Impact it produces on people, assets and the environment."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range impact:Impact ;
+    owl:inverseOf hazard:isImpactOf ;
+    skos:prefLabel "has impact"@en,
+        "ha impatto"@it .
+
+hazard:hasIntensityObservation a owl:ObjectProperty ;
+    rdfs:comment "Relates a HazardousEvent to a reified IntensityObservation carrying the numeric value, quantitative scale, unit, and provenance."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range hazard:IntensityObservation ;
+    owl:inverseOf hazard:isIntensityObservationOf ;
+    skos:prefLabel "has intensity observation"@en,
+        "ha osservazione di intensità"@it .
+
+hazard:hasMagnitudeObservation a owl:ObjectProperty ;
+    rdfs:comment "Relates a HazardousEvent to a reified MagnitudeObservation carrying the numeric value, named scale (e.g. Richter, moment magnitude Mw, VEI), and provenance."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range hazard:MagnitudeObservation ;
+    owl:inverseOf hazard:isMagnitudeObservationOf ;
+    skos:prefLabel "has magnitude observation"@en,
+        "ha osservazione di magnitudo"@it .
+
+hazard:hasObservationSource a owl:ObjectProperty ;
+    rdfs:comment "Relates a reified observation to the provenance — study, monitoring station, report, or expert assessment — from which the measured value is drawn."@en ;
+    rdfs:range hazard:ObservationSource ;
+    owl:inverseOf hazard:isSourceOf ;
+    skos:prefLabel "has observation source"@en,
+        "ha fonte dell'osservazione"@it .
+
+hazard:hasSeverityAssessment a owl:ObjectProperty ;
+    rdfs:comment "Relates a HazardousEvent to a reified SeverityAssessment carrying a qualitative or semi-quantitative severity classification, the scale used, and provenance."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range hazard:SeverityAssessment ;
+    owl:inverseOf hazard:isSeverityAssessmentOf ;
+    skos:prefLabel "has severity assessment"@en,
+        "ha valutazione di gravità"@it .
+
+hazard:hasStringValue a owl:DatatypeProperty ;
+    rdfs:comment "The categorical or textual datum of a reified observation (e.g. a severity category label)."@en ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has string value"@en,
+        "ha valore testuale"@it .
+
+hazard:isAffectedAssetOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the hazardous event that affected this asset."@en ;
+    owl:inverseOf hazard:hasAffectedAsset ;
+    skos:prefLabel "is affected asset of"@en .
+
+hazard:isAffectedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the hazardous event affecting this population."@en ;
+    owl:inverseOf hazard:affectsPopulation ;
+    skos:prefLabel "is affected by"@en .
+
+hazard:isCascadingEffectOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the hazardous event that triggered this cascading event."@en ;
+    owl:inverseOf hazard:hasCascadingEffect ;
+    skos:prefLabel "is cascading effect of"@en .
+
+hazard:isExposureContextOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event for which this is the exposure context."@en ;
+    owl:inverseOf hazard:hasExposureContext ;
+    skos:prefLabel "is exposure context of"@en .
+
+hazard:isImpactOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the hazardous event that produced this impact."@en ;
+    owl:inverseOf hazard:hasImpact ;
+    skos:prefLabel "is impact of"@en .
+
+hazard:isIntensityObservationOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event for which this intensity was observed."@en ;
+    owl:inverseOf hazard:hasIntensityObservation ;
+    skos:prefLabel "is intensity observation of"@en .
+
+hazard:isInterventionFor a owl:ObjectProperty ;
+    rdfs:comment "Indicates the hazardous event this intervention addresses."@en ;
+    owl:inverseOf hazard:involvesIntervention ;
+    skos:prefLabel "is intervention for"@en .
+
+hazard:isInvolvedInContext a owl:ObjectProperty ;
+    rdfs:comment "Indicates the multi-hazard context involving this hazard."@en ;
+    owl:inverseOf hazard:involvesHazard ;
+    skos:prefLabel "is involved in context"@en .
+
+hazard:isMagnitudeObservationOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event for which this magnitude was observed."@en ;
+    owl:inverseOf hazard:hasMagnitudeObservation ;
+    skos:prefLabel "is magnitude observation of"@en .
+
+hazard:isProtectedAgainstBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the measure protecting against this event."@en ;
+    owl:inverseOf hazard:protectsAgainst ;
+    skos:prefLabel "is protected against by"@en .
+
+hazard:isScaleUsedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the observation using this scale."@en ;
+    owl:inverseOf hazard:usesScale ;
+    skos:prefLabel "is scale used by"@en .
+
+hazard:isSeverityAssessmentOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event for which this severity was assessed."@en ;
+    owl:inverseOf hazard:hasSeverityAssessment ;
+    skos:prefLabel "is severity assessment of"@en .
+
+hazard:isSourceOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the observation for which this is the source."@en ;
+    owl:inverseOf hazard:hasObservationSource ;
+    skos:prefLabel "is source of"@en .
+
+hazard:protectsAgainst a owl:ObjectProperty ;
+    rdfs:comment "Relates a protective Measure or Evacuation action to the HazardousEvent whose harmful effects it is designed to prevent or minimise."@en ;
+    rdfs:range hazard:HazardousEvent ;
+    owl:inverseOf hazard:isProtectedAgainstBy ;
+    skos:prefLabel "protects against"@en,
+        "protegge da"@it .
+
+hazard:AnthropogenicHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "Hazards induced entirely or predominantly by human activities and choices."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:AnthropogenicOrigin ;
+            owl:onProperty hazard:hasHazardOrigin ],
+        hazard:Hazard ;
+    skos:prefLabel "Anthropogene Gefahr"@de,
+        "Anthropogenic Hazard"@en,
+        "Amenaza antropogénica"@es,
+        "Aléa anthropique"@fr,
+        "Pericolo antropogenico"@it,
+        "Ameaça antropogénica"@pt .
+
+hazard:GeologicalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "Hazards originating from internal earth processes. Examples are earthquakes, volcanic activity and emissions, and related geophysical processes such as mass movements, landslides, rockslides, surface collapses and debris or mud flows."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:GeologicalTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Geologische Gefahr"@de,
+        "Geological Hazard"@en,
+        "Amenaza geológica"@es,
+        "Aléa géologique"@fr,
+        "Pericolo geologico"@it,
+        "Ameaça geológica"@pt .
+
+hazard:NaturalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "Hazards predominantly associated with natural processes and phenomena."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:NaturalOrigin ;
+            owl:onProperty hazard:hasHazardOrigin ],
+        hazard:Hazard ;
+    skos:prefLabel "Naturgefahr"@de,
+        "Natural Hazard"@en,
+        "Amenaza natural"@es,
+        "Aléa naturel"@fr,
+        "Pericolo naturale"@it,
+        "Ameaça natural"@pt .
+
+hazard:hasNumericValue a owl:DatatypeProperty ;
+    rdfs:comment "The numeric datum of a reified observation."@en ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has numeric value"@en,
+        "ha valore numerico"@it .
+
+hazard:involvesHazard a owl:ObjectProperty ;
+    rdfs:comment "Relates a MultiHazardContext to one of the two or more Hazard types that occur simultaneously, cascadingly or cumulatively within it."@en ;
+    rdfs:domain hazard:MultiHazardContext ;
+    rdfs:range hazard:Hazard ;
+    owl:inverseOf hazard:isInvolvedInContext ;
+    skos:prefLabel "involves hazard"@en,
+        "coinvolge pericolo"@it .
+
+hazard:involvesIntervention a owl:ObjectProperty ;
+    rdfs:comment "Relates a HazardousEvent (or Disaster) to an Intervention — a deliberate action undertaken to alter the course of the event, reduce its impacts, or aid affected populations."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range response:Intervention ;
+    owl:inverseOf hazard:isInterventionFor ;
+    skos:editorialNote "Introduced from the Luigi Schema proposal to bridge the HazardousEvent frame to the Intervention frame."@en ;
+    skos:prefLabel "involves intervention"@en,
+        "coinvolge intervento"@it .
+
+hazard:BiologicalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "Hazards of organic origin or conveyed by biological vectors, including pathogenic microorganisms, toxins and bioactive substances."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:BiologicalTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Biologische Gefahr"@de,
+        "Biological Hazard"@en,
+        "Amenaza biológica"@es,
+        "Aléa biologique"@fr,
+        "Pericolo biologico"@it,
+        "Ameaça biológica"@pt .
+
+hazard:DepressionCyclone a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:DepressionCyclone ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0306> ;
+    skos:prefLabel "Depression or Cyclone (Low Pressure Area)"@en .
+
+hazard:EnvironmentalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "Hazards that may include chemical, natural and biological hazards, created by environmental degradation or physical or chemical pollution in the air, water and soil."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:EnvironmentalTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Umweltgefahr"@de,
+        "Environmental Hazard"@en,
+        "Amenaza ambiental"@es,
+        "Aléa environnemental"@fr,
+        "Pericolo ambientale"@it,
+        "Ameaça ambiental"@pt .
+
+hazard:HazardOrigin a owl:Class ;
+    rdfs:comment "Classification of the origin of a hazard: Natural, Anthropogenic, Socionatural."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Hazard Origin"@en .
+
+hazard:IntensityObservation a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A reified observation of the physical intensity of a HazardousEvent (e.g. peak ground acceleration in m/s², wind speed in km/h, flood depth in m), qualified by a quantitative scale, unit, and optionally source and uncertainty."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:usesScale ;
+            owl:someValuesFrom hazard:QuantitativeScale ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:hasNumericValue ;
+            owl:someValuesFrom xsd:decimal ],
+        dul:Situation ;
+    skos:prefLabel "Intensity Observation"@en,
+        "Observación de intensidad"@es,
+        "Observation d'intensité"@fr,
+        "Osservazione di intensità"@it .
+
+hazard:MagnitudeObservation a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A reified observation of the magnitude of a HazardousEvent on a named quantitative scale (e.g. Richter local magnitude ML, moment magnitude Mw, Volcanic Explosivity Index VEI, Saffir-Simpson hurricane scale)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:usesScale ;
+            owl:someValuesFrom hazard:QuantitativeScale ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:hasNumericValue ;
+            owl:someValuesFrom xsd:decimal ],
+        dul:Situation ;
+    skos:prefLabel "Magnitude Observation"@en,
+        "Observación de magnitud"@es,
+        "Observation de magnitude"@fr,
+        "Osservazione di magnitudo"@it .
+
+hazard:SeverityAssessment a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A reified qualitative or semi-quantitative assessment of the severity of a HazardousEvent according to a classification system (e.g. Enhanced Fujita scale for tornadoes, INFORM severity index, WHO grading for health emergencies)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:usesScale ;
+            owl:someValuesFrom hazard:QuantitativeScale ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:hasStringValue ;
+            owl:someValuesFrom xsd:string ],
+        dul:Situation ;
+    skos:prefLabel "Severity Assessment"@en,
+        "Evaluación de gravedad"@es,
+        "Évaluation de la gravité"@fr,
+        "Valutazione di gravità"@it .
+
+hazard:hasHazardOrigin a owl:ObjectProperty ;
+    rdfs:comment "Links a hazard type to its origin classification: Natural, Anthropogenic, or Socionatural."@en ;
+    rdfs:domain hazard:Hazard ;
+    skos:prefLabel "has hazard origin"@en,
+        "ha origine del pericolo"@it .
+
+hazard:QuantitativeScale a owl:Class ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A named quantitative scale, classification system, or metric definition that specifies how a quantitative or qualitative observation is expressed (e.g. Richter scale, Modified Mercalli Intensity, R₀, Saffir-Simpson, VEI, LD₅₀)."@en ;
+    rdfs:subClassOf dul:Description ;
+    skos:prefLabel "Quantitative Scale"@en .
+
+hazard:usesScale a owl:ObjectProperty ;
+    rdfs:comment "Relates a reified observation to the QuantitativeScale under which its value is expressed."@en ;
+    rdfs:range hazard:QuantitativeScale ;
+    owl:inverseOf hazard:isScaleUsedBy ;
+    skos:prefLabel "uses scale"@en,
+        "usa scala"@it .
+
+hazard:Flooding a hazard:HydrometeorologicalHazard,
+        owl:NamedIndividual ;
+    spec:specializes hazard:Flooding ;
+    owl:sameAs <https://www.undrr.org/terms/hips/mh0600> ;
+    skos:prefLabel "Flooding"@en .
+
+hazard:hasHazardCategory a owl:ObjectProperty ;
+    rdfs:comment "Links a hazard type to its domain classification: Biological, Environmental, Geological, Hydrometeorological, Technological."@en ;
+    rdfs:domain hazard:Hazard ;
+    rdfs:range foundation:HazardCategory ;
+    skos:prefLabel "has hazard category"@en,
+        "ha categoria del pericolo"@it .
+
+hazard:isManifestationOf a owl:ObjectProperty ;
+    rdfs:comment "Fuses two roles: (1) subPropertyOf dul:hasQuality — the event has the hazard as an inhering contextual quality (ContextualQuality reading); (2) subPropertyOf dul:satisfies — the event (as dul:Situation) satisfies the hazard (as dul:Description), i.e. it is a concrete occurrence of that hazard type (D&S reading)."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range hazard:Hazard ;
+    rdfs:subPropertyOf dul:satisfies ;
+    skos:prefLabel "is manifestation of"@en,
+        "es manifestación de"@es,
+        "est la manifestation de"@fr,
+        "è manifestazione di"@it .
+
+hazard:HazardousEvent a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F2 ;
+    foundation:sendaiAnnotation "Severe hazardous events can lead to a disaster as a result of the combination of hazard occurrence and other risk factors."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/hazardous-event> ;
+    foundation:termNumber 22 ;
+    rdfs:comment "The manifestation of a hazard in a particular place during a particular period of time."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty foundation:hasLocation ;
+            owl:someValuesFrom dul:Place ],
+        [ a owl:Restriction ;
+            owl:onProperty disaster:hasTemporalExtent ;
+            owl:someValuesFrom dul:TimeInterval ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:involvesIntervention ;
+            owl:someValuesFrom response:Intervention ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:isManifestationOf ;
+            owl:someValuesFrom hazard:Hazard ],
+        [ a owl:Restriction ;
+            owl:onProperty foundation:includesEvent ;
+            owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; 
+            owl:onClass d0:Eventuality ],
+        [ a owl:Restriction ;
+            owl:onProperty foundation:isEvolvedAs ;
+            owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; 
+            owl:onClass d0:Eventuality ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:hasCascadingEffect ;
+            owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; 
+            owl:onClass d0:Eventuality ],
+        dul:Event,
+        dul:Situation ;
+    skos:broader hazard:Hazard ;
+    skos:definition "The manifestation of a hazard in a particular place during a particular period of time."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower disaster:FrequentDisaster,
+        disaster:InfrequentDisaster,
+        disaster:LargeScaleDisaster,
+        disaster:SlowOnsetDisaster,
+        disaster:SmallScaleDisaster,
+        disaster:SuddenOnsetDisaster ;
+    skos:prefLabel "Gefahrenereignis"@de,
+        "Hazardous Event"@en,
+        "Evento peligroso"@es,
+        "Événement dangereux"@fr,
+        "Evento pericoloso"@it,
+        "Evento perigoso"@pt .
+
+hazard:Hazard a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F2 ;
+    foundation:scopeExclusion "This term does not include the occurrence or risk of armed conflicts and other situations of social instability or tension which are subject to international humanitarian law and national legislation."@en ;
+    foundation:sendaiAnnotation "Hazards may be natural, anthropogenic or socionatural in origin. Natural hazards are predominantly associated with natural processes and phenomena. Anthropogenic hazards, or human-induced hazards, are induced entirely or predominantly by human activities and choices. Several hazards are socionatural, in that they are associated with a combination of natural and anthropogenic factors, including environmental degradation and climate change. Hazards may be single, sequential or combined in their origin and effects. Each hazard is characterized by its location, intensity or magnitude, frequency and probability."@en,
+        "Hazards may be natural, anthropogenic or socionatural in origin. Natural hazards are predominantly associated with natural processes and phenomena. Anthropogenic hazards, or human-induced hazards, are induced entirely or predominantly by human activities and choices. This term does not include the occurrence or risk of armed conflicts and other situations of social instability or tension which are subject to international humanitarian law and national legislation. Several hazards are socionatural, in that they are associated with a combination of natural and anthropogenic factors, including environmental degradation and climate change. Hazards may be single, sequential or combined in their origin and effects. Each hazard is characterized by its location, intensity or magnitude, frequency and probability. Biological hazards are also defined by their infectiousness or toxicity, or other characteristics of the pathogen such as dose-response, incubation period, case fatality rate and estimation of the pathogen for transmission."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/hazard> ;
+    foundation:termNumber 21 ;
+    rdfs:comment "A process, phenomenon or human activity that may cause loss of life, injury or other health impacts, property damage, social and economic disruption or environmental degradation."@en ;
+    rdfs:subClassOf dul:ContextualDisposition,
+        dul:Description ;
+    skos:definition "A process, phenomenon or human activity that may cause loss of life, injury or other health impacts, property damage, social and economic disruption or environmental degradation."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower hazard:BiologicalHazard,
+        hazard:EnvironmentalHazard,
+        hazard:GeologicalHazard,
+        hazard:HydrometeorologicalHazard,
+        hazard:TechnologicalHazard ;
+    skos:prefLabel "Gefahr"@de,
+        "Hazard"@en,
+        "Amenaza"@es,
+        "Aléa"@fr,
+        "Pericolo"@it,
+        "Ameaça"@pt ;
+    skos:related hazard:HazardousEvent ;
+    skos:topConceptOf foundation:SendaiFrameworkTerminology .
+
+hazard:HydrometeorologicalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "Hazards of atmospheric, hydrological or oceanographic origin. Examples are tropical cyclones, floods, drought, heatwaves and cold spells, and coastal storm surges."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:HydrometeorologicalTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Hydrometeorologische Gefahr"@de,
+        "Hydrometeorological Hazard"@en,
+        "Amenaza hidrometeorológica"@es,
+        "Aléa hydrométéorologique"@fr,
+        "Pericolo idrometeorologico"@it,
+        "Ameaça hidrometeorológica"@pt .
+
+hazard:TechnologicalHazard a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "Hazards originating from technological or industrial conditions, dangerous procedures, infrastructure failures or specific human activities. Examples include industrial pollution, nuclear radiation, toxic wastes, dam failures, transport accidents, factory explosions, fires and chemical spills."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:TechnologicalTarget ;
+            owl:onProperty hazard:hasHazardCategory ],
+        hazard:Hazard ;
+    skos:prefLabel "Technologische Gefahr"@de,
+        "Technological Hazard"@en,
+        "Amenaza tecnológica"@es,
+        "Aléa technologique"@fr,
+        "Pericolo tecnologico"@it,
+        "Ameaça tecnológica"@pt .
+

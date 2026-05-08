@@ -1,0 +1,420 @@
+@prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix governance: <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response: <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk: <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:capacity a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Capacity stocks, CopingCapacity, Resilience, and capacity assessment/development processes."@en ;
+    owl:imports ecmocore:disaster,
+        ecmocore:foundation,
+        ecmocore:hazard ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Capacity & Resilience Module (F5)"@en .
+
+capacity:Competence a owl:Class ;
+    rdfs:comment "The knowledge, skills and abilities that individuals and organisations possess and can deploy for disaster risk management."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue capacity:HumanCapacityDomain ;
+            owl:onProperty capacity:hasCapacityDomain ],
+        capacity:Capacity,
+        dul:SocialObject ;
+    skos:prefLabel "Kompetenz"@de,
+        "Competence"@en,
+        "Competencia"@es,
+        "Compétence"@fr,
+        "Competenza"@it,
+        "Competência"@pt .
+
+capacity:InformationalCapacityDomain a capacity:CapacityDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Informational"@en .
+
+capacity:Infrastructure a owl:Class ;
+    dc:creator "aldogangemi" ;
+    dc:date "2026-02-26T18:58:09+00:00"^^xsd:dateTime ;
+    rdfs:comment "The physical systems and facilities — transport, energy, water, telecommunications — that provide essential services to communities and are critical for disaster risk management."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue capacity:PhysicalCapacityDomain ;
+            owl:onProperty capacity:hasCapacityDomain ],
+        capacity:Capacity ;
+    skos:prefLabel "Infrastruktur"@de,
+        "Infrastructure"@en,
+        "Infraestructura"@es,
+        "Infrastructure"@fr,
+        "Infrastruttura"@it,
+        "Infraestrutura"@pt .
+
+capacity:InstitutionalCapacityDomain a capacity:CapacityDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Institutional"@en .
+
+capacity:ProductionCapacity a owl:Class ;
+    dc:creator "aldogangemi" ;
+    dc:date "2026-02-26T18:58:59+00:00"^^xsd:dateTime ;
+    rdfs:comment "The capability of economic systems — agriculture, industry, services — to produce goods and services; a key factor in assessing indirect economic losses after a disaster."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue capacity:ProductiveCapacityDomain ;
+            owl:onProperty capacity:hasCapacityDomain ],
+        capacity:Capacity ;
+    skos:prefLabel "Produktionskapazität"@de,
+        "Production Capacity"@en,
+        "Capacidad productiva"@es,
+        "Capacité de production"@fr,
+        "Capacità produttiva"@it,
+        "Capacidade de produção"@pt .
+
+capacity:ServiceCapacityDomain a capacity:CapacityDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Service"@en .
+
+capacity:WarningCapacityDomain a capacity:CapacityDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Early Warning"@en .
+
+capacity:hasExceedanceDegree a owl:DatatypeProperty ;
+    rdfs:comment "A qualitative or quantitative indicator of how severely the capacity was exceeded (e.g. 'moderate', 'severe', 'catastrophic', or a numeric ratio)."@en ;
+    rdfs:domain capacity:CapacityExceedanceAssessment ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has exceedance degree"@en,
+        "ha grado di superamento"@it .
+
+capacity:includesInstitution a owl:ObjectProperty ;
+    rdfs:comment "Relates a Capacity stock to an Institution that is part of the governance resources available to manage disaster risk."@en ;
+    rdfs:domain capacity:Capacity ;
+    rdfs:range governance:Institution ;
+    skos:prefLabel "includes institution"@en,
+        "include istituzione"@it .
+
+capacity:CapacityAssessment a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F5 ;
+    rdfs:comment "The process by which the capacity of a group, organization or society is reviewed against desired goals, where existing capacities are identified for maintenance or strengthening and capacity gaps are identified for further action."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty capacity:assessesCapacityOf ;
+            owl:someValuesFrom capacity:Capacity ],
+        dul:Process ;
+    skos:prefLabel "Kapazitätsbewertung"@de,
+        "Capacity Assessment"@en,
+        "Evaluación de capacidades"@es,
+        "Évaluation des capacités"@fr,
+        "Valutazione della capacità"@it,
+        "Avaliação de capacidades"@pt .
+
+capacity:CapacityDevelopment a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F5 ;
+    rdfs:comment "The process by which people, organizations and society systematically stimulate and develop their capacities over time to achieve social and economic goals."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty capacity:developsCapacityOf ;
+            owl:someValuesFrom capacity:Capacity ],
+        dul:Process ;
+    skos:prefLabel "Kapazitätsentwicklung"@de,
+        "Capacity Development"@en,
+        "Desarrollo de capacidades"@es,
+        "Développement des capacités"@fr,
+        "Sviluppo delle capacità"@it,
+        "Desenvolvimento de capacidades"@pt .
+
+capacity:CollectiveAttribute a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F5 ;
+    rdfs:comment "Social relationships, leadership and management attributes of a community."@en ;
+    rdfs:subClassOf dul:Quality ;
+    skos:prefLabel "Kollektives Merkmal"@de,
+        "Collective Attribute"@en,
+        "Atributo colectivo"@es,
+        "Attribut collectif"@fr,
+        "Attributo collettivo"@it,
+        "Atributo coletivo"@pt .
+
+capacity:HumanCapacityDomain a capacity:CapacityDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Human/Competence"@en .
+
+capacity:Knowledge a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F5 ;
+    rdfs:comment "Human knowledge and skills available for disaster risk management."@en ;
+    rdfs:subClassOf dul:InformationObject ;
+    skos:prefLabel "Wissen"@de,
+        "Knowledge"@en,
+        "Conocimiento"@es,
+        "Connaissance"@fr,
+        "Conoscenza"@it,
+        "Conhecimento"@pt .
+
+capacity:MaterialCapacityDomain a capacity:CapacityDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Material/Resource"@en .
+
+capacity:PhysicalCapacityDomain a capacity:CapacityDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Physical Infrastructure"@en .
+
+capacity:ProductiveCapacityDomain a capacity:CapacityDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Productive"@en .
+
+capacity:Resource a dul:Role,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F5 ;
+    rdfs:comment "Available means that can be drawn upon to manage and reduce disaster risks."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue capacity:MaterialCapacityDomain ;
+            owl:onProperty capacity:hasCapacityDomain ],
+        capacity:Capacity ;
+    skos:prefLabel "Ressource"@de,
+        "Resource"@en,
+        "Recurso"@es,
+        "Ressource"@fr,
+        "Risorsa"@it,
+        "Recurso"@pt .
+
+capacity:assessesExceedanceBy a owl:ObjectProperty ;
+    rdfs:comment "Relates a CapacityExceedanceAssessment to the Disaster that caused the exceedance."@en ;
+    rdfs:domain capacity:CapacityExceedanceAssessment ;
+    rdfs:range hazard:HazardousEvent ;
+    skos:prefLabel "assesses exceedance by"@en,
+        "valuta superamento da"@it .
+
+capacity:hasCapacityAssessment a owl:ObjectProperty ;
+    rdfs:comment "Indicates an assessment evaluating this capacity."@en ;
+    owl:inverseOf capacity:assessesCapacityOf ;
+    skos:prefLabel "has capacity assessment"@en .
+
+capacity:hasCapacityDevelopment a owl:ObjectProperty ;
+    rdfs:comment "Indicates a development process strengthening this capacity."@en ;
+    owl:inverseOf capacity:developsCapacityOf ;
+    skos:prefLabel "has capacity development"@en .
+
+capacity:hasResistanceFrom a owl:ObjectProperty ;
+    rdfs:comment "Indicates the resilience resisting effects of this hazard."@en ;
+    owl:inverseOf capacity:resistsEffectsOf ;
+    skos:prefLabel "has resistance from"@en .
+
+capacity:includesCollectiveAttribute a owl:ObjectProperty ;
+    rdfs:comment "Relates a Capacity stock to a CollectiveAttribute — a shared social asset such as trust or social capital — that contributes to it."@en ;
+    rdfs:domain capacity:Capacity ;
+    rdfs:range capacity:CollectiveAttribute ;
+    owl:inverseOf capacity:isCollectiveAttributeOf ;
+    skos:prefLabel "includes collective attribute"@en,
+        "include attributo collettivo"@it .
+
+capacity:includesKnowledge a owl:ObjectProperty ;
+    rdfs:comment "Relates a Capacity stock to Knowledge — information, expertise and technical know-how — available for disaster risk management."@en ;
+    rdfs:domain capacity:Capacity ;
+    rdfs:range capacity:Knowledge ;
+    owl:inverseOf capacity:isKnowledgeOf ;
+    skos:prefLabel "includes knowledge"@en,
+        "include conoscenza"@it .
+
+capacity:includesResource a owl:ObjectProperty ;
+    rdfs:comment "Relates a Capacity stock to a Resource — financial, material or human — available for disaster risk management."@en ;
+    rdfs:domain capacity:Capacity ;
+    rdfs:range capacity:Resource ;
+    owl:inverseOf capacity:isResourceOf ;
+    skos:prefLabel "includes resource"@en,
+        "include risorsa"@it .
+
+capacity:isCollectiveAttributeOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the capacity stock to which this attribute contributes."@en ;
+    owl:inverseOf capacity:includesCollectiveAttribute ;
+    skos:prefLabel "is collective attribute of"@en .
+
+capacity:isKnowledgeOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the capacity stock containing this knowledge."@en ;
+    owl:inverseOf capacity:includesKnowledge ;
+    skos:prefLabel "is knowledge of"@en .
+
+capacity:isManagedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the coping capacity managing this risk."@en ;
+    owl:inverseOf capacity:managesAdversity ;
+    skos:prefLabel "is managed by"@en .
+
+capacity:isPreservedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the resilience that preserves this function."@en ;
+    owl:inverseOf capacity:preservesFunction ;
+    skos:prefLabel "is preserved by"@en .
+
+capacity:isResourceOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the capacity stock containing this resource."@en ;
+    owl:inverseOf capacity:includesResource ;
+    skos:prefLabel "is resource of"@en .
+
+capacity:isStrengthenedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the activity strengthening this resilience."@en ;
+    owl:inverseOf capacity:strengthensResilience ;
+    skos:prefLabel "is strengthened by"@en .
+
+capacity:strengthensResilience a owl:ObjectProperty ;
+    rdfs:comment "Relates a capacity-building or risk reduction activity to the Resilience quality it enhances in a community or system."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( capacity:Capacity governance:RiskReduction ) ] ;
+    rdfs:range capacity:Resilience ;
+    owl:inverseOf capacity:isStrengthenedBy ;
+    skos:prefLabel "strengthens resilience"@en,
+        "rafforza la resilienza"@it .
+
+capacity:CapacityExceedanceAssessment a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F5 ;
+    rdfs:comment "A reified assessment that a Disaster has exceeded the coping Capacity of a community or system — the determination that available resources are insufficient to manage the event without external assistance. Carries the assessed capacity, the disaster, the assessor/source, the assessment method, and optionally a degree of exceedance."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty capacity:assessesCapacityOf ;
+            owl:someValuesFrom capacity:Capacity ],
+        [ a owl:Restriction ;
+            owl:onProperty capacity:assessesExceedanceBy ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:hasObservationSource ;
+            owl:someValuesFrom hazard:ObservationSource ],
+        dul:Situation ;
+    skos:prefLabel "Capacity Exceedance Assessment"@en,
+        "Evaluación de superación de capacidad"@es,
+        "Évaluation du dépassement des capacités"@fr,
+        "Valutazione del superamento della capacità"@it .
+
+capacity:CopingCapacity a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F5 ;
+    rdfs:comment "The ability of people, organizations and systems, using available skills and resources, to manage adverse conditions, risk or disasters."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty capacity:managesAdversity ;
+            owl:someValuesFrom risk:Risk ],
+        dul:Quality ;
+    skos:prefLabel "Bewältigungskapazität"@de,
+        "Coping Capacity"@en,
+        "Capacidad de afrontamiento"@es,
+        "Capacité d'adaptation"@fr,
+        "Capacità di coping"@it,
+        "Capacidade de resposta"@pt .
+
+capacity:EssentialFunction a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F5 ;
+    rdfs:comment "A basic structure or function of a system that must be preserved for resilience."@en ;
+    rdfs:subClassOf dul:Role ;
+    skos:prefLabel "Wesentliche Funktion"@de,
+        "Essential Function"@en,
+        "Función esencial"@es,
+        "Fonction essentielle"@fr,
+        "Funzione essenziale"@it,
+        "Função essencial"@pt .
+
+capacity:developsCapacityOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a CapacityDevelopment process to the Capacity it strengthens through training, investment or institutional improvement."@en ;
+    rdfs:domain capacity:CapacityDevelopment ;
+    rdfs:range capacity:Capacity ;
+    owl:inverseOf capacity:hasCapacityDevelopment ;
+    skos:prefLabel "develops capacity of"@en,
+        "sviluppa la capacità di"@it .
+
+capacity:managesAdversity a owl:ObjectProperty ;
+    rdfs:comment "Relates a CopingCapacity to the Risk it can absorb and manage without external assistance."@en ;
+    rdfs:domain capacity:CopingCapacity ;
+    rdfs:range risk:Risk ;
+    owl:inverseOf capacity:isManagedBy ;
+    skos:prefLabel "manages adversity"@en,
+        "gestisce avversità"@it .
+
+capacity:preservesFunction a owl:ObjectProperty ;
+    rdfs:comment "Relates Resilience to the EssentialFunction — critical service or infrastructure — maintained despite the impact of a hazardous event."@en ;
+    rdfs:domain capacity:Resilience ;
+    rdfs:range capacity:EssentialFunction ;
+    owl:inverseOf capacity:isPreservedBy ;
+    skos:prefLabel "preserves function"@en,
+        "preserva la funzione"@it .
+
+capacity:resistsEffectsOf a owl:ObjectProperty ;
+    rdfs:comment "Relates Resilience to the Hazard type whose impacts a community or system can absorb and recover from without losing essential functions."@en ;
+    rdfs:domain capacity:Resilience ;
+    rdfs:range hazard:Hazard ;
+    owl:inverseOf capacity:hasResistanceFrom ;
+    skos:prefLabel "resists effects of"@en,
+        "resiste agli effetti di"@it .
+
+capacity:Resilience a dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F5 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/resilience> ;
+    foundation:termNumber 32 ;
+    rdfs:comment "The ability of a system, community or society exposed to hazards to resist, absorb, accommodate, adapt to, transform and recover from the effects of a hazard in a timely and efficient manner, including through the preservation and restoration of its essential basic structures and functions through risk management."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty capacity:preservesFunction ;
+            owl:someValuesFrom capacity:EssentialFunction ],
+        [ a owl:Restriction ;
+            owl:onProperty capacity:resistsEffectsOf ;
+            owl:someValuesFrom hazard:Hazard ],
+        dul:Quality ;
+    skos:definition "The ability of a system, community or society exposed to hazards to resist, absorb, accommodate, adapt to, transform and recover from the effects of a hazard in a timely and efficient manner, including through the preservation and restoration of its essential basic structures and functions through risk management."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Resilienz"@de,
+        "Resilience"@en,
+        "Resiliencia"@es,
+        "Résilience"@fr,
+        "Resilienza"@it,
+        "Resiliência"@pt ;
+    skos:related capacity:Capacity,
+        response:BuildBackBetter ;
+    skos:topConceptOf foundation:SendaiFrameworkTerminology .
+
+capacity:assessesCapacityOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a CapacityAssessment to the Capacity stock it evaluates."@en ;
+    rdfs:domain capacity:CapacityAssessment ;
+    rdfs:range capacity:Capacity ;
+    owl:inverseOf capacity:hasCapacityAssessment ;
+    skos:prefLabel "assesses capacity of"@en,
+        "valuta la capacità di"@it .
+
+capacity:hasCapacityDomain a owl:ObjectProperty ;
+    rdfs:comment "Classifies a capacity resource by its domain."@en ;
+    rdfs:domain capacity:Capacity ;
+    rdfs:range capacity:CapacityDomainType ;
+    skos:prefLabel "has capacity domain"@en .
+
+capacity:CapacityDomainType a owl:Class ;
+    rdfs:comment "Classification of the domain to which a capacity resource belongs."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Capacity Domain Type"@en .
+
+capacity:Capacity a dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F5 ;
+    foundation:sendaiAnnotation "Capacity may include infrastructure, institutions, human knowledge and skills, and collective attributes such as social relationships, leadership and management."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/capacity> ;
+    foundation:termNumber 4 ;
+    rdfs:comment "The combination of all the strengths, attributes and resources available within an organization, community or society to manage and reduce disaster risks and strengthen resilience."@en ;
+    rdfs:subClassOf dul:Object ;
+    skos:definition "The combination of all the strengths, attributes and resources available within an organization, community or society to manage and reduce disaster risks and strengthen resilience."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower capacity:CopingCapacity ;
+    skos:prefLabel "Kapazität"@de,
+        "Capacity"@en,
+        "Capacidad"@es,
+        "Capacité"@fr,
+        "Capacità"@it,
+        "Capacidade"@pt .
+

@@ -1,0 +1,524 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hera: <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix ph: <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.europa.eu/h8v/ecmo/hera> a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:source <https://health.ec.europa.eu/document/download/147630e7-835a-40cc-96d4-e0dc44707396_en?filename=hera_wd-health-treat-prioritisation-assessment_en.pdf> ;
+    rdfs:comment "HERA Health Threat Prioritisation Assessment concepts for medical countermeasures. Integrated into ECMO-CORE v2.0 from the Comprehensive 2025 Health Threat Prioritisation Assessment. Defines pathogen risk assessment criteria (prioritisation, PHEIC potential, cross-border threat, transmissibility, population immunity, pathogenicity) and MCM availability scales (vaccines, therapeutics)."@en ;
+    owl:imports ecmocore:foundation,
+        <http://data.europa.eu/h8v/ecmo/public-health> ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO HERA Risk Prioritisation Module"@en .
+
+hera:Available_Therapeutics a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfTherapeuticsScale ;
+    foundation:orderInScale 2 ;
+    skos:prefLabel "Available"@en .
+
+hera:Available_Vaccines a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfVaccinesScale ;
+    foundation:orderInScale 2 ;
+    skos:prefLabel "Available"@en .
+
+hera:Limited_Therapeutics a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfTherapeuticsScale ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Limited"@en .
+
+hera:Limited_Vaccines a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfVaccinesScale ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Limited"@en .
+
+hera:Medium_PHEICPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PHEICPotentialScale ;
+    foundation:orderInScale 2 ;
+    skos:prefLabel "Medium PHEIC Potential"@en .
+
+hera:NotAvailable_Therapeutics a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfTherapeuticsScale ;
+    foundation:orderInScale 0 ;
+    skos:prefLabel "Not Available"@en .
+
+hera:NotAvailable_Vaccines a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfVaccinesScale ;
+    foundation:orderInScale 0 ;
+    skos:prefLabel "Not Available"@en .
+
+hera:hasAvailabilityOfTherapeutics a owl:ObjectProperty ;
+    rdfs:comment "Indicates the availability of therapeutics for a given pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:AvailabilityOfTherapeutics ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has availability of therapeutics"@en .
+
+hera:hasAvailabilityOfVaccines a owl:ObjectProperty ;
+    rdfs:comment "Indicates the availability of vaccines for a given pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:AvailabilityOfVaccines ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has availability of vaccines"@en .
+
+hera:hasEUCrossBorderThreatPotential a owl:ObjectProperty ;
+    rdfs:comment "Indicates the EU cross-border threat potential of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:EUCrossBorderThreatPotential ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has EU cross-border threat potential"@en .
+
+hera:hasPHEICPotential a owl:ObjectProperty ;
+    rdfs:comment "Indicates the PHEIC potential of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:PHEICPotential ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has PHEIC potential"@en .
+
+hera:hasPathogenicity a owl:ObjectProperty ;
+    rdfs:comment "Indicates the pathogenicity level of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:Pathogenicity ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has pathogenicity"@en .
+
+hera:hasPopulationImmunity a owl:ObjectProperty ;
+    rdfs:comment "Indicates the population immunity level against a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:PopulationImmunity ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has population immunity"@en .
+
+hera:hasPriorityLevel a owl:ObjectProperty ;
+    rdfs:comment "Indicates the prioritisation level value assigned to a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:propertyChainAxiom ( hera:hasPriority foundation:hasLevel ) ;
+    skos:prefLabel "has priority level"@en .
+
+hera:hasTransmissibilityAssessment a owl:ObjectProperty ;
+    rdfs:comment "Indicates the transmissibility assessment of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:Transmissibility ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has transmissibility assessment"@en .
+
+hera:AvailabilityOfTherapeutics a owl:Class ;
+    rdfs:comment "The assessment of the availability of therapeutics for a pathogen."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:TherapeuticAvailabilityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Availability of Therapeutics"@en .
+
+hera:AvailabilityOfVaccines a owl:Class ;
+    rdfs:comment "The assessment of the availability of vaccines for a pathogen."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:VaccineAvailabilityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Availability of Vaccines"@en .
+
+hera:CrossBorderCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "EU Cross-Border Threat"@en .
+
+hera:EUCrossBorderThreatPotential a owl:Class ;
+    rdfs:comment "The assessment of the potential of a pathogen to pose a cross-border health threat within the EU."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:CrossBorderCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "EU Cross-Border Threat Potential"@en .
+
+hera:High_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:VeryHigh_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 5 ;
+    foundation:previousValue hera:ModerateToHigh_EUCrossBorderThreatPotential ;
+    skos:prefLabel "High EU Cross-Border Threat Potential"@en .
+
+hera:High_PHEICPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PHEICPotentialScale ;
+    foundation:orderInScale 3 ;
+    skos:prefLabel "High PHEIC Potential"@en .
+
+hera:ImmunityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Population Immunity"@en .
+
+hera:Low_PHEICPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PHEICPotentialScale ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low PHEIC Potential"@en .
+
+hera:PHEICCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "PHEIC Potential"@en .
+
+hera:PHEICPotential a owl:Class ;
+    rdfs:comment "The assessment of the potential of a pathogen to provoke events declared a Public Health Emergency of International Concern (PHEIC)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:PHEICCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "PHEIC Potential"@en .
+
+hera:PathogenPrioritisation a owl:Class ;
+    rdfs:comment "The overall prioritisation level of a pathogen according to HERA."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:PrioritisationCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Pathogen Prioritisation"@en .
+
+hera:Pathogenicity a owl:Class ;
+    rdfs:comment "The assessment of the pathogenicity of a pathogen."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:PathogenicityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Pathogenicity"@en .
+
+hera:PathogenicityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Pathogenicity"@en .
+
+hera:PopulationImmunity a owl:Class ;
+    rdfs:comment "The assessment of the population immunity against a pathogen."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:ImmunityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Population Immunity"@en .
+
+hera:PrioritisationCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Overall Prioritisation"@en .
+
+hera:TherapeuticAvailabilityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Therapeutic Availability"@en .
+
+hera:Transmissibility a owl:Class ;
+    rdfs:comment "The qualitative assessment of the transmissibility of a pathogen according to the HERA framework."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:TransmissibilityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Transmissibility Assessment"@en .
+
+hera:TransmissibilityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Transmissibility"@en .
+
+hera:VaccineAvailabilityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Vaccine Availability"@en .
+
+hera:hasPriority a owl:ObjectProperty ;
+    rdfs:comment "Indicates the overall prioritisation level of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:PathogenPrioritisation ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has priority"@en .
+
+hera:HighToVeryHigh_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:VeryHigh_Pathogenicity ;
+    foundation:orderInScale 7 ;
+    foundation:previousValue hera:High_Pathogenicity ;
+    skos:prefLabel "High to Very High Pathogenicity"@en .
+
+hera:High_PathogenPrioritisation a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenPrioritisationScale ;
+    foundation:nextValue hera:Highest_PathogenPrioritisation ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:Moderate_PathogenPrioritisation ;
+    skos:prefLabel "High Priority"@en .
+
+hera:High_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:HighToVeryHigh_Pathogenicity ;
+    foundation:orderInScale 6 ;
+    foundation:previousValue hera:ModerateToHigh_Pathogenicity ;
+    skos:prefLabel "High Pathogenicity"@en .
+
+hera:High_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:orderInScale 5 ;
+    foundation:previousValue hera:Moderate_PopulationImmunity ;
+    skos:prefLabel "High Population Immunity"@en .
+
+hera:High_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:orderInScale 5 ;
+    foundation:previousValue hera:Moderate_Transmissibility ;
+    skos:prefLabel "High Transmissibility"@en .
+
+hera:Highest_PathogenPrioritisation a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenPrioritisationScale ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:High_PathogenPrioritisation ;
+    skos:prefLabel "Highest Priority"@en .
+
+hera:LowToModerate_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:Moderate_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_EUCrossBorderThreatPotential ;
+    skos:prefLabel "Low to Moderate EU Cross-Border Threat Potential"@en .
+
+hera:LowToModerate_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:ModerateToLow_Pathogenicity ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_Pathogenicity ;
+    skos:prefLabel "Low to Moderate Pathogenicity"@en .
+
+hera:LowToModerate_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:nextValue hera:ModerateToLow_PopulationImmunity ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_PopulationImmunity ;
+    skos:prefLabel "Low to Moderate Population Immunity"@en .
+
+hera:LowToModerate_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:nextValue hera:ModerateToLow_Transmissibility ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_Transmissibility ;
+    skos:prefLabel "Low to Moderate Transmissibility"@en .
+
+hera:Low_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:LowToModerate_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low EU Cross-Border Threat Potential"@en .
+
+hera:Low_PathogenPrioritisation a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenPrioritisationScale ;
+    foundation:nextValue hera:Moderate_PathogenPrioritisation ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low Priority"@en .
+
+hera:Low_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:LowToModerate_Pathogenicity ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low Pathogenicity"@en .
+
+hera:Low_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:nextValue hera:LowToModerate_PopulationImmunity ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low Population Immunity"@en .
+
+hera:Low_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:nextValue hera:LowToModerate_Transmissibility ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low Transmissibility"@en .
+
+hera:ModerateToHigh_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:High_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:Moderate_EUCrossBorderThreatPotential ;
+    skos:prefLabel "Moderate to High EU Cross-Border Threat Potential"@en .
+
+hera:ModerateToHigh_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:High_Pathogenicity ;
+    foundation:orderInScale 5 ;
+    foundation:previousValue hera:Moderate_Pathogenicity ;
+    skos:prefLabel "Moderate to High Pathogenicity"@en .
+
+hera:ModerateToLow_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:Moderate_Pathogenicity ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:LowToModerate_Pathogenicity ;
+    skos:prefLabel "Moderate to Low Pathogenicity"@en .
+
+hera:ModerateToLow_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:nextValue hera:Moderate_PopulationImmunity ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:LowToModerate_PopulationImmunity ;
+    skos:prefLabel "Moderate to Low Population Immunity"@en .
+
+hera:ModerateToLow_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:nextValue hera:Moderate_Transmissibility ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:LowToModerate_Transmissibility ;
+    skos:prefLabel "Moderate to Low Transmissibility"@en .
+
+hera:Moderate_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:ModerateToHigh_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:LowToModerate_EUCrossBorderThreatPotential ;
+    skos:prefLabel "Moderate EU Cross-Border Threat Potential"@en .
+
+hera:Moderate_PathogenPrioritisation a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenPrioritisationScale ;
+    foundation:nextValue hera:High_PathogenPrioritisation ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_PathogenPrioritisation ;
+    skos:prefLabel "Moderate Priority"@en .
+
+hera:Moderate_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:ModerateToHigh_Pathogenicity ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:ModerateToLow_Pathogenicity ;
+    skos:prefLabel "Moderate Pathogenicity"@en .
+
+hera:Moderate_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:nextValue hera:High_PopulationImmunity ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:ModerateToLow_PopulationImmunity ;
+    skos:prefLabel "Moderate Population Immunity"@en .
+
+hera:Moderate_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:nextValue hera:High_Transmissibility ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:ModerateToLow_Transmissibility ;
+    skos:prefLabel "Moderate Transmissibility"@en .
+
+hera:VeryHigh_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:orderInScale 6 ;
+    rdfs:comment "The pathogen has a very high potential to pose a cross-border health threat within the EU."@en ;
+    skos:prefLabel "Very High EU Cross-Border Threat Potential"@en .
+
+hera:VeryHigh_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:orderInScale 8 ;
+    foundation:previousValue hera:HighToVeryHigh_Pathogenicity ;
+    skos:prefLabel "Very High Pathogenicity"@en .
+
+hera:AvailabilityOfTherapeuticsScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    skos:prefLabel "Availability of Therapeutics Scale"@en .
+
+hera:AvailabilityOfVaccinesScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    skos:prefLabel "Availability of Vaccines Scale"@en .
+
+hera:PHEICPotentialScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:High_PHEICPotential ;
+    foundation:hasMinValue hera:Low_PHEICPotential ;
+    skos:prefLabel "PHEIC Potential Scale"@en .
+
+hera:PathogenPrioritisationScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:Highest_PathogenPrioritisation ;
+    foundation:hasMinValue hera:Low_PathogenPrioritisation ;
+    skos:prefLabel "Pathogen Prioritisation Scale"@en .
+
+hera:PopulationImmunityScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:High_PopulationImmunity ;
+    foundation:hasMinValue hera:Low_PopulationImmunity ;
+    skos:prefLabel "Population Immunity Scale"@en .
+
+hera:TransmissibilityScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:High_Transmissibility ;
+    foundation:hasMinValue hera:Low_Transmissibility ;
+    skos:prefLabel "Transmissibility Scale"@en .
+
+hera:EUCrossBorderThreatPotentialScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:VeryHigh_EUCrossBorderThreatPotential ;
+    foundation:hasMinValue hera:Low_EUCrossBorderThreatPotential ;
+    skos:prefLabel "EU Cross-Border Threat Potential Scale"@en .
+
+hera:PathogenRiskAssessmentLevelScale a owl:Class ;
+    rdfs:comment "A scale used to categorise pathogen risk levels."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue foundation:PathogenRiskDomain ;
+            owl:onProperty foundation:hasAssessmentDomain ],
+        foundation:QualitativeAssessmentLevelScale ;
+    skos:prefLabel "Pathogen Risk Assessment Level Scale"@en .
+
+hera:PathogenicityScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:VeryHigh_Pathogenicity ;
+    foundation:hasMinValue hera:Low_Pathogenicity ;
+    skos:prefLabel "Pathogenicity Scale"@en .
+
+hera:hasAssessmentCriterion a owl:ObjectProperty ;
+    rdfs:comment "Indicates the specific criterion assessed in a pathogen risk assessment."@en ;
+    rdfs:domain hera:PathogenRiskAssessment ;
+    rdfs:range hera:AssessmentCriterion ;
+    skos:prefLabel "has assessment criterion"@en .
+
+hera:hasPathogenRisk a owl:ObjectProperty ;
+    rdfs:comment "Indicates the risk assessment associated with a given pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:PathogenRiskAssessment ;
+    rdfs:subPropertyOf foundation:hasQualitativeAssessment ;
+    skos:prefLabel "has pathogen risk assessment"@en .
+
+hera:AssessmentCriterion a owl:Class ;
+    rdfs:comment "The criterion assessed in a pathogen risk assessment."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Assessment Criterion"@en .
+
+hera:PathogenRiskAssessment a owl:Class ;
+    rdfs:comment "The risk assessment of a pathogen, according to a specific criterion in the HERA prioritisation framework."@en ;
+    rdfs:subClassOf foundation:QualitativeAssessment ;
+    skos:prefLabel "Pathogen Risk Assessment"@en .
+

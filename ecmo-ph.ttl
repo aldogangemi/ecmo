@@ -1,0 +1,931 @@
+@prefix bio: <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix ph: <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix spec: <http://www.ontologydesignpatterns.org/cp/owl/specialization.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.europa.eu/h8v/ecmo/public-health> a owl:Ontology ;
+    dcterms:issued "2026-03-25"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Pathogen, Disease, Transmission domain classes in the ph: namespace, plus the PathogenCharacteristic/PathogenRiskAssessment hierarchy and its five assessment subtypes (CaseFatalityRate, IncubationPeriod, Infectiousness, Toxicity, Transmissibility). Connected to ecmocore:BiologicalHazard as the bridge class. Imports the bio: module for biological entity foundations."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/bio>,
+        ecmocore:foundation,
+        ecmocore:hazard ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO Public Health Module"@en .
+
+ph:AedesAegypti a ph:DiseaseVector,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:AedesMosquito ;
+    bio:hasRank bio:Species ;
+    ph:isVectorOf ph:Chikungunya,
+        ph:DengueFever,
+        ph:YellowFever,
+        ph:ZikaVirusDisease ;
+    rdfs:comment "Aedes aegypti is a species of mosquito that is a primary vector for dengue fever, Zika virus disease, chikungunya, and yellow fever."@en ;
+    skos:prefLabel "Aedes aegypti mosquito (species)"@en .
+
+ph:Birds a bio:Animal,
+        ph:SusceptibleHost,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Animals ;
+    bio:hasRank bio:Class ;
+    rdfs:comment "All birds as hosts for infectious diseases."@en ;
+    skos:prefLabel "Birds (class Aves)"@en .
+
+ph:Bovids a bio:Animal,
+        ph:SusceptibleHost,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Mammals ;
+    bio:hasRank bio:Family ;
+    rdfs:comment "Cattle and other bovines as hosts for infectious diseases."@en ;
+    skos:prefLabel "Bovids (family Bovidae)"@en .
+
+ph:COVID19 a ph:InfectiousDisease,
+        owl:NamedIndividual ;
+    ph:hasCausativeAgent ph:SARS_CoV_2 ;
+    ph:hasDescribedRouteOfTransmission ph:COVID19RouteDescription,
+        ph:COVID19_Airborne_Transmission_Description ;
+    ph:hasRouteOfTransmission ph:Airborne,
+        ph:DirectContact,
+        ph:Droplet ;
+    ph:hasSignOrSymptom ph:Anosmia,
+        ph:Cough,
+        ph:Fatigue,
+        ph:Fever,
+        ph:ShortnessOfBreath ;
+    ph:hasSusceptibleHost ph:Humans,
+        ph:NonHumanAnimals ;
+    rdfs:comment "COVID-19 is an infectious disease caused by the SARS-CoV-2 virus."@en,
+        "Coronavirus disease 2019 (COVID-19) is an infectious disease caused by the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)."@en ;
+    skos:prefLabel "Coronavirus Disease 2019"@en .
+
+ph:EscherichiaColi a ph:PathogenicBacterium,
+        owl:NamedIndividual ;
+    rdfs:comment "Escherichia coli is a gram-negative, facultatively anaerobic, rod-shaped bacterium commonly found in the lower intestine of warm-blooded organisms."@en ;
+    skos:prefLabel "Escherichia coli"@en .
+
+ph:Foodborne a ph:RouteOfTransmission,
+        owl:NamedIndividual ;
+    rdfs:comment "Foodborne transmission is the spread of an infectious agent or disease through the consumption of contaminated food or beverages."@en ;
+    skos:prefLabel "Foodborne Transmission"@en .
+
+ph:MARV a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Marburgvirus ;
+    ph:hasRank bio:Species ;
+    rdfs:comment "Marburg virus (MARV) is a species of virus in the genus Marburgvirus that causes Marburg virus disease (MVD) in humans and other primates."@en ;
+    skos:prefLabel "Marburg virus"@en .
+
+ph:MPV a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    ph:hasRank bio:Species ;
+    bio:belongsTo ph:Orthopoxvirus ;
+    rdfs:comment "Monkeypox virus is a zoonotic virus belonging to the Orthopoxvirus genus in the family Poxviridae."@en ;
+    skos:prefLabel "Monkeypox Virus"@en .
+
+ph:NovelCoronavirus a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Coronaviridae ;
+    rdfs:comment "A novel coronavirus is a new strain of coronavirus that has not been previously identified in humans."@en ;
+    skos:prefLabel "Novel Coronavirus"@en .
+
+ph:Parasite a owl:Class ;
+    rdfs:comment "A class representing a type of parasite. Parasites are organisms that live on or in a host organism and get their food from or at the expense of their host."@en ;
+    rdfs:subClassOf bio:Organism,
+        ph:Pathogen ;
+    skos:prefLabel "Parasite"@en .
+
+ph:PathogenicFungus a owl:Class ;
+    rdfs:comment "A class representing a type of fungus that is pathogenic"@en ;
+    rdfs:subClassOf bio:Fungus,
+        ph:Pathogen ;
+    skos:prefLabel "Pathogenic Fungus"@en .
+
+ph:PathogenicProtozoon a owl:Class ;
+    rdfs:comment "A class representing a type of protozoon that is pathogenic"@en ;
+    rdfs:subClassOf bio:Protozoon,
+        ph:Pathogen ;
+    skos:prefLabel "Pathogenic Protozoon"@en .
+
+ph:Plants a bio:Plant,
+        ph:SusceptibleHost,
+        owl:NamedIndividual ;
+    bio:hasRank bio:Kingdom ;
+    rdfs:comment "All plants as hosts for infectious diseases."@en ;
+    skos:prefLabel "Plant (kingdom Plantae)"@en .
+
+ph:Pneumonia a ph:InfectiousDiseaseOrSyndrome,
+        owl:NamedIndividual ;
+    ph:hasCausativeAgent ph:Unspecified_Bacterium,
+        ph:Unspecified_Virus ;
+    rdfs:comment "Pneumonia is an inflammatory condition of the lung primarily affecting the small air sacs known as alveoli."@en ;
+    skos:prefLabel "Pneumonia"@en .
+
+ph:PopiliaJaponica a bio:Animal,
+        ph:Pest,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Insects ;
+    bio:hasRank bio:Species ;
+    rdfs:comment "The Japanese beetle (Popillia japonica) is a species of scarab beetle native to Japan that is considered a pest in many parts of the world."@en ;
+    skos:prefLabel "Popillia japonica"@en .
+
+ph:Prion a owl:Class ;
+    rdfs:comment "A class representing any type of prions. A prion is a misfolded protein that induces folding problems in normal variants of the same protein, leading to cellular death."@en ;
+    rdfs:subClassOf bio:BiologicalEntity,
+        ph:Pathogen ;
+    skos:prefLabel "Prion"@en .
+
+ph:SARS_CoV_2_BA2 a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:SARS_CoV_2_Omicron ;
+    bio:hasRank bio:Lineage ;
+    rdfs:comment "Omicron BA.2 is a subvariant / lineage of the Omicron variant of the SARS-CoV-2 virus."@en ;
+    skos:prefLabel "Variant Omicron BA.2"@en .
+
+ph:SexualTransmission a ph:RouteOfTransmission,
+        owl:NamedIndividual ;
+    rdfs:comment "Sexual transmission is the spread of an infectious agent or disease through sexual contact"@en ;
+    skos:prefLabel "Sexual Transmission"@en .
+
+ph:Unknown_Bacterium a ph:PathogenicBacterium,
+        owl:NamedIndividual ;
+    rdfs:comment "An unknown bacterium."@en ;
+    skos:prefLabel "Unknown Bacterium"@en .
+
+ph:Unknown_Pathogen a ph:Pathogen,
+        owl:NamedIndividual ;
+    rdfs:comment "An unknown pathogen."@en ;
+    skos:prefLabel "Unknown Pathogen"@en .
+
+ph:Unknown_Virus a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    rdfs:comment "An unknown virus."@en ;
+    skos:prefLabel "Unknown Virus"@en .
+
+ph:Unspecified_Pathogen a ph:Pathogen,
+        owl:NamedIndividual ;
+    rdfs:comment "An unspecified (generic) pathogen"@en ;
+    skos:prefLabel "Unspecified Pathogen"@en .
+
+ph:Waterborne a ph:RouteOfTransmission,
+        owl:NamedIndividual ;
+    rdfs:comment "Waterborne transmission is the spread of an infectious agent or disease through the ingestion of contaminated water."@en ;
+    skos:prefLabel "Waterborne Transmission"@en .
+
+ph:hasCaseFatalityRate a owl:ObjectProperty ;
+    rdfs:comment "Proportion of people diagnosed with a disease who die from it. Can be used as a shortcut on BiologicalHazard directly or as the literal-carrying property on a reified CaseFatalityRate."@en,
+        "Relates a BiologicalHazard to a reified observation of its case fatality rate, qualified by study population, temporal period, and source."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
+                        owl:hasValue hazard:BiologicalHazard ;
+                        owl:onProperty dul:hasRole ] ) ] ;
+    rdfs:range ph:CaseFatalityRate ;
+    rdfs:seeAlso ph:CaseFatalityRate ;
+    skos:editorialNote "Shortcut property — for fully qualified observations use hasCaseFatalityRate → CaseFatalityRate."@en,
+        "potentially requiring source attribution. Also, it may be expressed as a range or with uncertainty."@en,
+        "public health specific"@en ;
+    skos:prefLabel "has case fatality rate"@en,
+        "has case fatality rate assessment"@en,
+        "ha tasso di letalità"@it,
+        "ha valutazione del tasso di letalità"@it .
+
+ph:hasCaseFatalityRateValue a owl:DatatypeProperty ;
+    rdfs:comment "The numeric case fatality rate value."@en ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has case fatality rate value"@en .
+
+ph:hasIncubationPeriod a owl:ObjectProperty ;
+    rdfs:comment "Relates a BiologicalHazard to a reified observation of its incubation period, typically expressed as a median duration with lower/upper bounds."@en,
+        "Time between exposure to a pathogen and the appearance of symptoms. Can be used as a shortcut on BiologicalHazard directly or as the literal-carrying property on a reified IncubationPeriod."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
+                        owl:hasValue hazard:BiologicalHazard ;
+                        owl:onProperty dul:hasRole ] ) ] ;
+    rdfs:range ph:IncubationPeriod ;
+    rdfs:seeAlso ph:IncubationPeriod ;
+    skos:editorialNote "Shortcut property — for fully qualified observations use hasIncubationPeriod → IncubationPeriod."@en,
+        "potentially requiring source attribution. Also, it may be expressed as a range or with uncertainty."@en,
+        "public health specific"@en ;
+    skos:prefLabel "has incubation period"@en,
+        "has incubation period assessment"@en,
+        "ha periodo di incubazione"@it,
+        "ha valutazione del periodo di incubazione"@it .
+
+ph:hasIncubationPeriodValue a owl:DatatypeProperty ;
+    rdfs:comment "The numeric incubation period duration value."@en ;
+    rdfs:range xsd:duration ;
+    skos:prefLabel "has incubation period value"@en .
+
+ph:hasInfectiousness a owl:ObjectProperty ;
+    rdfs:comment "Measure of the ability of a pathogen to establish infection. Can be used as a shortcut on BiologicalHazard directly or as the literal-carrying property on a reified Infectiousness."@en,
+        "Relates a BiologicalHazard to a reified observation of its infectiousness — the ability of a pathogen to establish infection in a host."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
+                        owl:hasValue hazard:BiologicalHazard ;
+                        owl:onProperty dul:hasRole ] ) ] ;
+    rdfs:range ph:Infectiousness ;
+    rdfs:seeAlso ph:Infectiousness ;
+    skos:editorialNote "covered by HERA prioritisation",
+        "Shortcut property — for fully qualified observations use hasInfectiousness → Infectiousness."@en,
+        "public health specific"@en,
+        "to be discussed with subject matter experts"@en ;
+    skos:prefLabel "has infectiousness"@en,
+        "has infectiousness assessment"@en,
+        "ha infettività"@it,
+        "ha valutazione dell'infettività"@it .
+
+ph:hasInfectiousnessValue a owl:DatatypeProperty ;
+    rdfs:comment "The numeric infectiousness metric value."@en ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has infectiousness value"@en .
+
+ph:hasToxicity a owl:ObjectProperty ;
+    rdfs:comment "Measure of the toxic effects of a biological substance. Can be used as a shortcut on BiologicalHazard directly or as the literal-carrying property on a reified Toxicity."@en,
+        "Relates a BiologicalHazard to a reified observation of its toxicity, qualified by assay type, test species, route of exposure, and source study."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
+                        owl:hasValue hazard:BiologicalHazard ;
+                        owl:onProperty dul:hasRole ] ) ] ;
+    rdfs:range ph:Toxicity ;
+    rdfs:seeAlso ph:Toxicity ;
+    skos:editorialNote "Shortcut property — for fully qualified observations use hasToxicity → Toxicity."@en,
+        "public health specific"@en,
+        "to be discussed with subject matter experts"@en ;
+    skos:prefLabel "has toxicity"@en,
+        "has toxicity assessment"@en,
+        "ha tossicità"@it,
+        "ha valutazione della tossicità"@it .
+
+ph:hasToxicityValue a owl:DatatypeProperty ;
+    rdfs:comment "The numeric toxicity metric value."@en ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has toxicity value"@en .
+
+ph:hasTransmissibility a owl:ObjectProperty ;
+    rdfs:comment "Estimation of the pathogen potential for transmission (e.g., R0). Can be used as a shortcut on BiologicalHazard directly or as the literal-carrying property on a reified Transmissibility."@en,
+        "Relates a BiologicalHazard to a reified observation of its transmissibility — potential for person-to-person or vector-borne spread."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
+                        owl:hasValue hazard:BiologicalHazard ;
+                        owl:onProperty dul:hasRole ] ) ] ;
+    rdfs:range ph:Transmissibility ;
+    rdfs:seeAlso ph:Transmissibility ;
+    skos:editorialNote "Shortcut property — for fully qualified observations use hasTransmissibility → Transmissibility."@en,
+        "covered by HERA prioritisation"@en,
+        "public health specific"@en,
+        "to be discussed with subject matter experts"@en ;
+    skos:prefLabel "has transmissibility"@en,
+        "has transmissibility assessment"@en,
+        "ha trasmissibilità"@it,
+        "ha valutazione della trasmissibilità"@it .
+
+ph:hasTransmissibilityValue a owl:DatatypeProperty ;
+    rdfs:comment "The numeric transmissibility metric value (e.g. R0)."@en ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has transmissibility value"@en .
+
+ph:isGeneralisationOfCondition a owl:ObjectProperty ;
+    rdfs:comment "Relates a broader health condition to a more specific one it generalises."@en ;
+    rdfs:domain ph:HealthCondition ;
+    rdfs:range ph:HealthCondition ;
+    skos:prefLabel "is generalisation of condition"@en,
+        "è generalizzazione della condizione"@it .
+
+ph:AedesMosquito a ph:DiseaseVector,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Mosquitoes ;
+    bio:hasRank bio:Genus ;
+    ph:isVectorOf ph:Chikungunya,
+        ph:DengueFever,
+        ph:ZikaVirusDisease ;
+    rdfs:comment "Aedes is a genus of mosquito that includes species that transmit dengue fever, Zika virus disease, chikungunya, and other diseases to humans."@en ;
+    skos:prefLabel "Aedes Mosquito (Genus)"@en .
+
+ph:AnophelesMosquito a ph:DiseaseVector,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Mosquitoes ;
+    bio:hasRank bio:Genus ;
+    ph:isVectorOf ph:Malaria ;
+    rdfs:comment "Anopheles is a genus of mosquito that includes species that transmit malaria to humans."@en ;
+    skos:prefLabel "Anopheles Mosquito (Genus)"@en .
+
+ph:Betacoronavirus a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Orthocoronavirinae ;
+    bio:hasRank bio:Genus ;
+    rdfs:comment "Betacoronavirus is a genus of coronaviruses."@en ;
+    skos:prefLabel "Betacoronavirus"@en .
+
+ph:BetacoronavirusPandemicum a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Betacoronavirus ;
+    bio:hasRank bio:Species ;
+    rdfs:comment "Betacoronavirus pandemicum is the species of virus responsible for severe acute respiratory syndrome."@en ;
+    skos:prefLabel "Betacoronavirus pandemicum"@en .
+
+ph:Botox a ph:Toxin,
+        owl:NamedIndividual ;
+    ph:producedByPathogen ph:ClostridiumBotulinum ;
+    rdfs:comment "Botulinum toxin, botulinum neurotoxin, or botox is a neurotoxic protein produced by the bacterium Clostridium botulinum."@en ;
+    skos:prefLabel "Botulinum neurotoxin"@en .
+
+ph:COVID19_Airborne_Transmission a ph:RouteOfTransmission,
+        owl:NamedIndividual ;
+    ph:accordingToSource <https://pmc.ncbi.nlm.nih.gov/articles/PMC9047781/> ;
+    ph:concernsRoute ph:Airborne ;
+    rdfs:comment "Description of the airborne transmission route of COVID-19 according to WHO guidelines."@en ;
+    skos:prefLabel "COVID-19 Airborne Transmission Description"@en .
+
+ph:ClostridiumBotulinum a ph:PathogenicBacterium,
+        owl:NamedIndividual ;
+    ph:producesToxin ph:Botox ;
+    rdfs:comment "Clostridium botulinum is a gram-positive, rod-shaped, anaerobic, spore-forming bacterium that produces botulinum toxin."@en ;
+    skos:prefLabel "Clostridium botulinum"@en .
+
+ph:DiseaseCategory a ph:HealthConditionCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Disease or Syndrome"@en .
+
+ph:DiseaseOutcome a owl:Class ;
+    rdfs:comment "The result or consequence of a disease process (e.g. recovery, chronic condition, death)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue ph:OutcomeCategory ;
+            owl:onProperty ph:hasHealthConditionCategory ],
+        ph:HealthCondition ;
+    skos:prefLabel "Disease Outcome"@en,
+        "Esito della malattia"@it .
+
+ph:Droplet a ph:RouteOfTransmission,
+        owl:NamedIndividual ;
+    rdfs:comment "Droplet transmission is the spread of an infectious agent or disease caused by the dissemination of respiratory droplets that are expelled when an infected individual coughs, sneezes, talks, or breathes."@en ;
+    skos:prefLabel "Droplet Transmission"@en .
+
+ph:Ebola a ph:InfectiousDisease,
+        owl:NamedIndividual ;
+    ph:hasCausativeAgent ph:Ebolavirus ;
+    ph:hasRouteOfTransmission ph:DirectContact ;
+    ph:hasSignOrSymptom ph:Diarrhea,
+        ph:Fatigue,
+        ph:Fever,
+        ph:Hemorrhage,
+        ph:MusclePain,
+        ph:Vomiting ;
+    ph:hasSusceptibleHost ph:Humans,
+        ph:NonHumanPrimates ;
+    spec:specializes ph:VHF ;
+    rdfs:comment "Ebola virus disease (EVD), formerly known as Ebola hemorrhagic fever, is a severe, often fatal illness in humans caused by the Ebola virus."@en ;
+    skos:prefLabel "Ebola Virus Disease"@en .
+
+ph:Ebolavirus a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Filoviridae ;
+    ph:hasRank bio:Genus ;
+    rdfs:comment "Ebolavirus is a genus of viruses in the family Filoviridae that causes Ebola virus disease (EVD) in humans and other primates."@en ;
+    skos:prefLabel "Ebolavirus"@en .
+
+ph:LassaFever a ph:InfectiousDisease,
+        owl:NamedIndividual ;
+    ph:hasCausativeAgent ph:Arenaviridae ;
+    ph:hasRouteOfTransmission ph:DirectContact ;
+    ph:hasSignOrSymptom ph:Diarrhea,
+        ph:Fatigue,
+        ph:Fever,
+        ph:Hemorrhage,
+        ph:MusclePain,
+        ph:Vomiting ;
+    ph:hasSusceptibleHost ph:Humans ;
+    spec:specializes ph:VHF ;
+    rdfs:comment "Lassa fever is an acute viral hemorrhagic illness caused by the Lassa virus, a member of the Arenaviridae family."@en ;
+    skos:prefLabel "Lassa Fever"@en .
+
+ph:MVD a ph:InfectiousDisease,
+        owl:NamedIndividual ;
+    ph:hasCausativeAgent ph:Marburgvirus ;
+    ph:hasRouteOfTransmission ph:DirectContact ;
+    ph:hasSignOrSymptom ph:Diarrhea,
+        ph:Fatigue,
+        ph:Fever,
+        ph:Hemorrhage,
+        ph:MusclePain,
+        ph:Vomiting ;
+    ph:hasSusceptibleHost ph:Humans ;
+    spec:specializes ph:VHF ;
+    rdfs:comment "Marburg virus disease (MVD) is a severe and often fatal illness in humans caused by the Marburg virus."@en ;
+    skos:prefLabel "Marburg Virus Disease"@en .
+
+ph:Mammals a bio:Animal,
+        ph:SusceptibleHost,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Animals ;
+    bio:hasRank bio:Class ;
+    rdfs:comment "All mammals as hosts for infectious diseases."@en ;
+    skos:prefLabel "Mammals (class Mammalia)"@en .
+
+ph:Orthocoronavirinae a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Coronaviridae ;
+    bio:hasRank bio:Subfamily ;
+    rdfs:comment "Coronaviruses are a group of related RNA viruses that cause diseases in mammals and birds."@en ;
+    skos:prefLabel "Orthocoronavirinae"@en .
+
+ph:Orthopoxvirus a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Poxviridae ;
+    bio:hasRank bio:Genus ;
+    rdfs:comment "Orthopoxvirus is a genus of viruses that includes variola virus (which causes smallpox), vaccinia virus (used in the smallpox vaccine), cowpox virus, and monkeypox virus."@en ;
+    skos:prefLabel "Orthopoxvirus"@en .
+
+ph:OutcomeCategory a ph:HealthConditionCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Disease Outcome"@en .
+
+ph:PathogenCharacteristic a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A reified assessment of a biological or epidemiological property of a pathogen or biological hazard agent. Each subclass captures a specific characteristic (case fatality rate, incubation period, infectiousness, toxicity, transmissibility), qualified by source study, population context, uncertainty bounds, and temporal validity."@en,
+        "A reified assessment of a biological or epidemiological property of a pathogen or biological hazard agent. Subclasses capture specific characteristics (case fatality rate, incubation period, infectiousness, toxicity, transmissibility), qualified by source study, population context, uncertainty bounds, and temporal validity."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:hasObservationSource ;
+            owl:someValuesFrom hazard:ObservationSource ],
+        dul:Situation ;
+    skos:prefLabel "Pathogen Characteristic"@en,
+        "Característica del patógeno"@es,
+        "Caractéristique du pathogène"@fr,
+        "Caratteristica del patogeno"@it .
+
+ph:PlasmodiumFalciparum a ph:PathogenicProtist,
+        owl:NamedIndividual ;
+    rdfs:comment "Plasmodium falciparum is a protozoan parasite, one of the species of Plasmodium that cause malaria in humans."@en ;
+    skos:prefLabel "Plasmodium falciparum"@en .
+
+ph:PlasmodiumVivax a ph:PathogenicProtist,
+        owl:NamedIndividual ;
+    rdfs:comment "Plasmodium vivax is a protozoan parasite and a human pathogen. It is one of the species of Plasmodium that cause malaria in humans."@en ;
+    skos:prefLabel "Plasmodium vivax"@en .
+
+ph:Poxviridae a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:hasRank bio:Family ;
+    rdfs:comment "Poxviridae is a family of large, complex DNA viruses that infect both vertebrates and invertebrates."@en ;
+    skos:prefLabel "Poxviridae"@en .
+
+ph:SARS_CoV_2_Omicron a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:SARS_CoV_2 ;
+    bio:hasRank bio:Variant ;
+    rdfs:comment "Omicron is a variant of the SARS-CoV-2 virus."@en ;
+    skos:prefLabel "Variant Omicron"@en .
+
+ph:SignOrSymptom a owl:Class ;
+    rdfs:comment "An observable or reported manifestation of a disease — either an objective sign (measured by a clinician) or a subjective symptom (reported by the patient)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue ph:SymptomCategory ;
+            owl:onProperty ph:hasHealthConditionCategory ],
+        ph:HealthCondition ;
+    skos:prefLabel "Sign or Symptom"@en,
+        "Segno o sintomo"@it .
+
+ph:SymptomCategory a ph:HealthConditionCategory,
+        owl:NamedIndividual ;
+    skos:prefLabel "Sign or Symptom"@en .
+
+ph:Unspecified_Bacterium a ph:PathogenicBacterium,
+        owl:NamedIndividual ;
+    rdfs:comment "An unspecified bacterium."@en ;
+    skos:prefLabel "Unspecified Bacterium"@en .
+
+ph:Unspecified_Virus a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    rdfs:comment "An unspecified virus."@en ;
+    skos:prefLabel "Unspecified Virus"@en .
+
+ph:hasCausativeAgent a owl:ObjectProperty ;
+    rdfs:comment "Indicates the type of pathogen, toxin, pest or chemical/environmental hazard that is the causative agent of an infectious disease or syndrome."@en ;
+    rdfs:domain ph:InfectiousDiseaseOrSyndrome ;
+    rdfs:range [ owl:unionOf ( ph:Pathogen ph:Toxin ph:Pest hazard:ChemicalHazard hazard:EnvironmentalHazard ) ] ;
+    owl:inverseOf ph:isCausativeAgentOf ;
+    skos:prefLabel "hat verursachenden Erreger"@de,
+        "has causative agent"@en,
+        "tiene agente causante"@es,
+        "a pour agent causal"@fr,
+        "ha agente causativo"@it,
+        "tem agente causador"@pt .
+
+ph:hasOutcome a owl:ObjectProperty ;
+    rdfs:comment "Relates a disease or syndrome to its possible outcome."@en ;
+    rdfs:domain ph:DiseaseOrSyndrome ;
+    rdfs:range ph:DiseaseOutcome ;
+    owl:inverseOf ph:isOutcomeOf ;
+    skos:prefLabel "has outcome"@en,
+        "ha esito"@it .
+
+ph:hasRouteOfTransmission a owl:ObjectProperty ;
+    rdfs:comment "Relates an infectious disease or pathogen to the route by which it is transmitted (e.g. airborne, vector-borne, faecal-oral, contact)."@en ;
+    rdfs:domain ph:InfectiousDiseaseOrPathogen ;
+    rdfs:range ph:RouteOfTransmission ;
+    owl:inverseOf ph:isRouteOfTransmissionOf ;
+    skos:prefLabel "has route of transmission"@en,
+        "ha via di trasmissione"@it .
+
+ph:hasSignOrSymptom a owl:ObjectProperty ;
+    rdfs:comment "Relates a disease or syndrome to a clinical sign or symptom it manifests."@en ;
+    rdfs:domain ph:DiseaseOrSyndrome ;
+    rdfs:range ph:SignOrSymptom ;
+    owl:inverseOf ph:isSignOrSymptomOf ;
+    skos:prefLabel "has sign or symptom"@en,
+        "ha segno o sintomo"@it .
+
+ph:hasSusceptibleHost a owl:ObjectProperty ;
+    rdfs:comment "Relates an infectious disease or syndrome to the susceptible host organism(s) it can infect."@en ;
+    rdfs:domain ph:InfectiousDiseaseOrSyndrome ;
+    rdfs:range ph:SusceptibleHost ;
+    owl:inverseOf ph:isSusceptibleHostOf ;
+    skos:prefLabel "has susceptible host"@en,
+        "ha ospite suscettibile"@it .
+
+ph:hasVector a owl:ObjectProperty ;
+    rdfs:comment "Relates an infectious disease or pathogen to the vector organism that transmits it."@en ;
+    rdfs:domain ph:InfectiousDiseaseOrPathogen ;
+    rdfs:range ph:DiseaseVector ;
+    owl:inverseOf ph:isVectorOf ;
+    skos:prefLabel "has vector"@en,
+        "ha vettore"@it .
+
+ph:isCausativeAgentOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the disease caused by this agent."@en ;
+    owl:inverseOf ph:hasCausativeAgent ;
+    skos:prefLabel "is causative agent of"@en .
+
+ph:isOutcomeOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the disease producing this outcome."@en ;
+    owl:inverseOf ph:hasOutcome ;
+    skos:prefLabel "is outcome of"@en .
+
+ph:isProducedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the pathogen producing this toxin."@en ;
+    owl:inverseOf ph:producesToxin ;
+    skos:prefLabel "is produced by"@en .
+
+ph:isRouteOfTransmissionOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the disease transmitted via this route."@en ;
+    owl:inverseOf ph:hasRouteOfTransmission ;
+    skos:prefLabel "is route of transmission of"@en .
+
+ph:isSignOrSymptomOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the disease manifesting this sign or symptom."@en ;
+    owl:inverseOf ph:hasSignOrSymptom ;
+    skos:prefLabel "is sign or symptom of"@en .
+
+ph:isSusceptibleHostOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the disease to which this host is susceptible."@en ;
+    owl:inverseOf ph:hasSusceptibleHost ;
+    skos:prefLabel "is susceptible host of"@en .
+
+ph:isVectorOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the disease transmitted by this vector."@en ;
+    owl:inverseOf ph:hasVector ;
+    skos:prefLabel "is vector of"@en .
+
+ph:producesToxin a owl:ObjectProperty ;
+    rdfs:comment "Relates a pathogen to a toxin it produces."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range ph:Toxin ;
+    owl:inverseOf ph:isProducedBy ;
+    skos:prefLabel "produces toxin"@en,
+        "produce tossina"@it .
+
+ph:CaseFatalityRate a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A reified assessment of the case fatality rate (CFR) of a biological hazard — the proportion of diagnosed cases that result in death — qualified by study population, temporal period, and source."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:hasNumericValue ;
+            owl:someValuesFrom xsd:decimal ],
+        ph:PathogenRiskAssessment ;
+    skos:prefLabel "Case Fatality Rate"@en,
+        "Tasa de letalidad"@es,
+        "Taux de létalité"@fr,
+        "Tasso di letalità"@it .
+
+ph:Coronaviridae a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:hasRank bio:Family ;
+    rdfs:comment "Coronaviridae is a family of viruses known to cause respiratory and intestinal infections in humans and animals."@en ;
+    skos:prefLabel "Coronaviridae"@en .
+
+ph:IncubationPeriod a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A reified assessment of the incubation period of a biological hazard — the interval between pathogen exposure and symptom onset — typically expressed as a median duration with lower and upper bounds."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:hasDurationValue ;
+            owl:someValuesFrom xsd:duration ],
+        ph:PathogenRiskAssessment ;
+    skos:prefLabel "Incubation Period"@en,
+        "Período de incubación"@es,
+        "Période d'incubation"@fr,
+        "Periodo di incubazione"@it .
+
+ph:Infectiousness a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A reified assessment of the infectiousness of a biological hazard — the ability of a pathogen to establish infection in a host — qualified by the metric used (e.g. infectious dose ID₅₀, secondary attack rate SAR)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:usesScale ;
+            owl:someValuesFrom hazard:QuantitativeScale ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:hasNumericValue ;
+            owl:someValuesFrom xsd:decimal ],
+        ph:PathogenRiskAssessment ;
+    skos:prefLabel "Infectiousness"@en,
+        "Infecciosidad"@es,
+        "Infectiosité"@fr,
+        "Infettività"@it .
+
+ph:Insects a bio:Animal ;
+    bio:belongsTo ph:NonHumamAnimals ;
+    bio:hasRank bio:Class ;
+    rdfs:comment "Insects as a type of animal relevant to public health, either as disease vectors or pests."@en ;
+    skos:prefLabel "Insects (class Insecta)"@en .
+
+ph:Malaria a ph:InfectiousDisease,
+        owl:NamedIndividual ;
+    ph:hasCausativeAgent ph:PlasmodiumFalciparum,
+        ph:PlasmodiumVivax ;
+    ph:hasRouteOfTransmission ph:VectorBorne ;
+    ph:hasSusceptibleHost ph:Humans ;
+    ph:hasVector ph:AnophelesMosquito ;
+    rdfs:comment "Malaria is a mosquito-borne infectious disease that affects humans and other animals caused by parasitic protozoans (a type of protist) of the genus Plasmodium."@en ;
+    owl:sameAs <http://id.who.int/icd/entity/1439886552>,
+        <http://snomed.info/id/61462000> ;
+    skos:prefLabel "Malaria"@en .
+
+ph:Marburgvirus a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Filoviridae ;
+    ph:hasRank bio:Genus ;
+    rdfs:comment "Marburgvirus is a genus of viruses in the family Filoviridae that causes Marburg virus disease (MVD) in humans and other primates."@en ;
+    skos:prefLabel "Marburgvirus"@en .
+
+ph:Mosquitoes a ph:DiseaseVector,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Insects ;
+    bio:hasRank bio:Family ;
+    ph:isVectorOf ph:DengueFever,
+        ph:Malaria,
+        ph:WestNileFever,
+        ph:ZikaVirusDisease ;
+    rdfs:comment "Mosquitoes are a group of about 3,500 species of small flies belonging to the family Culicidae."@en ;
+    skos:prefLabel "Mosquito (Family Culicidae)"@en .
+
+ph:NonHumanPrimates a bio:Animal,
+        ph:SusceptibleHost,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:NonHumamAnimals,
+        ph:Primates ;
+    rdfs:comment "All non-human primates as hosts for infectious diseases."@en ;
+    skos:prefLabel "Non-Human Primates"@en .
+
+ph:PathogenicProtist a owl:Class ;
+    rdfs:comment "A class representing a type of protist that is pathogenic"@en ;
+    rdfs:subClassOf bio:Protist,
+        ph:Pathogen ;
+    skos:prefLabel "Pathogenic Protist"@en .
+
+ph:Pest a owl:Class ;
+    rdfs:comment "An organism (insect, rodent, plant, fungus) that causes damage to crops, livestock, stored products, or human health, constituting a biological hazard in agricultural and public health contexts."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hazard:BiologicalHazard ;
+            owl:onProperty dul:hasRole ],
+        dul:Agent ;
+    skos:prefLabel "Pest"@en,
+        "Infestante"@it .
+
+ph:Primates a bio:Animal,
+        ph:SusceptibleHost,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:NonHumamAnimals ;
+    bio:hasRank bio:Order ;
+    rdfs:comment "All primates as hosts for infectious diseases."@en ;
+    skos:prefLabel "Primates (order)"@en .
+
+ph:SARS_CoV_2 a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:BetacoronavirusPandemicum ;
+    rdfs:comment "SARS-CoV-2 is the virus responsible for the COVID-19 pandemic."@en ;
+    skos:prefLabel "SARS-CoV-2"@en .
+
+ph:Toxicity a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A reified assessment of the toxicity of a biological substance — qualified by assay type (LD₅₀, LC₅₀, NOAEL), test species, route of exposure, and source study."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:usesScale ;
+            owl:someValuesFrom hazard:QuantitativeScale ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:hasNumericValue ;
+            owl:someValuesFrom xsd:decimal ],
+        ph:PathogenRiskAssessment ;
+    skos:prefLabel "Toxicity"@en,
+        "Toxicidad"@es,
+        "Toxicité"@fr,
+        "Tossicità"@it .
+
+ph:Transmissibility a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "A reified assessment of the transmissibility of a biological hazard — the potential for person-to-person or vector-borne spread — qualified by metric type (basic reproduction number R₀, effective reproduction number Rₜ, serial interval)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:usesScale ;
+            owl:someValuesFrom hazard:QuantitativeScale ],
+        [ a owl:Restriction ;
+            owl:onProperty hazard:hasNumericValue ;
+            owl:someValuesFrom xsd:decimal ],
+        ph:PathogenRiskAssessment ;
+    skos:prefLabel "Transmissibility"@en,
+        "Transmisibilidad"@es,
+        "Transmissibilité"@fr,
+        "Trasmissibilità"@it .
+
+ph:VectorBorne a ph:RouteOfTransmission,
+        owl:NamedIndividual ;
+    rdfs:comment "Vector-borne transmission is the spread of an infectious agent or disease caused by the bite of infected arthropod vectors, such as mosquitoes, ticks, or fleas."@en ;
+    skos:prefLabel "Vector-Borne Transmission"@en .
+
+ph:Airborne a ph:RouteOfTransmission,
+        owl:NamedIndividual ;
+    rdfs:comment "Airborne transmission is the spread of an infectious agent or disease caused by the dissemination of aerosols that remain infectious when suspended in air over long distances and time."@en ;
+    skos:prefLabel "Airborne Transmission"@en .
+
+ph:DiseaseOrSyndrome a owl:Class ;
+    rdfs:comment "A pathological condition characterised by an identifiable group of signs, symptoms, and clinical findings. Superclass for InfectiousDiseaseOrSyndrome."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue ph:DiseaseCategory ;
+            owl:onProperty ph:hasHealthConditionCategory ],
+        ph:HealthCondition ;
+    skos:prefLabel "Disease or Syndrome"@en,
+        "Malattia o sindrome"@it .
+
+ph:Filoviridae a ph:PathogenicVirus,
+        owl:NamedIndividual ;
+    ph:hasRank bio:Family ;
+    rdfs:comment "Filoviridae is a family of viruses that includes the genera Ebolavirus and Marburgvirus, which cause severe viral hemorrhagic fevers in humans and nonhuman primates."@en ;
+    skos:prefLabel "Filoviridae"@en .
+
+ph:NonHumamAnimals a bio:Animal,
+        ph:SusceptibleHost,
+        owl:NamedIndividual ;
+    rdfs:comment "Animals other than humans as hosts for infectious diseases."@en ;
+    skos:prefLabel "Animals (non-human)"@en .
+
+ph:Toxin a owl:Class ;
+    rdfs:comment "A poisonous substance produced by a living organism (pathogen, plant, or animal) that can cause harm to exposed populations."@en ;
+    rdfs:subClassOf hazard:BiologicalHazard,
+        dul:Agent ;
+    skos:prefLabel "Toxin"@en,
+        "Tossina"@it .
+
+ph:VHF a ph:InfectiousDiseaseOrSyndrome,
+        owl:NamedIndividual ;
+    ph:hasCausativeAgent ph:Arenaviridae,
+        ph:Filoviridae,
+        ph:Flaviviridae,
+        ph:Hantaviridae,
+        ph:Rhabdoviridae ;
+    ph:hasRouteOfTransmission ph:Airborne,
+        ph:DirectContact,
+        ph:VectorBorne ;
+    ph:hasSignOrSymptom ph:Diarrhea,
+        ph:Fatigue,
+        ph:Fever,
+        ph:Hemorrhage,
+        ph:MusclePain,
+        ph:Vomiting ;
+    ph:hasSusceptibleHost ph:Humans,
+        ph:NonHumanPrimates ;
+    spec:specializedBy ph:Ebola,
+        ph:LassaFever,
+        ph:MVD ;
+    rdfs:comment "Viral hemorrhagic fevers (VHFs) are a group of illnesses caused by five families of viruses. These fevers are characterized by fever and bleeding disorders and can progress to high fever, shock and death in many cases."@en ;
+    skos:prefLabel "Viral Hemorrhagic Fever"@en .
+
+ph:hasHealthConditionCategory a owl:ObjectProperty ;
+    rdfs:comment "Classifies a health condition by its nature (disease/syndrome, outcome, sign/symptom)."@en ;
+    rdfs:domain ph:HealthCondition ;
+    rdfs:range ph:HealthConditionCategory ;
+    skos:prefLabel "has health condition category"@en .
+
+ph:HealthConditionCategory a owl:Class ;
+    rdfs:comment "Classification of health conditions by their nature."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Health Condition Category"@en .
+
+ph:InfectiousDiseaseOrPathogen a owl:Class ;
+    rdfs:comment "A class covering both infectious diseases and the pathogenic agents that cause them — the central node connecting the Pathogen frame to the Disease and Transmission frames. Subclass of both ecmocore:BiologicalHazard (hazard typing) and ph:DiseaseOrSyndrome (clinical typing)."@en ;
+    rdfs:subClassOf hazard:BiologicalHazard ;
+    skos:editorialNote "This class bridges the ECMO-CORE hazard taxonomy (ecmocore:BiologicalHazard) with the public health domain model (ph:HealthCondition hierarchy). The dual superclass captures the fact that infectious diseases are simultaneously hazard types (from the DRR perspective) and clinical entities (from the health perspective)."@en ;
+    skos:prefLabel "Infectious Disease or Pathogen"@en,
+        "Malattia infettiva o patogeno"@it .
+
+ph:PathogenicBacterium a owl:Class ;
+    rdfs:comment "A class representing a type of bacterium that is pathogenic"@en ;
+    rdfs:subClassOf bio:Bacterium,
+        ph:Pathogen ;
+    skos:prefLabel "Pathogenic Bacterium"@en .
+
+ph:DirectContact a ph:RouteOfTransmission,
+        owl:NamedIndividual ;
+    rdfs:comment "Direct contact transmission is the spread of an infectious agent or disease through direct physical contact between an infected individual and a susceptible host."@en ;
+    skos:prefLabel "Direct Contact Transmission"@en .
+
+ph:DiseaseVector a owl:Class ;
+    rdfs:comment "An animal (typically an arthropod) that transmits a pathogen from an infected host to a susceptible one, without itself being affected by the disease (e.g. mosquitoes for malaria, ticks for Lyme disease)."@en ;
+    rdfs:subClassOf bio:Animal,
+        hazard:BiologicalHazard ;
+    skos:prefLabel "Disease Vector"@en,
+        "Vettore di malattia"@it .
+
+ph:InfectiousDisease a owl:Class ;
+    rdfs:comment "An infectious disease — a condition caused by a pathogenic agent, with identifiable clinical presentation, causative agent, and transmission route."@en ;
+    rdfs:subClassOf ph:InfectiousDiseaseOrSyndrome ;
+    skos:prefLabel "Infectious Disease"@en,
+        "Malattia infettiva"@it .
+
+ph:InfectiousDiseaseOrSyndrome a owl:Class ;
+    rdfs:comment "An infectious disease or syndrome — a condition caused by a pathogenic agent, with identifiable clinical presentation, causative agent, and transmission route."@en ;
+    rdfs:subClassOf ph:DiseaseOrSyndrome,
+        ph:InfectiousDiseaseOrPathogen ;
+    skos:prefLabel "Infectious Disease or Syndrome"@en,
+        "Malattia o sindrome infettiva"@it .
+
+ph:PathogenRiskAssessment a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F2 ;
+    rdfs:comment "An intermediate subclass of PathogenCharacteristic grouping those assessments that specifically characterise the risk profile of a pathogen in terms of its epidemiological and toxicological behaviour — case fatality rate, incubation period, infectiousness, toxicity, and transmissibility. This class bridges the Pathogen frame to the Transmission frame by associating measurable risk parameters with biological hazard agents."@en ;
+    rdfs:subClassOf ph:PathogenCharacteristic ;
+    skos:prefLabel "Pathogen Risk Assessment"@en,
+        "Evaluación de riesgo del patógeno"@es,
+        "Évaluation du risque pathogène"@fr,
+        "Valutazione del rischio patogeno"@it .
+
+ph:HealthCondition a owl:Class ;
+    rdfs:comment "A state of health or disease affecting an organism. Superclass for DiseaseOrSyndrome, SignOrSymptom, and DiseaseOutcome."@en ;
+    rdfs:subClassOf dul:Situation ;
+    skos:prefLabel "Health Condition"@en,
+        "Condizione di salute"@it .
+
+ph:Humans a bio:Animal,
+        ph:SusceptibleHost,
+        owl:NamedIndividual ;
+    bio:belongsTo ph:Primates ;
+    bio:hasRank bio:Species ;
+    rdfs:comment "The human species as a host for infectious diseases."@en ;
+    skos:prefLabel "Humans"@en .
+
+ph:RouteOfTransmission a owl:Class ;
+    rdfs:comment "A description of the mechanism by which a pathogen is transmitted between hosts (e.g. airborne, droplet, faecal-oral, vector-borne, contact, vertical, waterborne)."@en ;
+    rdfs:subClassOf dul:Description ;
+    skos:prefLabel "Route of Transmission"@en,
+        "Via di trasmissione"@it .
+
+ph:SusceptibleHost a owl:Class ;
+    rdfs:comment "An organism (human, animal, or plant) that is susceptible to infection by a particular pathogen, due to lack of immunity or other predisposing factors."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue bio:SusceptibleHostRole ;
+            owl:onProperty bio:hasOrganismRole ],
+        bio:Organism ;
+    skos:prefLabel "Susceptible Host"@en,
+        "Ospite suscettibile"@it .
+
+ph:Pathogen a owl:Class ;
+    rdfs:comment "A microorganism (bacterium, virus, fungus, parasite, or prion) capable of causing disease in a host organism."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue bio:PathogenRole ;
+            owl:onProperty bio:hasOrganismRole ],
+        bio:BiologicalEntity,
+        ph:InfectiousDiseaseOrPathogen ;
+    skos:prefLabel "Pathogen"@en,
+        "Patogeno"@it .
+
+ph:PathogenicVirus a owl:Class ;
+    rdfs:comment "A class representing a type of virus that is pathogenic"@en ;
+    rdfs:subClassOf bio:Virus,
+        ph:Pathogen ;
+    skos:prefLabel "Pathogenic Virus"@en .
+

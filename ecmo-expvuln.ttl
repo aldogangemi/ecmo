@@ -1,0 +1,567 @@
+@prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln: <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:expvuln a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Exposure situations, ExposedElement, Vulnerability and its four dimensions (Physical, Social, Economic, Environmental)."@en ;
+    owl:imports ecmocore:foundation,
+        ecmocore:hazard ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Exposure & Vulnerability Module (F4)"@en .
+
+expvuln:CriticalInfrastructureType a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Types of critical infrastructures that are essential for the functioning of society and economy, and are exposed to hazards."@en ;
+    rdfs:subClassOf expvuln:InfrastructureType ;
+    skos:prefLabel "Kritischer Infrastrukturtyp"@de,
+        "Critical Infrastructure Type"@en,
+        "Tipo de infraestructura crítica"@es,
+        "Type d'infrastructure critique"@fr,
+        "Tipo di infrastruttura critica"@it,
+        "Tipo de infraestrutura crítica"@pt .
+
+expvuln:EconomicAssetType a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Types of economic, social or cultural assets (livelihoods, production capacities, housing, property) that are present in places and settings that could be adversely affected."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:EconomicDomain ;
+            owl:onProperty expvuln:hasAssetDomain ],
+        expvuln:ExposedElementType ;
+    skos:prefLabel "Wirtschaftsguttyp"@de,
+        "Economic Asset Type"@en,
+        "Tipo de activo económico"@es,
+        "Type d'actif économique"@fr,
+        "Tipo di bene economico"@it,
+        "Tipo de ativo económico"@pt .
+
+expvuln:EconomicVulnerability a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "The economic dimension of vulnerability: conditions related to income levels, livelihoods, assets, economic diversification and financial access that affect the susceptibility of individuals, households or communities to the adverse impacts of hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:Economic ;
+            owl:onProperty expvuln:hasVulnerabilityDimension ],
+        expvuln:Vulnerability ;
+    skos:prefLabel "Ökonomische Vulnerabilität"@de,
+        "Economic Vulnerability"@en,
+        "Vulnerabilidad económica"@es,
+        "Vulnérabilité économique"@fr,
+        "Vulnerabilità economica"@it,
+        "Vulnerabilidade económica"@pt .
+
+expvuln:ElderlyPopulation a expvuln:PopulationGroupType,
+        owl:NamedIndividual ;
+    rdfs:comment "Population group consisting of elderly individuals who may have specific vulnerabilities to hazards."@en ;
+    skos:prefLabel "Ältere Bevölkerung"@de,
+        "Elderly Population"@en,
+        "Población anciana"@es,
+        "Population âgée"@fr,
+        "Popolazione anziana"@it,
+        "População idosa"@pt .
+
+expvuln:EnergyInfrastructure a owl:Class ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Energy infrastructure such as power plants, grids, and distribution systems that are critical and exposed to hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:EnergySector ;
+            owl:onProperty expvuln:hasInfrastructureSector ],
+        expvuln:CriticalInfrastructureOrService ;
+    skos:prefLabel "Energieinfrastruktur"@de,
+        "Energy Infrastructure"@en,
+        "Infraestructura energética"@es,
+        "Infrastructure énergétique"@fr,
+        "Infrastruttura energetica"@it,
+        "Infraestrutura energética"@pt .
+
+expvuln:EnvironmentalAssetType a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Types of environmental assets (ecosystems, species, environmental functions and services, natural resources) that are exposed to hazards. Based on IPCC 2022 definition of exposure."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:EnvironmentDomain ;
+            owl:onProperty expvuln:hasAssetDomain ],
+        expvuln:ExposedElementType ;
+    skos:prefLabel "Umweltguttyp"@de,
+        "Environmental Asset Type"@en,
+        "Tipo de activo ambiental"@es,
+        "Type d'actif environnemental"@fr,
+        "Tipo di bene ambientale"@it,
+        "Tipo de ativo ambiental"@pt .
+
+expvuln:EnvironmentalVulnerability a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "The environmental dimension of vulnerability: conditions related to the degradation of natural ecosystems, reduced biodiversity and compromised environmental services that increase the susceptibility of communities and territories to disaster impacts."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:Environmental ;
+            owl:onProperty expvuln:hasVulnerabilityDimension ],
+        expvuln:Vulnerability ;
+    skos:prefLabel "Umweltvulnerabilität"@de,
+        "Environmental Vulnerability"@en,
+        "Vulnerabilidad ambiental"@es,
+        "Vulnérabilité environnementale"@fr,
+        "Vulnerabilità ambientale"@it,
+        "Vulnerabilidade ambiental"@pt .
+
+expvuln:HealthFacility a owl:Class ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Hospitals, clinics and health centres that are critical and exposed to hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:HealthSector ;
+            owl:onProperty expvuln:hasInfrastructureSector ],
+        expvuln:CriticalInfrastructureOrService ;
+    skos:prefLabel "Gesundheitseinrichtung"@de,
+        "Health Facility"@en,
+        "Instalación sanitaria"@es,
+        "Établissement de santé"@fr,
+        "Struttura sanitaria"@it,
+        "Instalação de saúde"@pt .
+
+expvuln:HealthcareServices a expvuln:CriticalInfrastructureOrServiceType,
+        owl:NamedIndividual ;
+    rdfs:comment "Healthcare services that are critical for public health and exposed to hazards."@en ;
+    skos:prefLabel "Healthcare Services"@en .
+
+expvuln:PhysicalVulnerability a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "The physical dimension of vulnerability: conditions of the built environment — including construction quality, land use, infrastructure integrity and proximity to hazard-prone areas — that determine the degree of potential harm from hazardous events."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:Physical ;
+            owl:onProperty expvuln:hasVulnerabilityDimension ],
+        expvuln:Vulnerability,
+        dul:Situation ;
+    skos:prefLabel "Physische Vulnerabilität"@de,
+        "Physical Vulnerability"@en,
+        "Vulnerabilidad física"@es,
+        "Vulnérabilité physique"@fr,
+        "Vulnerabilità fisica"@it,
+        "Vulnerabilidade física"@pt .
+
+expvuln:PowerPlant a expvuln:CriticalInfrastructureOrServiceType,
+        owl:NamedIndividual ;
+    rdfs:comment "Type of critical infrastructure that generates electrical power."@en ;
+    skos:prefLabel "Power Plant"@en .
+
+expvuln:ServiceType a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Types of essential services (health, education, emergency, social welfare) that are exposed to hazards and whose disruption affects population well-being."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:ServiceDomain ;
+            owl:onProperty expvuln:hasAssetDomain ],
+        expvuln:ExposedElementType ;
+    skos:prefLabel "Dienstleistungstyp"@de,
+        "Service Type"@en,
+        "Tipo de servicio"@es,
+        "Type de service"@fr,
+        "Tipo di servizio"@it,
+        "Tipo de serviço"@pt .
+
+expvuln:SocialVulnerability a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "The social dimension of vulnerability: conditions related to social cohesion, networks, access to services, education, health status, gender, age and disability that affect the susceptibility of individuals and communities to disaster impacts."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:Social ;
+            owl:onProperty expvuln:hasVulnerabilityDimension ],
+        expvuln:Vulnerability ;
+    skos:prefLabel "Soziale Vulnerabilität"@de,
+        "Social Vulnerability"@en,
+        "Vulnerabilidad social"@es,
+        "Vulnérabilité sociale"@fr,
+        "Vulnerabilità sociale"@it,
+        "Vulnerabilidade social"@pt .
+
+expvuln:TransportInfrastructure a owl:Class ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Transport networks (roads, railways, ports, airports) that are critical and exposed to hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:TransportSector ;
+            owl:onProperty expvuln:hasInfrastructureSector ],
+        expvuln:CriticalInfrastructureOrService ;
+    skos:prefLabel "Transportinfrastruktur"@de,
+        "Transport Infrastructure"@en,
+        "Infraestructura de transporte"@es,
+        "Infrastructure de transport"@fr,
+        "Infrastruttura di trasporto"@it,
+        "Infraestrutura de transporte"@pt .
+
+expvuln:WaterInfrastructure a owl:Class ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Water supply, sanitation and flood defence infrastructure that is critical and exposed to hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:WaterSector ;
+            owl:onProperty expvuln:hasInfrastructureSector ],
+        expvuln:CriticalInfrastructureOrService ;
+    skos:prefLabel "Wasserinfrastruktur"@de,
+        "Water Infrastructure"@en,
+        "Infraestructura hídrica"@es,
+        "Infrastructure hydraulique"@fr,
+        "Infrastruttura idrica"@it,
+        "Infraestrutura hídrica"@pt .
+
+expvuln:affects a owl:ObjectProperty ;
+    rdfs:comment "Indicates the type of exposed element or specific asset that is affected (i.e. impacted) in a given situation."@en ;
+    rdfs:domain dul:Situation ;
+    rdfs:range [ owl:unionOf ( expvuln:ExposedElement expvuln:ExposedElementType ) ] ;
+    rdfs:subPropertyOf expvuln:involvesExposedElementOrType ;
+    skos:prefLabel "affects"@en,
+        "colpisce"@it .
+
+expvuln:hasExposedElementType a owl:ObjectProperty ;
+    rdfs:comment "Relates an Exposure situation to the type of asset (infrastructure, service, population, environment) that is exposed."@en ;
+    rdfs:domain expvuln:Exposure ;
+    rdfs:range expvuln:ExposedElementType ;
+    skos:prefLabel "has exposed element type"@en,
+        "ha tipo di bene esposto"@it .
+
+expvuln:hasExposedPopulationCount a owl:DatatypeProperty ;
+    rdfs:comment "Specifies the count of people present in the ExposedElement population of an Exposure situation."@en ;
+    rdfs:domain expvuln:Exposure ;
+    rdfs:range xsd:integer ;
+    skos:editorialNote "consider specialization"@en,
+        "this may also require to specify as range or level of uncertainty as it is an estimation"@en ;
+    skos:prefLabel "has exposed population count"@en,
+        "ha conteggio popolazione esposta"@it .
+
+expvuln:involvesExposureOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates that a given situation involves the exposure of an asset or type."@en ;
+    rdfs:domain dul:Situation ;
+    rdfs:range [ owl:unionOf ( expvuln:ExposedElement expvuln:ExposedElementType ) ] ;
+    rdfs:subPropertyOf expvuln:involvesExposedElementOrType ;
+    skos:prefLabel "involves exposure of"@en,
+        "coinvolge esposizione di"@it .
+
+expvuln:CriticalInfrastructureDomain a expvuln:AssetDomain,
+        owl:NamedIndividual ;
+    skos:prefLabel "Critical Infrastructure"@en .
+
+expvuln:Economic a expvuln:VulnerabilityDimension,
+        owl:NamedIndividual ;
+    rdfs:comment "Named individual representing the economic dimension of vulnerability, used as the hasValue target of the EconomicVulnerability class restriction."@en ;
+    skos:prefLabel "Economic"@en .
+
+expvuln:EconomicDomain a expvuln:AssetDomain,
+        owl:NamedIndividual ;
+    skos:prefLabel "Economic"@en .
+
+expvuln:EnergySector a expvuln:InfrastructureSector,
+        owl:NamedIndividual ;
+    skos:prefLabel "Energy"@en .
+
+expvuln:EnvironmentDomain a expvuln:AssetDomain,
+        owl:NamedIndividual ;
+    skos:prefLabel "Environment"@en .
+
+expvuln:Environmental a expvuln:VulnerabilityDimension,
+        owl:NamedIndividual ;
+    rdfs:comment "Named individual representing the environmental dimension of vulnerability, used as the hasValue target of the EnvironmentalVulnerability class restriction."@en ;
+    skos:prefLabel "Environmental"@en .
+
+expvuln:HealthSector a expvuln:InfrastructureSector,
+        owl:NamedIndividual ;
+    skos:prefLabel "Health"@en .
+
+expvuln:InfrastructureDomain a expvuln:AssetDomain,
+        owl:NamedIndividual ;
+    skos:prefLabel "Infrastructure"@en .
+
+expvuln:InfrastructureType a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Types of physical infrastructure (transport, energy, water, telecommunications, housing, health facilities) that are exposed to hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:InfrastructureDomain ;
+            owl:onProperty expvuln:hasAssetDomain ],
+        expvuln:ExposedElementType ;
+    skos:prefLabel "Infrastrukturtyp"@de,
+        "Infrastructure Type"@en,
+        "Tipo de infraestructura"@es,
+        "Type d'infrastructure"@fr,
+        "Tipo di infrastruttura"@it,
+        "Tipo de infraestrutura"@pt .
+
+expvuln:Physical a expvuln:VulnerabilityDimension,
+        owl:NamedIndividual ;
+    rdfs:comment "Named individual representing the physical dimension of vulnerability, used as the hasValue target of the PhysicalVulnerability class restriction."@en ;
+    skos:prefLabel "Physical"@en .
+
+expvuln:PopulationDomain a expvuln:AssetDomain,
+        owl:NamedIndividual ;
+    skos:prefLabel "Population"@en .
+
+expvuln:PopulationGroupType a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Types of population groups that are exposed to hazards, such as vulnerable populations, demographic groups, indigenous communities, etc."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:PopulationDomain ;
+            owl:onProperty expvuln:hasAssetDomain ],
+        expvuln:ExposedElementType ;
+    skos:prefLabel "Bevölkerungsgruppentyp"@de,
+        "Population Group Type"@en,
+        "Tipo de grupo de población"@es,
+        "Type de groupe de population"@fr,
+        "Tipo di gruppo di popolazione"@it,
+        "Tipo de grupo populacional"@pt .
+
+expvuln:ServiceDomain a expvuln:AssetDomain,
+        owl:NamedIndividual ;
+    skos:prefLabel "Service"@en .
+
+expvuln:Social a expvuln:VulnerabilityDimension,
+        owl:NamedIndividual ;
+    rdfs:comment "Named individual representing the social dimension of vulnerability, used as the hasValue target of the SocialVulnerability class restriction."@en ;
+    skos:prefLabel "Social"@en .
+
+expvuln:TransportSector a expvuln:InfrastructureSector,
+        owl:NamedIndividual ;
+    skos:prefLabel "Transport"@en .
+
+expvuln:WaterSector a expvuln:InfrastructureSector,
+        owl:NamedIndividual ;
+    skos:prefLabel "Water"@en .
+
+expvuln:exposesTo a owl:ObjectProperty ;
+    rdfs:comment "Indicates the exposure situation relative to this hazard."@en ;
+    owl:inverseOf expvuln:isExposedTo ;
+    skos:prefLabel "exposes to"@en .
+
+expvuln:hasExposedElement a owl:ObjectProperty ;
+    rdfs:comment "Relates an Exposure situation to the ExposedElement — infrastructure, housing, population group — present in the hazard-affected area. Complements exposesElement with a more specific range."@en ;
+    rdfs:domain expvuln:Exposure ;
+    rdfs:range expvuln:ExposedElement ;
+    owl:inverseOf expvuln:isExposedElementIn ;
+    skos:prefLabel "has exposed element"@en,
+        "ha bene esposto"@it .
+
+expvuln:hasSusceptibilityFrom a owl:ObjectProperty ;
+    rdfs:comment "Indicates the vulnerability increasing susceptibility to this hazard."@en ;
+    owl:inverseOf expvuln:increasesSusceptibilityTo ;
+    skos:prefLabel "has susceptibility from"@en .
+
+expvuln:isDimensionOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the vulnerability characterised by this dimension."@en ;
+    owl:inverseOf expvuln:hasVulnerabilityDimension ;
+    skos:prefLabel "is dimension of"@en .
+
+expvuln:isExposedElementIn a owl:ObjectProperty ;
+    rdfs:comment "Indicates the exposure situation involving this asset."@en ;
+    owl:inverseOf expvuln:hasExposedElement ;
+    skos:prefLabel "is exposed element in"@en .
+
+expvuln:isExposedIn a owl:ObjectProperty ;
+    rdfs:comment "Indicates the exposure situation in which this element is present."@en ;
+    owl:inverseOf expvuln:exposesElement ;
+    skos:prefLabel "is exposed in"@en .
+
+expvuln:CriticalInfrastructureOrServiceType a owl:Class ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Classifies an exposed element type by its domain (infrastructure, population, etc.)."@en,
+        "Types of critical infrastructures or services essential for the functioning of society and economy, and exposed to hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue expvuln:CriticalInfrastructureDomain ;
+            owl:onProperty expvuln:hasAssetDomain ],
+        expvuln:ExposedElementType ;
+    skos:prefLabel "Typ kritischer Infrastruktur oder Dienst"@de,
+        "Critical Infrastructure or Service Type"@en,
+        "Tipo de infraestructura o servicio crítico"@es,
+        "Type d'infrastructure ou service critique"@fr,
+        "Tipo di infrastruttura o servizio critico"@it,
+        "Tipo de infraestrutura ou serviço crítico"@pt .
+
+expvuln:exposesElement a owl:ObjectProperty ;
+    rdfs:comment "Relates an Exposure situation to the ExposedElement — people, infrastructure or assets — present in the hazard-prone area."@en ;
+    rdfs:domain expvuln:Exposure ;
+    rdfs:range expvuln:ExposedElement ;
+    owl:inverseOf expvuln:isExposedIn ;
+    skos:prefLabel "exposes element"@en,
+        "espone elemento"@it .
+
+expvuln:increasesSusceptibilityTo a owl:ObjectProperty ;
+    rdfs:comment "Relates a Vulnerability situation to the Hazard type to whose impacts it makes a community or system more susceptible."@en ;
+    rdfs:domain expvuln:Vulnerability ;
+    rdfs:range hazard:Hazard ;
+    owl:inverseOf expvuln:hasSusceptibilityFrom ;
+    skos:prefLabel "increases susceptibility to"@en,
+        "aumenta la suscettibilità a"@it .
+
+expvuln:involvesExposedElementOrType a owl:ObjectProperty ;
+    rdfs:comment "Indicates the exposed element or type involved in a given situation that is at risk of impacts."@en ;
+    rdfs:domain dul:Situation ;
+    rdfs:range [ owl:unionOf ( expvuln:ExposedElement expvuln:ExposedElementType ) ] ;
+    rdfs:subPropertyOf dul:isSettingFor ;
+    skos:prefLabel "involves exposed element or type"@en,
+        "coinvolge bene esposto o tipo"@it .
+
+expvuln:isExposedTo a owl:ObjectProperty ;
+    rdfs:comment "Relates an Exposure situation to the Hazard type to which the ExposedElement is vulnerable in that geographic context."@en ;
+    rdfs:domain expvuln:Exposure ;
+    rdfs:range hazard:Hazard ;
+    owl:inverseOf expvuln:exposesTo ;
+    skos:prefLabel "is exposed to"@en,
+        "è esposto a"@it .
+
+expvuln:hasInfrastructureSector a owl:ObjectProperty ;
+    rdfs:comment "Classifies a critical infrastructure by its sector."@en ;
+    rdfs:domain expvuln:CriticalInfrastructureOrService ;
+    rdfs:range expvuln:InfrastructureSector ;
+    skos:prefLabel "has infrastructure sector"@en .
+
+expvuln:CriticalInfrastructureOrService a owl:Class ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "A specific critical infrastructure or service essential for the functioning of society and economy, that is exposed to hazards in a given situation."@en ;
+    rdfs:subClassOf expvuln:ExposedElement ;
+    skos:prefLabel "Kritische Infrastruktur oder Dienst"@de,
+        "Critical Infrastructure or Service"@en,
+        "Infraestructura o servicio crítico"@es,
+        "Infrastructure ou service critique"@fr,
+        "Infrastruttura o servizio critico"@it,
+        "Infraestrutura ou serviço crítico"@pt .
+
+expvuln:InfrastructureSector a owl:Class ;
+    rdfs:comment "Classification of critical infrastructure by sector."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Infrastructure Sector"@en .
+
+expvuln:VulnerabilityDimension a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "A facet along which vulnerability is classified: physical, social, economic, environmental."@en ;
+    rdfs:subClassOf dul:Quality ;
+    skos:prefLabel "Vulnerabilitätsdimension"@de,
+        "Vulnerability Dimension"@en,
+        "Dimensión de vulnerabilidad"@es,
+        "Dimension de vulnérabilité"@fr,
+        "Dimensione di vulnerabilità"@it,
+        "Dimensão de vulnerabilidade"@pt .
+
+expvuln:hasVulnerabilityDimension a owl:ObjectProperty ;
+    rdfs:comment "Relates a Vulnerability situation to the VulnerabilityDimension (physical, social, economic or environmental) that characterises it."@en ;
+    rdfs:domain expvuln:Vulnerability ;
+    rdfs:range expvuln:VulnerabilityDimension ;
+    owl:inverseOf expvuln:isDimensionOf ;
+    skos:prefLabel "has vulnerability dimension"@en,
+        "ha dimensione di vulnerabilità"@it .
+
+expvuln:Exposure a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F4 ;
+    foundation:sendaiAnnotation "Measures of exposure can include the number of people or types of assets in an area. These can be combined with the specific vulnerability and capacity of the exposed elements to any particular hazard to estimate the quantitative risks associated with that hazard in the area of interest."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/exposure> ;
+    foundation:termNumber 19 ;
+    dcterms:source <https://drmkc.jrc.ec.europa.eu/risk-data-hub#/>,
+        <https://report.ipcc.ch/ar6wg2/pdf/IPCC_AR6_WGII_SummaryForPolicymakers.pdf>,
+        <https://www.undrr.org/publication/2009-unisdr-terminology-disaster-risk-reduction>,
+        <https://www.undrr.org/terminology> ;
+    rdfs:comment "The situation of people, infrastructure, housing, production capacities and other tangible human assets located in hazard-prone areas."@en,
+        "ecmocore:Exposure is both a dul:Situation (a relational condition: elements are situated in hazard-prone areas) and a dul:Quality (the exposure level is a contextual quality of a territory or population relative to a hazard type)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty expvuln:exposesElement ;
+            owl:someValuesFrom expvuln:ExposedElement ],
+        [ a owl:Restriction ;
+            owl:onProperty expvuln:isExposedTo ;
+            owl:someValuesFrom hazard:Hazard ],
+        dul:Situation ;
+    skos:definition "The situation of people, infrastructure, housing, production capacities and other tangible human assets located in hazard-prone areas."@en ;
+    skos:editorialNote "Multiple authoritative definitions exist: (1) UNDRR 2017: The situation of people, infrastructure, housing, production capacities and other tangible human assets located in hazard-prone areas. (2) IPCC 2022: The presence of people; livelihoods; species or ecosystems; environmental functions, services and resources; infrastructure; or economic, social or cultural assets in places and settings that could be adversely affected. (3) UNDRR 2009: People, property, systems, or other elements present in hazard zones that are thereby subject to potential losses. (4) Risk Data Hub: The property, people, plant or environment that are threatened by the event. The ECMO-CORE modelling synthesises these views through the ExposedElementType taxonomy."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Exposition"@de,
+        "Exposure"@en,
+        "Exposición"@es,
+        "Exposition"@fr,
+        "Esposizione"@it,
+        "Exposição"@pt ;
+    skos:related expvuln:Vulnerability .
+
+expvuln:hasAssetDomain a owl:ObjectProperty ;
+    rdfs:comment "Classifies an exposed element type by its domain (infrastructure, population, environment, economic, service)."@en ;
+    rdfs:domain expvuln:ExposedElementType ;
+    rdfs:range expvuln:AssetDomain ;
+    skos:prefLabel "has asset domain"@en .
+
+expvuln:AssetDomain a owl:Class ;
+    rdfs:comment "The domain to which an exposed element type belongs."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Asset Domain"@en .
+
+expvuln:ExposedElement a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "A specific, identifiable asset (infrastructure, facility, location) that is exposed to hazards and at risk of impacts in a given situation. Distinct from ExposedElementType which classifies categories of assets."@en,
+        "People, infrastructure, housing, production capacities and other tangible assets located in hazard-prone areas."@en ;
+    rdfs:subClassOf dul:Object ;
+    skos:prefLabel "Exponierter Vermögenswert"@de,
+        "Exponiertes Element"@de,
+        "Exposed Element"@en,
+        "Activo expuesto"@es,
+        "Elemento expuesto"@es,
+        "Actif exposé"@fr,
+        "Élément exposé"@fr,
+        "Bene esposto"@it,
+        "Elemento esposto"@it,
+        "Ativo exposto"@pt,
+        "Elemento exposto"@pt .
+
+expvuln:Vulnerability a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F4 ;
+    foundation:isComplementaryTo capacity:Capacity ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/vulnerability> ;
+    foundation:termNumber 38 ;
+    rdfs:comment "The conditions determined by physical, social, economic and environmental factors or processes which increase the susceptibility of an individual, a community, assets or systems to the impacts of hazards."@en,
+        "ecmocore:Vulnerability is both a dul:Situation (a relational condition of susceptibility) and a dul:Quality (the vulnerability level is a contextual quality of a community or system relative to a hazard type). Parallel to ecmocore:Capacity and ecmocore:Resilience."@en ;
+    rdfs:seeAlso capacity:Capacity,
+        capacity:CopingCapacity ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty expvuln:increasesSusceptibilityTo ;
+            owl:someValuesFrom hazard:Hazard ],
+        dul:Situation ;
+    skos:definition "The conditions determined by physical, social, economic and environmental factors or processes which increase the susceptibility of an individual, a community, assets or systems to the impacts of hazards."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Vulnerabilität"@de,
+        "Vulnerability"@en,
+        "Vulnerabilidad"@es,
+        "Vulnérabilité"@fr,
+        "Vulnerabilità"@it,
+        "Vulnerabilidade"@pt ;
+    skos:related capacity:Capacity,
+        capacity:CopingCapacity,
+        expvuln:Exposure .
+
+expvuln:ExposedElementType a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F4 ;
+    rdfs:comment "Any type of asset (infrastructure, service, population, environment) that is exposed to hazards and at risk of impacts. Superclass for the main categories of exposed elements."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Exponierter Vermögenswerttyp"@de,
+        "Exposed Element Type"@en,
+        "Tipo de activo expuesto"@es,
+        "Type d'actif exposé"@fr,
+        "Tipo di bene esposto"@it,
+        "Tipo de ativo exposto"@pt .
+

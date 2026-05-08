@@ -1,0 +1,689 @@
+@prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix disaster: <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln: <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix governance: <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response: <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk: <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:governance a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "DRR governance, policy/legal frameworks, risk management strategies, institutional actors, and management plan types."@en ;
+    owl:imports ecmocore:capacity,
+        ecmocore:disaster,
+        ecmocore:expvuln,
+        ecmocore:foundation,
+        ecmocore:hazard,
+        ecmocore:risk ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Governance & Management Module (F6)"@en .
+
+governance:isSubPhaseOf a owl:ObjectProperty ;
+    rdfs:comment "Relates EmergencyManagement to the broader Response phase of which it is a component."@en ;
+    rdfs:domain governance:EmergencyManagement ;
+    rdfs:range response:Response ;
+    skos:prefLabel "is sub-phase of"@en,
+        "è sotto-fase di"@it .
+
+governance:EmergencyManagement a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "Used sometimes interchangeably with disaster management, particularly in the context of biological and technological hazards and for health emergencies."@en ;
+    rdfs:subClassOf governance:DisasterManagement,
+        dul:Action ;
+    skos:prefLabel "Notfallmanagement"@de,
+        "Emergency Management"@en,
+        "Gestión de emergencias"@es,
+        "Gestion des urgences"@fr,
+        "Gestione delle emergenze"@it,
+        "Gestão de emergências"@pt .
+
+governance:HazardousEventRiskManagement a owl:Class ;
+    rdfs:comment "The application of policies, processes and actions to prevent new risk, reduce existing risk and manage residual risk, contributing to the strengthening of resilience and reduction of losses. Equivalent to DisasterRiskManagement (Sendai terminology)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty risk:assessesRisk ;
+            owl:someValuesFrom risk:Risk ],
+        dul:Action,
+        dul:Situation ;
+    skos:prefLabel "Gefahrenereignis-Risikomanagement"@de,
+        "Hazardous Event Risk Management"@en,
+        "Gestión de riesgos de eventos peligrosos"@es,
+        "Gestion des risques d'événements dangereux"@fr,
+        "Gestione del rischio di eventi pericolosi"@it,
+        "Gestão de riscos de eventos perigosos"@pt .
+
+governance:HazardousEventRiskManagementPlan a owl:Class ;
+    rdfs:comment "A document setting out goals and specific objectives for reducing losses together with related actions. Equivalent to DisasterRiskManagementPlan."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty foundation:contributesTo ;
+            owl:someValuesFrom governance:HazardousEventRiskReduction ],
+        dul:Description,
+        dul:Plan ;
+    skos:prefLabel "Gefahrenereignis-Risikomanagementplan"@de,
+        "Hazardous Event Risk Management Plan"@en,
+        "Plan de gestión de riesgos de eventos peligrosos"@es,
+        "Plan de gestion des risques d'événements dangereux"@fr,
+        "Piano di gestione del rischio di eventi pericolosi"@it,
+        "Plano de gestão de riscos de eventos perigosos"@pt .
+
+governance:HazardousEventRiskReductionStrategy a owl:Class ;
+    rdfs:comment "A strategic framework guiding and coordinating risk reduction policies and measures. Equivalent to DisasterRiskReductionStrategy."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty foundation:contributesTo ;
+            owl:someValuesFrom governance:HazardousEventRiskReduction ],
+        dul:Description ;
+    skos:prefLabel "Strategie zur Risikominderung bei Gefahrenereignissen"@de,
+        "Hazardous Event Risk Reduction Strategy"@en,
+        "Estrategia de reducción de riesgos de eventos peligrosos"@es,
+        "Stratégie de réduction des risques d'événements dangereux"@fr,
+        "Strategia di riduzione del rischio di eventi pericolosi"@it,
+        "Estratégia de redução de riscos de eventos perigosos"@pt .
+
+governance:LocalAndIndigenousApproach a dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "The recognition and use of traditional, indigenous and local knowledge and practices to complement scientific knowledge in disaster risk assessments and for the planning and implementation of local disaster risk management."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:usesTraditionalKnowledge ;
+            owl:someValuesFrom capacity:Knowledge ],
+        governance:RiskManagement ;
+    skos:broader governance:RiskManagement ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Ansatz lokaler und indigener Völker"@de,
+        "Local and Indigenous Peoples' Approach"@en,
+        "Enfoque de los pueblos indígenas y locales"@es,
+        "Approche des peuples autochtones et locaux"@fr,
+        "Approccio dei popoli locali e indigeni"@it,
+        "Abordagem dos povos indígenas e locais"@pt .
+
+governance:RiskInformation a dul:InformationObject,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    foundation:sendaiAnnotation "Disaster risk information includes all studies, information and mapping required to understand the disaster risk drivers and underlying risk factors."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/disaster-risk-information> ;
+    foundation:termNumber 13 ;
+    rdfs:comment "Comprehensive information on all dimensions of disaster risk, including hazards, exposure, vulnerability and capacity, related to persons, communities, organizations and countries and their assets."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:informsAbout ;
+            owl:someValuesFrom risk:Risk ],
+        dul:InformationObject ;
+    skos:definition "Comprehensive information on all dimensions of disaster risk, including hazards, exposure, vulnerability and capacity, related to persons, communities, organizations and countries and their assets."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Katastrophenrisikoinformation"@de,
+        "Disaster Risk Information"@en,
+        "Información sobre riesgo de desastre"@es,
+        "Information sur le risque de catastrophe"@fr,
+        "Informazione sul rischio di disastro"@it,
+        "Informação sobre risco de desastre"@pt .
+
+governance:RiskManagementPlan a dul:InformationObject,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "Plans that set out the goals and specific objectives for reducing disaster risks together with related actions to accomplish these objectives."@en ;
+    rdfs:subClassOf dul:Plan ;
+    skos:prefLabel "Katastrophenrisikomanagementplan"@de,
+        "DRM Plan"@en,
+        "Plan de gestión del riesgo"@es,
+        "Plan de gestion du risque de catastrophe"@fr,
+        "Piano di gestione del rischio di disastro"@it,
+        "Plano de gestão do risco"@pt .
+
+governance:RiskReductionStrategy a dul:InformationObject,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "Strategies and policies that define goals and objectives across different timescales with concrete targets, indicators and time frames for disaster risk reduction."@en ;
+    rdfs:subClassOf dul:Plan ;
+    skos:prefLabel "Katastrophenvorsorgenstrategie"@de,
+        "DRR Strategy"@en,
+        "Estrategia de reducción del riesgo"@es,
+        "Stratégie de réduction des risques"@fr,
+        "Strategia di riduzione del rischio"@it,
+        "Estratégia de redução do risco"@pt .
+
+governance:SustainableDevelopment a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:comment "Development that meets the needs of the present without compromising future generations."@en ;
+    rdfs:subClassOf dul:Situation ;
+    skos:prefLabel "Nachhaltige Entwicklung"@de,
+        "Sustainable Development"@en,
+        "Desarrollo sostenible"@es,
+        "Développement durable"@fr,
+        "Sviluppo sostenibile"@it,
+        "Desenvolvimento sustentável"@pt .
+
+governance:analysesHazard a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskAssessment to the Hazard type it characterises in terms of frequency, intensity and location."@en ;
+    rdfs:domain governance:RiskAssessment ;
+    rdfs:range hazard:Hazard ;
+    skos:prefLabel "analyses hazard"@en,
+        "analizza il pericolo"@it .
+
+governance:appliesStrategy a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskManagement Action to the RiskReductionStrategy it implements."@en ;
+    rdfs:domain governance:RiskManagement ;
+    rdfs:range governance:RiskReductionStrategy ;
+    skos:prefLabel "applies strategy"@en,
+        "applica strategia"@it .
+
+governance:coordinatesDRR a owl:ObjectProperty ;
+    rdfs:comment "Relates a NationalPlatformForDRR to the RiskReduction activities it organises and aligns across sectors."@en ;
+    rdfs:domain governance:NationalPlatformForDRR ;
+    rdfs:range governance:RiskReduction ;
+    skos:prefLabel "coordinates DRR"@en,
+        "coordina la riduzione del rischio"@it .
+
+governance:evaluatesCopingCapacity a owl:ObjectProperty ;
+    rdfs:comment "Links disaster risk assessment to the evaluation of the effectiveness of prevailing and alternative coping capacities with respect to likely risk scenarios."@en ;
+    rdfs:domain governance:RiskAssessment ;
+    rdfs:range capacity:CopingCapacity ;
+    skos:prefLabel "evaluates coping capacity"@en,
+        "valuta la capacità di risposta"@it .
+
+governance:evaluatesExposure a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskAssessment to the Exposure condition it quantifies in terms of people and assets in hazard-prone areas."@en ;
+    rdfs:domain governance:RiskAssessment ;
+    rdfs:range expvuln:Exposure ;
+    skos:prefLabel "evaluates exposure"@en,
+        "valuta l'esposizione"@it .
+
+governance:evaluatesVulnerability a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskAssessment to the Vulnerability condition it characterises across physical, social and economic dimensions."@en ;
+    rdfs:domain governance:RiskAssessment ;
+    rdfs:range expvuln:Vulnerability ;
+    skos:prefLabel "evaluates vulnerability"@en,
+        "valuta la vulnerabilità"@it .
+
+governance:guides a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskGovernance Description to the RiskManagement activities it directs through policies, regulations and institutional mandates."@en ;
+    rdfs:domain governance:RiskGovernance ;
+    rdfs:range governance:RiskManagement ;
+    skos:prefLabel "guides"@en,
+        "guía"@es,
+        "guide"@fr,
+        "guida"@it .
+
+governance:hasInstitutionalFramework a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskGovernance Description to the Institution or institutional arrangement that implements it."@en ;
+    rdfs:domain governance:RiskGovernance ;
+    rdfs:range governance:Institution ;
+    skos:prefLabel "has institutional framework"@en,
+        "ha quadro istituzionale"@it .
+
+governance:hasLegalFramework a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskGovernance Description to the LegalFramework — legislation, regulations and standards — that gives it normative force."@en ;
+    rdfs:domain governance:RiskGovernance ;
+    rdfs:range governance:LegalFramework ;
+    skos:prefLabel "has legal framework"@en,
+        "ha quadro giuridico"@it .
+
+governance:hasPolicyFramework a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskGovernance Description to the Policy framework that articulates its objectives and priorities."@en ;
+    rdfs:domain governance:RiskGovernance ;
+    rdfs:range governance:Policy ;
+    skos:prefLabel "has policy framework"@en,
+        "ha quadro politico"@it .
+
+governance:hasPolicyObjective a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskManagement Action to the RiskReduction goal it is designed to achieve."@en ;
+    rdfs:domain governance:RiskManagement ;
+    rdfs:range governance:RiskReduction ;
+    skos:prefLabel "has policy objective"@en,
+        "ha obiettivo politico"@it .
+
+governance:implementsPlan a owl:ObjectProperty ;
+    rdfs:comment "Relates a DisasterManagement action to the RiskManagementPlan it executes."@en ;
+    rdfs:domain governance:DisasterManagement ;
+    rdfs:range governance:RiskManagementPlan ;
+    skos:prefLabel "implements plan"@en,
+        "attua il piano"@it .
+
+governance:inJurisdiction a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskGovernance arrangement to the Jurisdiction — administrative territory — within which it applies."@en ;
+    rdfs:domain governance:RiskGovernance ;
+    rdfs:range governance:Jurisdiction ;
+    skos:prefLabel "in jurisdiction"@en,
+        "in giurisdizione"@it .
+
+governance:informsAbout a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskInformation product to the Risk it describes, quantifies or communicates."@en ;
+    rdfs:domain governance:RiskInformation ;
+    rdfs:range risk:Risk ;
+    skos:prefLabel "informs about"@en,
+        "informa su"@it .
+
+governance:involvesCivilSociety a owl:ObjectProperty ;
+    rdfs:comment "Relates a NationalPlatformForDRR to the CivilSociety organisations participating in its multi-stakeholder coordination."@en ;
+    rdfs:range governance:CivilSociety ;
+    skos:prefLabel "involves civil society"@en,
+        "coinvolge la società civile"@it .
+
+governance:involvesCommunity a owl:ObjectProperty ;
+    rdfs:comment "Relates a CommunityBasedRiskManagement initiative to the Community that is its primary actor and beneficiary."@en ;
+    rdfs:domain governance:CommunityBasedRiskManagement ;
+    rdfs:range disaster:Community ;
+    skos:prefLabel "involves community"@en,
+        "coinvolge la comunità"@it .
+
+governance:involvesSector a owl:ObjectProperty ;
+    rdfs:comment "Relates a NationalPlatformForDRR to a Sector (e.g. health, infrastructure, agriculture) represented in its coordination."@en ;
+    rdfs:domain governance:NationalPlatformForDRR ;
+    rdfs:range governance:Sector ;
+    skos:prefLabel "involves sector"@en,
+        "coinvolge il settore"@it .
+
+governance:involvesStakeholder a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskManagement activity to a Stakeholder that participates in or is affected by it."@en ;
+    rdfs:domain governance:RiskManagement ;
+    rdfs:range governance:Stakeholder ;
+    skos:prefLabel "involves stakeholder"@en,
+        "coinvolge portatore di interesse"@it .
+
+governance:managesResidualRisk a owl:ObjectProperty ;
+    rdfs:comment "Relates a CompensatoryRiskManagement approach to the ResidualRisk it addresses through financial and social protection mechanisms."@en ;
+    rdfs:domain governance:CompensatoryRiskManagement ;
+    rdfs:range risk:ResidualRisk ;
+    skos:prefLabel "manages residual risk"@en,
+        "gestisce rischio residuo"@it .
+
+governance:preventsNewRisk a owl:ObjectProperty ;
+    rdfs:comment "Relates a ProspectiveRiskManagement approach to the Risk it eliminates by ensuring new development does not generate future risk."@en ;
+    rdfs:domain governance:ProspectiveRiskManagement ;
+    rdfs:range risk:Risk ;
+    skos:prefLabel "prevents new risk"@en,
+        "previene nuovo rischio"@it .
+
+governance:reducesExistingRisk a owl:ObjectProperty ;
+    rdfs:comment "Relates a CorrectiveRiskManagement approach to the existing Risk it addresses through retrofitting, relocation and structural measures."@en ;
+    rdfs:domain governance:CorrectiveRiskManagement ;
+    rdfs:range risk:Risk ;
+    skos:prefLabel "reduces existing risk"@en,
+        "riduce rischio esistente"@it .
+
+governance:respondsTo a owl:ObjectProperty ;
+    rdfs:comment "Relates a DisasterManagement or Response action to the Disaster or emergency situation it addresses."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( governance:DisasterManagement response:Response ) ] ;
+    rdfs:range hazard:HazardousEvent ;
+    skos:prefLabel "responds to"@en,
+        "risponde a"@it .
+
+governance:usesTraditionalKnowledge a owl:ObjectProperty ;
+    rdfs:comment "Links the indigenous approach to the traditional, local or indigenous knowledge it draws upon."@en ;
+    rdfs:domain governance:LocalAndIndigenousApproach ;
+    rdfs:range capacity:Knowledge ;
+    skos:prefLabel "uses traditional knowledge"@en,
+        "utilizza conoscenza tradizionale"@it .
+
+governance:CivilSociety a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "Non-governmental actors and organizations."@en ;
+    rdfs:subClassOf dul:Agent ;
+    skos:prefLabel "Zivilgesellschaft"@de,
+        "Civil Society"@en,
+        "Sociedad civil"@es,
+        "Société civile"@fr,
+        "Società civile"@it,
+        "Sociedade civil"@pt .
+
+governance:CommunityBasedRiskManagement a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "Promotes the involvement of potentially affected communities in disaster risk management at the local level."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:involvesCommunity ;
+            owl:someValuesFrom disaster:Community ],
+        governance:RiskManagement ;
+    skos:prefLabel "Gemeindebasiertes Katastrophenrisikomanagement"@de,
+        "Community-based Disaster Risk Management"@en,
+        "Gestión comunitaria del riesgo de desastre"@es,
+        "Gestion communautaire du risque de catastrophe"@fr,
+        "Gestione comunitaria del rischio di disastro"@it,
+        "Gestão comunitária do risco de desastre"@pt .
+
+governance:CompensatoryRiskManagement a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "Activities that strengthen the social and economic resilience of individuals and societies in the face of residual risk that cannot be effectively reduced."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:managesResidualRisk ;
+            owl:someValuesFrom risk:ResidualRisk ],
+        governance:RiskManagement ;
+    skos:prefLabel "Kompensatorisches Katastrophenrisikomanagement"@de,
+        "Compensatory Disaster Risk Management"@en,
+        "Gestión compensatoria del riesgo de desastre"@es,
+        "Gestion compensatoire du risque de catastrophe"@fr,
+        "Gestione compensativa del rischio di disastro"@it,
+        "Gestão compensatória do risco de desastre"@pt .
+
+governance:CorrectiveRiskManagement a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "Activities that address and seek to remove or reduce disaster risks which are already present."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:reducesExistingRisk ;
+            owl:someValuesFrom risk:Risk ],
+        governance:RiskManagement ;
+    skos:prefLabel "Korrektives Katastrophenrisikomanagement"@de,
+        "Corrective Disaster Risk Management"@en,
+        "Gestión correctiva del riesgo de desastre"@es,
+        "Gestion corrective du risque de catastrophe"@fr,
+        "Gestione correttiva del rischio di disastro"@it,
+        "Gestão corretiva do risco de desastre"@pt .
+
+governance:Institution a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "An organizational body involved in disaster risk governance."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue capacity:InstitutionalCapacityDomain ;
+            owl:onProperty capacity:hasCapacityDomain ],
+        capacity:Capacity,
+        dul:Agent ;
+    skos:prefLabel "Institution"@de,
+        "Institution"@en,
+        "Institución"@es,
+        "Institution"@fr,
+        "Istituzione"@it,
+        "Instituição"@pt .
+
+governance:Jurisdiction a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "An administrative territory with governance authority."@en ;
+    rdfs:subClassOf dul:Place ;
+    skos:prefLabel "Rechtsgebiet"@de,
+        "Jurisdiction"@en,
+        "Jurisdicción"@es,
+        "Juridiction"@fr,
+        "Giurisdizione"@it,
+        "Jurisdição"@pt .
+
+governance:LegalFramework a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "Laws, regulations, standards and procedures for disaster risk governance."@en ;
+    rdfs:subClassOf dul:Norm ;
+    skos:prefLabel "Rechtsrahmen"@de,
+        "Legal Framework"@en,
+        "Marco legal"@es,
+        "Cadre juridique"@fr,
+        "Quadro giuridico"@it,
+        "Quadro jurídico"@pt .
+
+governance:NationalPlatformForDRR a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/national-platform-disaster-risk-reduction> ;
+    foundation:termNumber 25 ;
+    rdfs:comment "A generic term for national mechanisms for coordination and policy guidance on disaster risk reduction that are multisectoral and interdisciplinary in nature, with public, private and civil society participation involving all concerned entities within a country."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:coordinatesDRR ;
+            owl:someValuesFrom governance:HazardousEventRiskReduction ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:involvesCivilSociety ;
+            owl:someValuesFrom governance:CivilSociety ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:involvesSector ;
+            owl:someValuesFrom governance:Sector ],
+        dul:SocialObject ;
+    skos:definition "A generic term for national mechanisms for coordination and policy guidance on disaster risk reduction that are multisectoral and interdisciplinary in nature, with public, private and civil society participation involving all concerned entities within a country."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Nationale Plattform für Katastrophenvorsorge"@de,
+        "National Platform for DRR"@en,
+        "Plataforma nacional para la reducción del riesgo"@es,
+        "Plateforme nationale pour la réduction des risques"@fr,
+        "Piattaforma nazionale per la riduzione del rischio di disastro"@it,
+        "Plataforma nacional para redução do risco"@pt .
+
+governance:Policy a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "A governance instrument defining goals and rules for disaster risk reduction."@en ;
+    rdfs:subClassOf dul:Description ;
+    skos:prefLabel "Politik"@de,
+        "Policy"@en,
+        "Política"@es,
+        "Politique"@fr,
+        "Politica"@it,
+        "Política"@pt .
+
+governance:ProspectiveRiskManagement a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "Activities that address and seek to avoid the development of new or increased disaster risks."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:preventsNewRisk ;
+            owl:someValuesFrom risk:Risk ],
+        governance:RiskManagement ;
+    skos:prefLabel "Prospektives Katastrophenrisikomanagement"@de,
+        "Prospective Disaster Risk Management"@en,
+        "Gestión prospectiva del riesgo de desastre"@es,
+        "Gestion prospective du risque de catastrophe"@fr,
+        "Gestione prospettica del rischio di disastro"@it,
+        "Gestão prospetiva do risco de desastre"@pt .
+
+governance:Sector a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "An economic or social sector."@en ;
+    rdfs:subClassOf dul:SocialObject ;
+    skos:prefLabel "Sektor"@de,
+        "Sector"@en,
+        "Sector"@es,
+        "Secteur"@fr,
+        "Settore"@it,
+        "Setor"@pt .
+
+governance:Stakeholder a dul:Role,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    rdfs:comment "A person, group, or organization with interest in disaster risk reduction."@en ;
+    rdfs:subClassOf dul:Agent ;
+    skos:prefLabel "Interessengruppe"@de,
+        "Stakeholder"@en,
+        "Parte interesada"@es,
+        "Partie prenante"@fr,
+        "Portatore di interesse"@it,
+        "Parte interessada"@pt .
+
+governance:RiskReduction a dul:InformationObject,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    foundation:sendaiAnnotation "Disaster risk reduction is the policy objective of disaster risk management, and its goals and objectives are defined in disaster risk reduction strategies and plans."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/disaster-risk-reduction> ;
+    foundation:termNumber 15 ;
+    rdfs:comment "Disaster risk reduction is aimed at preventing new and reducing existing disaster risk and managing residual risk, all of which contribute to strengthening resilience and therefore to the achievement of sustainable development."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty foundation:contributesTo ;
+            owl:someValuesFrom capacity:Resilience ],
+        [ a owl:Restriction ;
+            owl:onProperty foundation:contributesTo ;
+            owl:someValuesFrom governance:SustainableDevelopment ],
+        dul:Description ;
+    skos:definition "Disaster risk reduction is aimed at preventing new and reducing existing disaster risk and managing residual risk, all of which contribute to strengthening resilience and therefore to the achievement of sustainable development."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Katastrophenvorsorge"@de,
+        "Disaster Risk Reduction"@en,
+        "Reducción del riesgo de desastre"@es,
+        "Réduction du risque de catastrophe"@fr,
+        "Riduzione del rischio di disastro"@it,
+        "Redução do risco de desastre"@pt .
+
+governance:DisasterManagement a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F6 ;
+    foundation:sendaiAnnotation "Disaster management may not completely avert or eliminate the threats; it focuses on creating and implementing preparedness and other plans to decrease the impact of disasters and build back better."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/disaster-management> ;
+    foundation:termNumber 9 ;
+    rdfs:comment "The organization, planning and application of measures preparing for, responding to and recovering from disasters."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:implementsPlan ;
+            owl:someValuesFrom governance:HazardousEventRiskManagementPlan ],
+        [ a owl:Restriction ;
+            owl:onProperty disaster:preparesFor ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:respondsTo ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        dul:Action ;
+    skos:definition "The organization, planning and application of measures preparing for, responding to and recovering from disasters."@en ;
+    skos:prefLabel "Katastrophenmanagement"@de,
+        "Disaster Management"@en,
+        "Gestión de desastres"@es,
+        "Gestion des catastrophes"@fr,
+        "Gestione dei disastri"@it,
+        "Gestão de desastres"@pt .
+
+governance:HazardousEventRiskReduction a owl:Class ;
+    rdfs:comment "Activities aimed at preventing new and reducing existing risk and managing residual risk. Equivalent to DisasterRiskReduction (Sendai terminology)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty risk:assessesRisk ;
+            owl:someValuesFrom risk:Risk ],
+        dul:Description,
+        dul:Situation ;
+    skos:prefLabel "Gefahrenereignis-Risikominderung"@de,
+        "Hazardous Event Risk Reduction"@en,
+        "Reducción de riesgos de eventos peligrosos"@es,
+        "Réduction des risques d'événements dangereux"@fr,
+        "Riduzione del rischio di eventi pericolosi"@it,
+        "Redução de riscos de eventos perigosos"@pt .
+
+governance:RiskAssessment a dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    foundation:sendaiAnnotation "Disaster risk assessments include: the identification of hazards; a review of the technical characteristics of hazards such as their location, intensity, frequency and probability; the analysis of exposure and vulnerability, including the physical, social, health, environmental and economic dimensions; and the evaluation of the effectiveness of prevailing and alternative coping capacities with respect to likely risk scenarios."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/disaster-risk-assessment> ;
+    foundation:termNumber 11 ;
+    rdfs:comment "A qualitative or quantitative approach to determine the nature and extent of disaster risk by analysing potential hazards and evaluating existing conditions of exposure and vulnerability that together could harm people, property, services, livelihoods and the environment on which they depend."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:analysesHazard ;
+            owl:someValuesFrom hazard:Hazard ],
+        [ a owl:Restriction ;
+            owl:onProperty risk:assessesRisk ;
+            owl:someValuesFrom risk:Risk ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:evaluatesCopingCapacity ;
+            owl:someValuesFrom capacity:CopingCapacity ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:evaluatesExposure ;
+            owl:someValuesFrom expvuln:Exposure ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:evaluatesVulnerability ;
+            owl:someValuesFrom expvuln:Vulnerability ],
+        dul:Process ;
+    skos:definition "A qualitative or quantitative approach to determine the nature and extent of disaster risk by analysing potential hazards and evaluating existing conditions of exposure and vulnerability that together could harm people, property, services, livelihoods and the environment on which they depend."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Katastrophenrisikobewertung"@de,
+        "Disaster Risk Assessment"@en,
+        "Evaluación del riesgo de desastre"@es,
+        "Évaluation du risque de catastrophe"@fr,
+        "Valutazione del rischio di disastro"@it,
+        "Avaliação do risco de desastre"@pt .
+
+governance:RiskGovernance a dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    foundation:sendaiAnnotation "Good governance needs to be transparent, inclusive, collective and efficient to reduce existing disaster risks and avoid creating new ones."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/disaster-risk-governance> ;
+    foundation:termNumber 12 ;
+    rdfs:comment "The system of institutions, mechanisms, policy and legal frameworks and other arrangements to guide, coordinate and oversee disaster risk reduction and related areas of policy."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:guides ;
+            owl:someValuesFrom governance:HazardousEventRiskManagement ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:hasInstitutionalFramework ;
+            owl:someValuesFrom governance:Institution ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:hasLegalFramework ;
+            owl:someValuesFrom governance:LegalFramework ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:hasPolicyFramework ;
+            owl:someValuesFrom governance:Policy ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:inJurisdiction ;
+            owl:someValuesFrom governance:Jurisdiction ],
+        dul:Description ;
+    skos:definition "The system of institutions, mechanisms, policy and legal frameworks and other arrangements to guide, coordinate and oversee disaster risk reduction and related areas of policy."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Katastrophenrisikogovernance"@de,
+        "Disaster Risk Governance"@en,
+        "Gobernanza del riesgo de desastre"@es,
+        "Gouvernance du risque de catastrophe"@fr,
+        "Governance del rischio di disastro"@it,
+        "Governança do risco de desastre"@pt .
+
+governance:RiskManagement a dul:InformationObject,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F6 ;
+    foundation:sendaiAnnotation "Disaster risk management actions can be distinguished between prospective disaster risk management, corrective disaster risk management and compensatory disaster risk management, also called residual risk management."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/disaster-risk-management> ;
+    foundation:termNumber 14 ;
+    rdfs:comment "The application of disaster risk reduction policies and strategies to prevent new disaster risk, reduce existing disaster risk and manage residual risk, contributing to the strengthening of resilience and reduction of disaster losses."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty governance:appliesStrategy ;
+            owl:someValuesFrom governance:HazardousEventRiskReductionStrategy ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:hasPolicyObjective ;
+            owl:someValuesFrom governance:HazardousEventRiskReduction ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:involvesStakeholder ;
+            owl:someValuesFrom governance:Stakeholder ],
+        dul:Action,
+        dul:Situation ;
+    skos:definition "The application of disaster risk reduction policies and strategies to prevent new disaster risk, reduce existing disaster risk and manage residual risk, contributing to the strengthening of resilience and reduction of disaster losses."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower governance:CommunityBasedRiskManagement,
+        governance:CompensatoryRiskManagement,
+        governance:CorrectiveRiskManagement,
+        governance:ProspectiveRiskManagement ;
+    skos:prefLabel "Katastrophenrisikomanagement"@de,
+        "Disaster Risk Management"@en,
+        "Gestión del riesgo de desastre"@es,
+        "Gestion du risque de catastrophe"@fr,
+        "Gestione del rischio di disastro"@it,
+        "Gestão do risco de desastre"@pt ;
+    skos:related governance:DisasterManagement,
+        governance:RiskGovernance,
+        governance:RiskReduction ;
+    skos:topConceptOf foundation:SendaiFrameworkTerminology .
+

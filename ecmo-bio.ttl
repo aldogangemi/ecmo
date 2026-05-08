@@ -1,0 +1,156 @@
+@prefix bio: <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.europa.eu/h8v/ecmo/bio> a owl:Ontology ;
+    dcterms:issued "2026-03-25"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Biological entity classes (Organism, Animal, BiologicalEntity, BiologicalEntityType), taxonomic rank infrastructure (TaxonomicRank, hasRank), and organism role classification. Provides the biological foundation for the Public Health module."@en ;
+    owl:imports ecmocore:foundation ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO Biological Entities Module"@en .
+
+bio:Animal a owl:Class ;
+    rdfs:comment "A multicellular eukaryotic organism of the kingdom Animalia, relevant as a disease vector host, reservoir, or susceptible species."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue bio:VectorOrHostRole ;
+            owl:onProperty bio:hasOrganismRole ],
+        bio:Organism ;
+    skos:prefLabel "Animal"@en,
+        "Animale"@it .
+
+bio:Bacterium a owl:Class ;
+    rdfs:comment "A class representing any type of bacteria. Bacteria are ubiquitous, mostly free-living organisms often consisting of one biological cell. They constitute a large domain of prokaryotic microorganisms."@en ;
+    rdfs:subClassOf bio:Organism ;
+    skos:prefLabel "Bacterium"@en .
+
+bio:Class a bio:TaxonomicRank,
+        owl:NamedIndividual ;
+    skos:prefLabel "Class"@en .
+
+bio:Family a bio:TaxonomicRank,
+        owl:NamedIndividual ;
+    skos:prefLabel "Family"@en .
+
+bio:Fungus a owl:Class ;
+    rdfs:comment "A class representing any type of fungi. A fungus (pl.: fungi or funguses) is any member of the group of eukaryotic organisms that includes yeast and mold as well as the mushroom. These organisms are classified in the biological kingdom Fungi."@en ;
+    rdfs:subClassOf bio:Organism ;
+    skos:prefLabel "Fungus"@en .
+
+bio:Genus a bio:TaxonomicRank,
+        owl:NamedIndividual ;
+    skos:prefLabel "Genus"@en .
+
+bio:Kingdom a bio:TaxonomicRank,
+        owl:NamedIndividual ;
+    skos:prefLabel "Kingdom"@en .
+
+bio:Order a bio:TaxonomicRank,
+        owl:NamedIndividual ;
+    skos:prefLabel "Order"@en .
+
+bio:PathogenRole a bio:OrganismRole,
+        owl:NamedIndividual ;
+    skos:prefLabel "Pathogen"@en .
+
+bio:Phylum a bio:TaxonomicRank,
+        owl:NamedIndividual ;
+    skos:prefLabel "Phylum"@en .
+
+bio:Plant a owl:Class ;
+    rdfs:comment "A class representing any type of plants."@en ;
+    rdfs:subClassOf bio:Organism ;
+    skos:prefLabel "Plant"@en .
+
+bio:Protist a owl:Class ;
+    rdfs:comment "A class representing any type of protists. A protist or protoctist is any eukaryotic organism that is not an animal, land plant, or fungus."@en ;
+    rdfs:subClassOf bio:Organism ;
+    skos:prefLabel "Protist"@en .
+
+bio:Protozoon a owl:Class ;
+    rdfs:comment "A class representing any type of protozoa. Protozoa (sg.: protozoan or protozoon; alternative plural: protozoans) are a polyphyletic group of single-celled eukaryotes, either free-living or parasitic, that feed on organic matter such as other microorganisms or organic debris."@en ;
+    rdfs:subClassOf bio:Organism ;
+    skos:prefLabel "Protozoon"@en .
+
+bio:Species a bio:TaxonomicRank,
+        owl:NamedIndividual ;
+    skos:prefLabel "Species"@en .
+
+bio:SusceptibleHostRole a bio:OrganismRole,
+        owl:NamedIndividual ;
+    skos:prefLabel "Susceptible Host"@en .
+
+bio:Virus a owl:Class ;
+    rdfs:comment "A class representing any type of viruses. A virus is a submicroscopic infectious agent that replicates only inside the living cells of an organism."@en ;
+    rdfs:subClassOf bio:BiologicalEntity ;
+    skos:prefLabel "Virus"@en .
+
+bio:belongsTo a owl:ObjectProperty ;
+    rdfs:comment "Relates an organism to the taxonomic group it belongs to."@en ;
+    rdfs:domain bio:BiologicalEntity ;
+    skos:prefLabel "belongs to"@en,
+        "appartiene a"@it .
+
+bio:VectorOrHostRole a bio:OrganismRole,
+        owl:NamedIndividual ;
+    skos:prefLabel "Vector or Host"@en .
+
+bio:hasOrganismRole a owl:ObjectProperty ;
+    rdfs:comment "Classifies an organism by its role in the disease/hazard context."@en ;
+    rdfs:domain bio:Organism ;
+    rdfs:range bio:OrganismRole ;
+    skos:prefLabel "has organism role"@en .
+
+bio:hasRank a owl:ObjectProperty ;
+    rdfs:comment "Indicates the taxonomic rank of a biological entity type."@en ;
+    rdfs:domain bio:BiologicalEntity ;
+    rdfs:range bio:TaxonomicRank ;
+    owl:inverseOf bio:isRankOf ;
+    skos:prefLabel "hat taxonomischen Rang"@de,
+        "has taxonomic rank"@en,
+        "tiene rango taxonómico"@es,
+        "a un rang taxonomique"@fr,
+        "ha rango tassonomico"@it,
+        "tem grau taxonómico"@pt .
+
+bio:isRankOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the biological entity type with this rank."@en ;
+    owl:inverseOf bio:hasRank ;
+    skos:prefLabel "is rank of"@en .
+
+bio:BiologicalEntity a owl:Class ;
+    rdfs:comment "A concept classifying a type of biological entity (e.g. species, strain, serotype). BiologicalEntityType individuals are linked to a TaxonomicRank via bio:hasRank."@en,
+        "Any entity of biological origin, including organisms, biological substances, and their products."@en ;
+    rdfs:subClassOf dul:Agent,
+        dul:Concept ;
+    skos:altLabel "Biological Entity Type"@en,
+        "Tipo di entità biologica"@it ;
+    skos:prefLabel "Biological Entity"@en,
+        "Entità biologica"@it .
+
+bio:OrganismRole a owl:Class ;
+    rdfs:comment "The role an organism plays in a disease/hazard context."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Organism Role"@en .
+
+bio:Organism a owl:Class ;
+    rdfs:comment "A living individual capable of growth, reproduction and functional activity — the broadest class for living things in the biological domain."@en ;
+    rdfs:subClassOf bio:BiologicalEntity ;
+    skos:prefLabel "Organism"@en,
+        "Organismo"@it .
+
+bio:TaxonomicRank a owl:Class ;
+    rdfs:comment "A class representing taxonomic ranks used in the classification of biological organisms (e.g. Kingdom, Phylum, Class, Order, Family, Genus, Species)."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Taxonomischer Rang"@de,
+        "Taxonomic Rank"@en,
+        "Rango taxonómico"@es,
+        "Rang taxonomique"@fr,
+        "Rango tassonomico"@it,
+        "Grau taxonómico"@pt .
+

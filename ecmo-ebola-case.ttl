@@ -1,0 +1,1081 @@
+@prefix bio:         <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix capacity:    <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix drivers:     <http://data.europa.eu/h8v/ecmo/core/drivers/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix hera:        <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix mp:          <http://data.europa.eu/h8v/ecmo/main-pattern/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix time:        <http://www.w3.org/2006/time#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix agency: <http://example.org/agency/> .
+@prefix ews:    <http://example.org/agency/ews/> .
+@prefix argus:  <http://example.org/agency/argus/> .
+@prefix ecrc:   <http://example.org/agency/ecrc/> .
+@prefix athina: <http://example.org/agency/athina/> .
+@prefix ipcr:   <http://example.org/agency/ipcr/> .
+@prefix who:    <http://example.org/agency/who/> .
+
+@prefix : <http://data.europa.eu/h8v/ecmo/examples/ebola/> .
+
+# =============================================================================
+# Synthetic worked example: Zaire ebolavirus outbreak — fictional location
+#
+# Scenario: A large Ebola Virus Disease (EVD) outbreak in a refugee camp in the
+# fictional Republic of Nadira, April–July 2026. Designed to populate every
+# major ECMO module so the CQ queries in `ecmo-cqs.ttl` return non-empty
+# results when run over (TBox ∪ this ABox).
+#
+# Numbers, places, agencies, and persons are SYNTHETIC. Real WHO/ECDC EVD
+# response details are not asserted here. The 2026 dates are placeholders.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/examples/ebola> a owl:Ontology ;
+    dcterms:issued "2026-06-08"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Synthetic Ebola outbreak fixture for exercising the ECMO CQ catalogue."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
+                <http://data.europa.eu/h8v/ecmo/coref> ,
+                <http://data.europa.eu/h8v/ecmo/main-pattern> ;
+    owl:versionInfo "0.1" ;
+    skos:prefLabel "ECMO synthetic Ebola case — Republic of Nadira"@en .
+
+# -----------------------------------------------------------------------------
+# PLACES, AGENCIES, ACTORS
+# -----------------------------------------------------------------------------
+
+:Nadira             a dul:Place ; skos:prefLabel "Republic of Nadira (fictional)"@en .
+:NorthernCoastalProvince a dul:Place ; skos:prefLabel "Northern Coastal Province, Nadira"@en .
+:CampAkele          a dul:Place ; skos:prefLabel "Camp Akele refugee settlement, Nadira"@en .
+
+agency:EWS    a prov:Organization, governance:Institution ; skos:prefLabel "ECDC EWRS"@en .
+agency:ARGUS  a prov:Organization, governance:Institution ; skos:prefLabel "EU Commission ARGUS"@en .
+agency:ECRC   a prov:Organization, governance:Institution ; skos:prefLabel "Emergency Response Coordination Centre (ECHO)"@en .
+agency:ATHINA a prov:Organization, governance:Institution ; skos:prefLabel "ATHINA platform"@en .
+agency:IPCR   a prov:Organization, governance:Institution ; skos:prefLabel "Integrated Political Crisis Response"@en .
+agency:ECDC   a prov:Organization, governance:Institution ; skos:prefLabel "European Centre for Disease Prevention and Control"@en .
+agency:HERA   a prov:Organization, governance:Institution ; skos:prefLabel "Health Emergency Preparedness and Response Authority"@en .
+agency:WHO    a prov:Organization, governance:Institution ; skos:prefLabel "World Health Organization"@en .
+agency:NadiraMoH a prov:Organization, governance:Institution ; skos:prefLabel "Nadira Ministry of Health"@en .
+
+:NadiraJurisdiction a governance:Jurisdiction ;
+    skos:prefLabel "Nadira national jurisdiction"@en .
+
+:EUJurisdiction a governance:Jurisdiction ;
+    skos:prefLabel "EU jurisdiction (cross-border public-health threats)"@en .
+
+:HealthSector_Nadira a governance:Sector ;
+    skos:prefLabel "Nadira health sector"@en .
+
+:RefugeeCommunity_Akele a disaster:Community, governance:CivilSociety ;
+    skos:prefLabel "Refugee community at Camp Akele"@en .
+
+:CivilSociety_Nadira a governance:CivilSociety, governance:Stakeholder ;
+    skos:prefLabel "Nadiran civil society organisations"@en .
+
+# -----------------------------------------------------------------------------
+# Occurrence anchor (COREF) and HazardousEvent (CORE)
+# -----------------------------------------------------------------------------
+
+:NadiraEbolaOutbreak a coref:Occurrence ;
+    skos:prefLabel "Zaire ebolavirus outbreak, Camp Akele, Nadira (Apr–Jul 2026)"@en ;
+    foundation:hasLocation :CampAkele ;
+    disaster:hasTemporalExtent [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-04-15"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-07-30"^^xsd:date ]
+    ] .
+
+:EbolaOutbreakEvent a hazard:HazardousEvent, hazard:BiologicalEvent, disaster:Disaster,
+                     disaster:LargeScaleDisaster, disaster:SuddenOnsetDisaster, disaster:InfrequentDisaster ;
+    skos:prefLabel "Zaire ebolavirus outbreak event (manifestation)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    hazard:isManifestationOf hazard:BiologicalHazard ;
+    foundation:hasLocation :CampAkele ;
+    governance:inJurisdiction :NadiraJurisdiction ;
+    disaster:hasTemporalExtent [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-04-15"^^xsd:date ]
+    ] ;
+    hazard:hasCausativeAgent ph:ZaireEbolavirus ;
+    hazard:hasHazardCategory foundation:Biological ;
+    hazard:affectsPopulation :CampAkele_AffectedPopulation, :DirectlyAffected_CampAkele, :IndirectlyAffected_CampAkele ;
+    hazard:hasIntensityObservation :EbolaIntensity ;
+    hazard:hasMagnitudeObservation :EbolaMagnitude ;
+    hazard:hasSeverityAssessment :EbolaSeverity ;
+    disaster:hasOnsetType disaster:SuddenOnset ;
+    disaster:hasScaleType disaster:LargeScale ;
+    disaster:hasFrequencyType disaster:LowFrequency ;
+    disaster:realizesRisk :NadiraEVDRisk .
+
+# Observation infrastructure
+:EbolaIntensity a hazard:IntensityObservation ;
+    hazard:hasNumericValue "1240"^^xsd:integer ;
+    hazard:hasUnit "confirmed cases"@en ;
+    hazard:hasObservationSource :ECDC_Surveillance ;
+    hazard:usesScale :EpidemicCaseCountScale .
+
+:EbolaMagnitude a hazard:MagnitudeObservation ;
+    hazard:hasNumericValue "0.45"^^xsd:decimal ;
+    hazard:hasUnit "case-fatality ratio"@en ;
+    hazard:hasObservationSource :ECDC_Surveillance .
+
+:EbolaSeverity a hazard:SeverityAssessment ;
+    foundation:hasLevel :Sev_VeryHigh ;
+    hazard:hasObservationSource :ECDC_Surveillance .
+
+:Sev_VeryHigh a foundation:SeverityLevelValue ;
+    foundation:inScale :SeverityScale ;
+    foundation:orderInScale 4 ;
+    skos:prefLabel "Very High"@en .
+
+:SeverityScale a foundation:SeverityLevelScale ;
+    foundation:hasMinValue :Sev_Low ;
+    foundation:hasMaxValue :Sev_VeryHigh ;
+    foundation:hasAssessmentDomain foundation:SeverityDomain .
+
+:Sev_Low a foundation:SeverityLevelValue ;
+    foundation:inScale :SeverityScale ;
+    foundation:orderInScale 1 ;
+    foundation:nextValue :Sev_Medium ;
+    skos:prefLabel "Low"@en .
+
+:Sev_Medium a foundation:SeverityLevelValue ;
+    foundation:inScale :SeverityScale ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue :Sev_Low ;
+    foundation:nextValue :Sev_High ;
+    skos:prefLabel "Medium"@en .
+
+:Sev_High a foundation:SeverityLevelValue ;
+    foundation:inScale :SeverityScale ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue :Sev_Medium ;
+    foundation:nextValue :Sev_VeryHigh ;
+    skos:prefLabel "High"@en .
+
+:EpidemicCaseCountScale a hazard:QuantitativeScale ;
+    skos:prefLabel "Epidemic case count scale"@en .
+
+:ECDC_Surveillance a hazard:ObservationSource ;
+    skos:prefLabel "ECDC EVD surveillance feed"@en .
+
+# Cascade — a secondary cholera outbreak triggered by water/sanitation collapse
+:CholeraSecondaryEvent a hazard:HazardousEvent, hazard:BiologicalEvent ;
+    skos:prefLabel "Secondary cholera outbreak triggered by sanitation collapse"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    hazard:isManifestationOf hazard:BiologicalHazard ;
+    foundation:hasLocation :CampAkele ;
+    disaster:hasTemporalExtent [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-20"^^xsd:date ] ] ;
+    hazard:hasImpact :CholeraImpact .
+
+:CholeraImpact a impact:Impact, impact:HumanImpact ;
+    skos:prefLabel "Human impact of the secondary cholera outbreak"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    impact:hasImpactType impact:HumanImpactType ;
+    impact:hasImpactIntensity impact:MediumImpactIntensity .
+
+:EbolaOutbreakEvent hazard:triggers :CholeraSecondaryEvent .
+
+:MultiHazardContext_Nadira a hazard:MultiHazardContext ;
+    skos:prefLabel "Multi-hazard context: concurrent EVD + cholera + monsoon flooding risk"@en ;
+    foundation:includesEvent :EbolaOutbreakEvent, :CholeraSecondaryEvent .
+
+# -----------------------------------------------------------------------------
+# Reified hazard classification chain (COREF)
+# -----------------------------------------------------------------------------
+
+:UnknownHaemorrhagicAgent a hazard:BiologicalHazard, owl:NamedIndividual ;
+    skos:prefLabel "Unknown haemorrhagic-fever agent"@en .
+
+ph:Filoviridae a hazard:BiologicalHazard, owl:NamedIndividual ;
+    skos:prefLabel "Filoviridae"@en ;
+    fschema:subsumedUnder ph:Pathogen .
+
+ph:Ebolavirus a hazard:BiologicalHazard, owl:NamedIndividual ;
+    skos:prefLabel "Ebolavirus (genus)"@en ;
+    fschema:subsumedUnder ph:Filoviridae .
+
+ph:ZaireEbolavirus a hazard:BiologicalHazard, ph:PathogenicVirus, owl:NamedIndividual ;
+    skos:prefLabel "Zaire ebolavirus"@en ;
+    fschema:subsumedUnder ph:Ebolavirus .
+
+ph:MarburgVirus a hazard:BiologicalHazard, ph:PathogenicVirus, ph:Pathogen, owl:NamedIndividual ;
+    skos:prefLabel "Marburg virus"@en ;
+    fschema:subsumedUnder ph:Filoviridae ;
+    hera:hasAvailabilityOfTherapeutics :MarburgTher ;
+    hera:hasAvailabilityOfVaccines    :MarburgVac .
+
+:MarburgTher a hera:AvailabilityOfTherapeutics ;
+    foundation:hasLevel hera:NotAvailable_Therapeutics .
+:MarburgVac a hera:AvailabilityOfVaccines ;
+    foundation:hasLevel hera:NotAvailable_Vaccines .
+
+:Cls_t0_unknown a coref:HazardClassificationSituation ;
+    skos:prefLabel "Classification @ 15-18 Apr — Unknown haemorrhagic agent"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    coref:classifiesAs :UnknownHaemorrhagicAgent ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-04-15"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-04-18"^^xsd:date ]
+    ] ;
+    coref:refinedBy :Cls_t1_filoviridae ;
+    prov:wasAttributedTo agency:NadiraMoH, agency:EWS .
+
+:Cls_t1_filoviridae a coref:HazardClassificationSituation ;
+    skos:prefLabel "Classification @ 18-25 Apr — Filoviridae (family-level)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    coref:classifiesAs ph:Filoviridae ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-04-18"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-04-25"^^xsd:date ]
+    ] ;
+    coref:refinedBy :Cls_t2_zaire ;
+    prov:wasAttributedTo agency:WHO, agency:ECDC .
+
+:Cls_t2_zaire a coref:HazardClassificationSituation ;
+    skos:prefLabel "Classification @ 25 Apr+ — Zaire ebolavirus (PCR-confirmed)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    coref:classifiesAs ph:ZaireEbolavirus ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-04-25"^^xsd:date ]
+    ] ;
+    prov:wasAttributedTo agency:WHO, agency:ECDC, agency:IPCR .
+
+# Conflict bay: WHO field team briefly suspected Marburg before PCR confirmation
+:Cls_t1a_who_marburg a coref:HazardClassificationSituation ;
+    skos:prefLabel "Working hypothesis @ 22-25 Apr — Marburg virus (WHO field team)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    coref:classifiesAs ph:MarburgVirus ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-04-22"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-04-25"^^xsd:date ]
+    ] ;
+    coref:correctedBy :Cls_t2_zaire ;
+    coref:conflictsWith :Cls_t1b_ecdc_ebola ;
+    coref:hasConflictReport :ConflictReport_MarburgVsEbola ;
+    prov:wasAttributedTo agency:WHO .
+
+:Cls_t1b_ecdc_ebola a coref:HazardClassificationSituation ;
+    skos:prefLabel "Working hypothesis @ 22-25 Apr — Ebolavirus (ECDC modelling)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    coref:classifiesAs ph:Ebolavirus ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-04-22"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-04-25"^^xsd:date ]
+    ] ;
+    coref:refinedBy :Cls_t2_zaire ;
+    coref:conflictsWith :Cls_t1a_who_marburg ;
+    coref:hasConflictReport :ConflictReport_MarburgVsEbola ;
+    prov:wasAttributedTo agency:ECDC .
+
+:ConflictReport_MarburgVsEbola a coref:ConflictReport ;
+    skos:prefLabel "Conflict @ 22 Apr — Marburg vs Ebolavirus suspicion"@en ;
+    coref:disputedProperty coref:classifiesAs ;
+    rdfs:comment "WHO field team initially leaned Marburg based on early clinical presentation; ECDC modelling leaned Ebolavirus. Resolved 25 Apr by PCR identifying Zaire ebolavirus."@en .
+
+# -----------------------------------------------------------------------------
+# Per-agency local Situations
+# -----------------------------------------------------------------------------
+
+:s_nadira_initial a foundation:Signal ;
+    skos:prefLabel "Nadira MoH initial alert — 15 Apr"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-04-15"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:NadiraMoH ;
+    foundation:hasConfidenceScore 0.3 ;
+    foundation:pertainsToEvent :EbolaOutbreakEvent .
+
+:s_ews_n1 a ews:Notification, foundation:Signal ;
+    skos:prefLabel "EWRS notification — 16 Apr"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-04-16"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:EWS ;
+    foundation:hasConfidenceScore 0.5 ;
+    foundation:pertainsToEvent :EbolaOutbreakEvent .
+
+:s_argus_p1 a argus:Phase1_Event, foundation:Signal ;
+    skos:prefLabel "ARGUS Phase 1 activation — 20 Apr"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-04-20"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ARGUS .
+
+:s_argus_p2 a argus:Phase2_Event, foundation:Signal ;
+    skos:prefLabel "ARGUS Phase 2 activation — 27 Apr"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-04-27"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ARGUS ;
+    coref:supersedes :s_argus_p1 .
+
+:s_athina_threat a athina:Threat, foundation:Signal ;
+    skos:prefLabel "ATHINA threat record — 21 Apr"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-04-21"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ATHINA .
+
+:s_ecrc_ucpm_act a ecrc:UCPM_Activation, governance:EmergencyManagement ;
+    skos:prefLabel "UCPM activation by Nadira — 28 Apr"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-04-28"^^xsd:date ] ] ;
+    prov:wasAttributedTo agency:ECRC .
+
+:s_ipcr_ism a ipcr:InfoSharingMode_Event, governance:EmergencyManagement ;
+    skos:prefLabel "IPCR information-sharing mode — 02 May"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ] ] ;
+    prov:wasAttributedTo agency:IPCR .
+
+:s_ipcr_fcm a ipcr:FullCrisisMode_Event, governance:EmergencyManagement ;
+    skos:prefLabel "IPCR full crisis mode — 10 May (after PHEIC declaration)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-10"^^xsd:date ] ] ;
+    coref:supersedes :s_ipcr_ism ;
+    prov:wasAttributedTo agency:IPCR .
+
+:s_who_pheic a who:PHEIC_Declaration, foundation:Signal ;
+    skos:prefLabel "WHO PHEIC declaration — 08 May"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:WHO ;
+    foundation:hasConfidenceScore 1.0 .
+
+:Validation_ECDC_22Apr a foundation:EventValidation ;
+    skos:prefLabel "ECDC validation of the initial signal — 22 Apr"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:validatesSignal :s_ews_n1 ;
+    foundation:confirmsEvent :EbolaOutbreakEvent ;
+    prov:wasAttributedTo agency:ECDC .
+
+# -----------------------------------------------------------------------------
+# Public-health frame: Ebolavirus pathogen + EVD disease + HERA prioritisation
+# -----------------------------------------------------------------------------
+
+ph:ZaireEbolavirus
+    ph:hasCaseFatalityRateValue 0.45 ;
+    ph:hasIncubationPeriodValue "2-21 days"@en ;
+    ph:hasInfectiousnessValue "high (post-symptom)"@en ;
+    ph:hasTransmissibilityValue "high (body-fluid contact)"@en ;
+    hera:hasPathogenicity :Patho_Ebola ;
+    hera:hasTransmissibilityAssessment :Trans_Ebola ;
+    hera:hasPHEICPotential :PHEIC_Ebola ;
+    hera:hasEUCrossBorderThreatPotential :CB_Ebola ;
+    hera:hasPopulationImmunity :Imm_Ebola ;
+    hera:hasAvailabilityOfTherapeutics :Ther_Ebola ;
+    hera:hasAvailabilityOfVaccines :Vac_Ebola ;
+    hera:hasPriority :Prio_Ebola .
+
+:Patho_Ebola a hera:Pathogenicity ;
+    foundation:hasLevel hera:High_Pathogenicity ;
+    foundation:hasJustification "Synthetic case: case-fatality ratio ~0.45 places Zaire ebolavirus in the highest pathogenicity tier."@en .
+
+:Trans_Ebola a hera:Transmissibility ;
+    foundation:hasLevel hera:High_Transmissibility ;
+    foundation:hasJustification "Synthetic case: body-fluid transmission, nosocomial and funerary amplification, R0 in confined camp setting estimated 2.4."@en .
+
+:PHEIC_Ebola a hera:PHEICPotential ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    foundation:hasJustification "Synthetic case: WHO declared PHEIC on 08 May."@en .
+
+:CB_Ebola a hera:EUCrossBorderThreatPotential ;
+    foundation:hasLevel hera:High_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "Synthetic case: returning humanitarian workers and onward air travel risk."@en .
+
+:Imm_Ebola a hera:PopulationImmunity ;
+    foundation:hasLevel hera:Low_PopulationImmunity .
+
+:Ther_Ebola a hera:AvailabilityOfTherapeutics ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "Inmazeb / Ebanga monoclonals available in limited quantity through stockpile sharing."@en .
+
+:Vac_Ebola a hera:AvailabilityOfVaccines ;
+    foundation:hasLevel hera:Available_Vaccines ;
+    foundation:hasJustification "rVSV-ZEBOV (Ervebo) approved and stockpiled; ring vaccination feasible."@en .
+
+:Prio_Ebola a hera:PathogenPrioritisation ;
+    foundation:hasLevel hera:VeryHigh_Priority ;
+    foundation:hasJustification "High pathogenicity + high transmissibility + high cross-border threat + only limited therapeutics ⇒ top-tier priority."@en .
+
+ph:EbolaVirusDisease a ph:InfectiousDiseaseOrSyndrome ;
+    skos:prefLabel "Ebola Virus Disease (EVD)"@en ;
+    ph:hasCausativeAgent ph:ZaireEbolavirus ;
+    ph:hasRouteOfTransmission ph:BodyFluidContact_Route, ph:NosocomialContact_Route ;
+    ph:hasSignOrSymptom :Fever, :Haemorrhage, :Vomiting, :Myalgia ;
+    ph:hasOutcome :DeathOutcome, :RecoveryOutcome .
+
+ph:BodyFluidContact_Route a ph:RouteOfTransmission ; skos:prefLabel "Body-fluid contact"@en .
+ph:NosocomialContact_Route a ph:RouteOfTransmission ; skos:prefLabel "Nosocomial contact"@en .
+:Fever       a ph:SignOrSymptom ; skos:prefLabel "Fever"@en .
+:Haemorrhage a ph:SignOrSymptom ; skos:prefLabel "Haemorrhage"@en .
+:Vomiting    a ph:SignOrSymptom ; skos:prefLabel "Vomiting"@en .
+:Myalgia     a ph:SignOrSymptom ; skos:prefLabel "Myalgia"@en .
+:DeathOutcome a ph:DiseaseOutcome ; skos:prefLabel "Death"@en .
+:RecoveryOutcome a ph:DiseaseOutcome ; skos:prefLabel "Recovery"@en .
+
+# Reservoir / vector wiring (BIO module)
+:Megachiroptera a bio:Animal, ph:SusceptibleHost, bio:Organism ;
+    bio:hasOrganismRole :ReservoirRole ;
+    bio:hasRank :GenusRank ;
+    skos:prefLabel "Megachiroptera (fruit bats — putative reservoir)"@en .
+
+:ReservoirRole a bio:OrganismRole ;
+    skos:prefLabel "Reservoir host"@en .
+
+:GenusRank a bio:TaxonomicRank ; skos:prefLabel "Genus"@en .
+:SpeciesRank a bio:TaxonomicRank ; skos:prefLabel "Species"@en ; skos:prefLabel "Species"@en .
+
+# Ensure Pathogen also has bio classification (for CQ-BIO-P03)
+ph:ZaireEbolavirus a bio:Virus, bio:Organism ;
+    bio:hasRank :SpeciesRank ;
+    bio:belongsTo ph:Ebolavirus .
+
+# Add a HealthConditionCategory for CQ-PH-P07
+ph:EbolaVirusDisease ph:hasHealthConditionCategory :HaemorrhagicFeverCategory .
+:HaemorrhagicFeverCategory a ph:HealthConditionCategory ;
+    skos:prefLabel "Viral haemorrhagic fever"@en .
+
+# -----------------------------------------------------------------------------
+# EXPOSURE / EXPOSED ELEMENTS / VULNERABILITY (F4)
+# -----------------------------------------------------------------------------
+
+:CampAkele_Population a expvuln:ExposedElement, foundation:Population ;
+    skos:prefLabel "Camp Akele population (refugees + staff)"@en ;
+    expvuln:hasExposedElementType :CampGeneralPopulationType ;
+    foundation:hasLocation :CampAkele .
+
+# Explicit instance-level ExposedElementType so CQ-EXV-P02/P03 see hasAssetDomain triples.
+:CampGeneralPopulationType a expvuln:PopulationGroupType, owl:NamedIndividual ;
+    expvuln:hasAssetDomain expvuln:PopulationDomain ;
+    skos:prefLabel "Camp general population group"@en .
+
+# Instance triples so CQ-EXV-P02 (group ExposedElementTypes by AssetDomain) returns rows.
+expvuln:PopulationGroupType  expvuln:hasAssetDomain expvuln:PopulationDomain .
+expvuln:InfrastructureType   expvuln:hasAssetDomain expvuln:InfrastructureDomain .
+expvuln:EconomicAssetType    expvuln:hasAssetDomain expvuln:EconomicDomain .
+expvuln:EnvironmentalAssetType expvuln:hasAssetDomain expvuln:EnvironmentDomain .
+expvuln:ServiceType          expvuln:hasAssetDomain expvuln:ServiceDomain .
+expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfrastructureDomain .
+
+:HealthcareWorkers a expvuln:ExposedElement, foundation:Population ;
+    skos:prefLabel "Healthcare workers deployed to Camp Akele"@en ;
+    expvuln:hasExposedElementType expvuln:PopulationGroupType ;
+    foundation:hasLocation :CampAkele .
+
+:RefugeeHealthFacility a expvuln:CriticalInfrastructureOrService, expvuln:HealthFacility ;
+    skos:prefLabel "Field hospital, Camp Akele"@en ;
+    expvuln:hasInfrastructureSector expvuln:HealthSector ;
+    foundation:hasLocation :CampAkele .
+
+:CampWaterSystem a expvuln:CriticalInfrastructureOrService, expvuln:WaterInfrastructure ;
+    skos:prefLabel "Camp Akele water + sanitation system"@en ;
+    expvuln:hasInfrastructureSector expvuln:WaterSector .
+
+:CampExposure a expvuln:Exposure ;
+    skos:prefLabel "Exposure of Camp Akele population to Zaire ebolavirus"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    expvuln:exposesElement :CampAkele_Population, :HealthcareWorkers ;
+    expvuln:hasExposedElement :CampAkele_Population ;
+    expvuln:hasExposedElementType :CampGeneralPopulationType ;
+    expvuln:isExposedTo hazard:BiologicalHazard ;
+    expvuln:hasExposedPopulationCount 52000 ;
+    expvuln:affects :CampAkele_Population ;
+    foundation:hasLocation :CampAkele .
+
+:CampSocialVulnerability a expvuln:SocialVulnerability ;
+    skos:prefLabel "Social vulnerability of camp population (overcrowding, low healthcare access)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    expvuln:hasVulnerabilityDimension expvuln:Social ;
+    expvuln:increasesSusceptibilityTo hazard:BiologicalHazard ;
+    foundation:isComplementaryTo :EU_HumanitarianCapacity .
+
+:CampPhysicalVulnerability a expvuln:PhysicalVulnerability ;
+    skos:prefLabel "Physical vulnerability of camp infrastructure"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    expvuln:hasVulnerabilityDimension expvuln:Physical ;
+    expvuln:increasesSusceptibilityTo hazard:BiologicalHazard .
+
+:CampEconomicVulnerability a expvuln:EconomicVulnerability ;
+    skos:prefLabel "Economic vulnerability — no household savings, no insurance penetration"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    expvuln:hasVulnerabilityDimension expvuln:Economic ;
+    expvuln:increasesSusceptibilityTo hazard:BiologicalHazard .
+
+:RegionalEnvironmentalVulnerability a expvuln:EnvironmentalVulnerability ;
+    skos:prefLabel "Environmental vulnerability — degraded buffer ecosystems"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    expvuln:hasVulnerabilityDimension expvuln:Environmental ;
+    expvuln:increasesSusceptibilityTo hazard:BiologicalHazard .
+
+# -----------------------------------------------------------------------------
+# CAPACITY + RESILIENCE (F5)
+# -----------------------------------------------------------------------------
+
+:EU_HumanitarianCapacity a capacity:Capacity ;
+    skos:prefLabel "EU+WHO humanitarian capacity mobilised for the Nadira outbreak"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    capacity:includesInstitution agency:ECRC, agency:ECDC, agency:HERA, agency:WHO ;
+    capacity:includesKnowledge :EVDClinicalKnowledge ;
+    capacity:includesResource :ETU_FieldKit, :rVSV_VaccineStockpile, :MonoclonalStockpile ;
+    capacity:includesCollectiveAttribute :SocialCohesion_Akele ;
+    capacity:preservesFunction :HealthcareDelivery, :WaterSanitation ;
+    capacity:managesAdversity :Adversity_DiseaseSpread ;
+    capacity:strengthensResilience :CampResilience ;
+    foundation:isComplementaryTo :CampSocialVulnerability .
+
+:SocialCohesion_Akele a capacity:CollectiveAttribute ; skos:prefLabel "Camp social cohesion"@en .
+:HealthcareDelivery a capacity:EssentialFunction ; skos:prefLabel "Healthcare delivery essential function"@en .
+:WaterSanitation a capacity:EssentialFunction ; skos:prefLabel "Water + sanitation essential function"@en .
+:Adversity_DiseaseSpread a dul:Situation ; skos:prefLabel "Disease-spread adversity"@en .
+
+:CampResilience a capacity:Resilience ;
+    skos:prefLabel "Resilience of the Camp Akele system (built over the outbreak response)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak .
+
+:LocalCopingCapacity a capacity:CopingCapacity ;
+    skos:prefLabel "Local coping capacity of Camp Akele community"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak .
+
+:EVDClinicalKnowledge a capacity:Knowledge ; skos:prefLabel "Clinical and laboratory knowledge of EVD"@en .
+:ETU_FieldKit         a capacity:Resource ; skos:prefLabel "Ebola Treatment Unit deployable kit"@en .
+:rVSV_VaccineStockpile a capacity:Resource ; skos:prefLabel "rVSV-ZEBOV vaccine stockpile"@en .
+:MonoclonalStockpile  a capacity:Resource ; skos:prefLabel "Monoclonal therapeutics stockpile (Inmazeb / Ebanga)"@en .
+
+:CampCapacityAssessment a capacity:CapacityAssessment ;
+    skos:prefLabel "Capacity assessment of the Camp Akele response, 30 Apr"@en ;
+    capacity:assessesCapacityOf :EU_HumanitarianCapacity ;
+    foundation:hasLevel :Sev_Medium ;
+    foundation:hasJustification "Adequate clinical surge capacity, but logistical chain stretched by concurrent cholera response."@en ;
+    foundation:hasQualitativeAssessment :CapAssessQA ;
+    capacity:hasCapacityDomain foundation:PathogenRiskDomain ;
+    prov:wasAttributedTo agency:ECDC .
+
+:CapAssessQA a foundation:QualitativeAssessment ;
+    foundation:hasLevel :Sev_Medium ;
+    foundation:hasJustification "Adequate clinical surge capacity, but logistical chain stretched by concurrent cholera response."@en .
+
+:CapDevPlan a capacity:CapacityDevelopment, response:Intervention ;
+    skos:prefLabel "Capacity development plan: ETU expansion + community workers"@en ;
+    capacity:developsCapacityOf :EU_HumanitarianCapacity .
+
+:CapExcAssessment a capacity:CapacityExceedanceAssessment ;
+    skos:prefLabel "Capacity exceedance: outbreak exceeded local coping capacity"@en ;
+    foundation:hasLevel :Sev_High ;
+    capacity:hasExceedanceDegree 0.7 .
+
+:EbolaOutbreakEvent disaster:exceedsCapacityOf :LocalCopingCapacity ;
+    disaster:hasCapacityExceedanceAssessment :CapExcAssessment .
+
+# -----------------------------------------------------------------------------
+# RISK + RISK ASSESSMENT (F1, F6, FOUND)
+# -----------------------------------------------------------------------------
+
+:NadiraEVDRisk a risk:Risk ;
+    skos:prefLabel "Disaster risk: Zaire ebolavirus outbreak in Camp Akele"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    risk:hasHazardDeterminant hazard:BiologicalHazard ;
+    risk:hasExposureDeterminant :CampExposure ;
+    risk:hasVulnerabilityDeterminant :CampSocialVulnerability ;
+    risk:hasCapacityDeterminant :EU_HumanitarianCapacity ;
+    risk:materializesAs :EbolaOutbreakEvent ;
+    risk:hasRiskIntensityProfile risk:IntensiveProfile ;
+    risk:hasFrequencyProfile "Decadal regional recurrence of EVD outbreaks"@en .
+
+# A residual risk after the rVSV ring vaccination campaign — some unvaccinated cohort remains.
+:RingVaccinationMeasure a instruments:NonStructuralMeasure, instruments:Measure ;
+    skos:prefLabel "Ring vaccination campaign with rVSV-ZEBOV"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    instruments:reducesImpactOf hazard:BiologicalHazard .
+
+:ResidualRiskAfterRing a risk:ResidualRisk ;
+    skos:prefLabel "Residual risk after ring vaccination"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    risk:remainsAfter :RingVaccinationMeasure ;
+    risk:hasHazardDeterminant hazard:BiologicalHazard ;
+    risk:hasExposureDeterminant :CampExposure ;
+    risk:hasVulnerabilityDeterminant :CampSocialVulnerability ;
+    risk:hasCapacityDeterminant :EU_HumanitarianCapacity .
+
+:LocalAcceptableRisk a risk:AcceptableRisk ;
+    skos:prefLabel "Acceptable level of residual EVD risk for the post-outbreak monitoring phase"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    risk:hasHazardDeterminant hazard:BiologicalHazard ;
+    risk:hasExposureDeterminant :CampExposure ;
+    risk:hasVulnerabilityDeterminant :CampSocialVulnerability ;
+    risk:hasCapacityDeterminant :EU_HumanitarianCapacity ;
+    foundation:hasQualitativeAssessment :AcceptabilityQA .
+
+:AcceptabilityQA a foundation:QualitativeAssessment ;
+    foundation:hasJustification "After 42-day post-discharge surveillance with zero new cases, residual risk is deemed acceptable for the monitoring phase."@en .
+
+:ECDC_RRA a governance:RiskAssessment, foundation:RiskAssessmentReport ;
+    skos:prefLabel "ECDC Rapid Risk Assessment, 28 Apr"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    foundation:hasReportDate "2026-04-28"^^xsd:date ;
+    foundation:isReportFor :EbolaOutbreakEvent ;
+    governance:analysesHazard hazard:BiologicalHazard ;
+    governance:evaluatesExposure :CampExposure ;
+    governance:evaluatesVulnerability :CampSocialVulnerability ;
+    governance:evaluatesCopingCapacity :EU_HumanitarianCapacity ;
+    foundation:recommendsMeasure :RingVaccinationMT, :ContactTracingMT, :SafeBurialMT ;
+    risk:assessesRisk :NadiraEVDRisk ;
+    prov:wasAttributedTo agency:ECDC .
+
+# Disaster declaration record (the outbreak event itself is also typed as Disaster above)
+:NadiraEVDDisaster a disaster:Disaster, disaster:LargeScaleDisaster, disaster:SuddenOnsetDisaster, disaster:InfrequentDisaster ;
+    skos:prefLabel "Nadira EVD disaster declaration record (05 May 2026)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    disaster:hasOnsetType disaster:SuddenOnset ;
+    disaster:hasScaleType disaster:LargeScale ;
+    disaster:hasFrequencyType disaster:LowFrequency ;
+    foundation:hasLocation :CampAkele ;
+    governance:inJurisdiction :NadiraJurisdiction ;
+    disaster:hasTemporalExtent [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-05"^^xsd:date ] ] ;
+    hazard:isManifestationOf hazard:BiologicalHazard ;
+    hazard:hasCausativeAgent ph:ZaireEbolavirus ;
+    hazard:affectsPopulation :DirectlyAffected_CampAkele, :IndirectlyAffected_CampAkele ;
+    hazard:hasImpact :EVD_HumanImpact ;
+    disaster:hasHumanImpact :EVD_HumanImpact ;
+    disaster:hasEnvironmentalImpact :EVD_EnvironmentalImpact ;
+    disaster:causesEconomicLoss :DirectLoss_Nadira, :IndirectLoss_Nadira ;
+    disaster:exceedsCapacityOf :LocalCopingCapacity ;
+    disaster:realizesRisk :NadiraEVDRisk ;
+    disaster:hasVulnerabilityContext :CampSocialVulnerability .
+
+# -----------------------------------------------------------------------------
+# AFFECTED POPULATIONS + IMPACTS (F3, F10)
+# -----------------------------------------------------------------------------
+
+:CampAkele_AffectedPopulation a disaster:AffectedPopulation ;
+    skos:prefLabel "Population affected by the Nadira EVD outbreak"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    rdfs:subClassOf foundation:Population .
+
+:DirectlyAffected_CampAkele a disaster:DirectlyAffectedPopulation ;
+    skos:prefLabel "Directly affected: confirmed cases + their households"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    disaster:hasAffectednessType disaster:DirectAffectedness .
+
+:IndirectlyAffected_CampAkele a disaster:IndirectlyAffectedPopulation ;
+    skos:prefLabel "Indirectly affected: contacts, livelihood disruption, schooling loss"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    disaster:hasAffectednessType disaster:IndirectAffectedness .
+
+# Hazardous event impact relations
+:EbolaOutbreakEvent
+    disaster:causesEconomicLoss :DirectLoss_Nadira, :IndirectLoss_Nadira ;
+    disaster:causesDamage :CampDamage ;
+    disaster:hasHumanImpact :EVD_HumanImpact ;
+    disaster:hasEnvironmentalImpact :EVD_EnvironmentalImpact ;
+    disaster:hasVulnerabilityContext :CampSocialVulnerability .
+
+:EVD_HumanImpact a impact:HumanImpact, impact:Impact ;
+    skos:prefLabel "Human impact: 1240 cases, 540 deaths"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    impact:hasImpactType impact:HumanImpactType ;
+    impact:hasImpactIntensity impact:VeryHighImpactIntensity ;
+    impact:hasReportedImpactType impact:HumanImpactType ;
+    impact:affects :CampAkele_Population .
+
+# Disease manifestation (uses the v0.1 mp:manifestsCondition; will become subPropertyOf hasComponent in v2.3)
+:EVD_HumanImpact mp:manifestsCondition ph:EbolaVirusDisease .
+
+:EVD_EnvironmentalImpact a impact:EnvironmentalImpact, impact:Impact ;
+    skos:prefLabel "Environmental impact: medical waste, contaminated water sources"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    impact:hasImpactType impact:EnvironmentalImpactType ;
+    impact:hasImpactIntensity impact:MediumImpactIntensity .
+
+:CampDamage a impact:HazardousEventDamage ;
+    skos:prefLabel "Damage to camp infrastructure during the response"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak .
+
+:DirectLoss_Nadira a impact:DirectEconomicLoss ;
+    skos:prefLabel "Direct economic loss — destroyed/condemned camp facilities"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    impact:hasMonetaryValue 42000000 ;
+    impact:hasCurrency "EUR" ;
+    impact:hasEconomicScopeType impact:DirectScope .
+
+:IndirectLoss_Nadira a impact:IndirectEconomicLoss ;
+    skos:prefLabel "Indirect economic loss — trade and tourism disruption"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    impact:hasMonetaryValue 85000000 ;
+    impact:hasCurrency "EUR" ;
+    impact:hasEconomicScope "mesoeconomic" ;
+    impact:hasEconomicScopeType impact:IndirectScope .
+
+# -----------------------------------------------------------------------------
+# GOVERNANCE (F6)
+# -----------------------------------------------------------------------------
+
+:Nadira_RiskGovernance a governance:RiskGovernance ;
+    skos:prefLabel "Risk governance arrangements activated for the outbreak"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    governance:inJurisdiction :NadiraJurisdiction, :EUJurisdiction ;
+    governance:involvesSector :HealthSector_Nadira ;
+    governance:involvesStakeholder :CivilSociety_Nadira ;
+    governance:involvesCivilSociety :CivilSociety_Nadira ;
+    governance:involvesCommunity :RefugeeCommunity_Akele ;
+    governance:usesTraditionalKnowledge "Community-led safe-burial practices co-designed with elders."@en ;
+    governance:guides :Nadira_RiskReductionStrategy .
+
+:Nadira_RiskReductionStrategy a governance:RiskReductionStrategy ;
+    skos:prefLabel "Outbreak risk-reduction strategy for the Akele camp"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    governance:appliesStrategy :Nadira_RiskManagementPlan .
+
+:Nadira_RiskManagementPlan a governance:RiskManagementPlan ;
+    skos:prefLabel "Outbreak risk-management plan, Camp Akele"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    governance:hasPolicyFramework :NadiraPolicy ;
+    governance:hasLegalFramework :NadiraLegal ;
+    governance:hasInstitutionalFramework :NadiraInstitutional ;
+    governance:implementsPlan :UCPM_Intervention, :CapDevPlan .
+
+# Phase sub-phase structure so CQ-GOV-P07 (isSubPhaseOf walk) returns rows.
+:ResponsePhase_Acute a response:Response, response:RiskReductionPhase ;
+    skos:prefLabel "Acute outbreak response sub-phase"@en ;
+    governance:isSubPhaseOf :ResponsePhase .
+:ResponsePhase_StandDown a response:Response, response:RiskReductionPhase ;
+    skos:prefLabel "Outbreak response stand-down sub-phase"@en ;
+    governance:isSubPhaseOf :ResponsePhase .
+
+:NadiraPolicy        a governance:Policy ;
+    skos:prefLabel "Nadira national outbreak policy"@en ;
+    governance:inJurisdiction :NadiraJurisdiction .
+:NadiraLegal         a governance:LegalFramework ; skos:prefLabel "Nadira public-health emergency legal framework"@en .
+:NadiraInstitutional a governance:Institution ; skos:prefLabel "Nadira National Emergency Coordination Committee"@en .
+
+# Four risk-management subtypes
+:Corrective_Mgmt   a governance:CorrectiveRiskManagement   ; skos:prefLabel "Corrective risk management: ring vaccination + ETU expansion"@en ;
+                   coref:concernsOccurrence :NadiraEbolaOutbreak ;
+                   governance:reducesExistingRisk :NadiraEVDRisk .
+:Prospective_Mgmt  a governance:ProspectiveRiskManagement  ; skos:prefLabel "Prospective risk management: regional pathogen surveillance upgrade"@en ;
+                   coref:concernsOccurrence :NadiraEbolaOutbreak ;
+                   governance:preventsNewRisk :NadiraEVDRisk .
+:Compensatory_Mgmt a governance:CompensatoryRiskManagement ; skos:prefLabel "Compensatory risk management: livelihood support + contingency funding"@en ;
+                   coref:concernsOccurrence :NadiraEbolaOutbreak ;
+                   governance:managesResidualRisk :ResidualRiskAfterRing .
+:Community_Mgmt    a governance:CommunityBasedRiskManagement; skos:prefLabel "Community-based risk management: peer educators + traditional leaders"@en ;
+                   coref:concernsOccurrence :NadiraEbolaOutbreak .
+
+:LocalIndigenous_Approach a governance:LocalAndIndigenousApproach ;
+    skos:prefLabel "Indigenous community-led safe-burial approach"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak .
+
+:Nadira_NationalPlatform a governance:NationalPlatformForDRR ;
+    skos:prefLabel "Nadira National Platform for DRR"@en ;
+    governance:inJurisdiction :NadiraJurisdiction .
+
+# Risk information feeding governance
+:Nadira_RiskInfo a governance:RiskInformation ;
+    skos:prefLabel "Consolidated risk information dossier"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak .
+
+# -----------------------------------------------------------------------------
+# RESPONSE / RECOVERY (F7)
+# -----------------------------------------------------------------------------
+
+:RingVaccinationMT a response:MeasureType ; skos:prefLabel "Ring vaccination"@en .
+:ContactTracingMT  a response:MeasureType ; skos:prefLabel "Contact tracing"@en .
+:SafeBurialMT      a response:MeasureType ; skos:prefLabel "Safe and dignified burial"@en .
+:PortHealthMT      a response:MeasureType ; skos:prefLabel "Port-of-entry health screening"@en .
+
+:LogisticsCapacityType a response:CapacityType ; skos:prefLabel "Logistics capacity"@en .
+:ClinicalCapacityType  a response:CapacityType ; skos:prefLabel "Clinical surge capacity"@en .
+
+:PreparednessPhase a response:Preparedness ;
+    skos:prefLabel "Outbreak preparedness phase"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    response:precedesPhase :ResponsePhase ;
+    response:linksToEWS :EWS_System .
+
+:ResponsePhase a response:Response ;
+    skos:prefLabel "Active outbreak response phase"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    response:precedesPhase :RecoveryPhase ;
+    response:involvesEmergencyService :EmergencyMedicalService ;
+    response:involvesMeasureType :RingVaccinationMT, :ContactTracingMT, :SafeBurialMT .
+
+:RecoveryPhase a response:Recovery ;
+    skos:prefLabel "Recovery / rehabilitation phase"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    response:precedesPhase :ReconstructionPhase ;
+    response:restoresAssetsAfter :NadiraEVDDisaster ;
+    response:restoresBasicServicesAfter :NadiraEVDDisaster ;
+    response:alignsWithPrinciple response:BuildBackBetter .
+
+:ReconstructionPhase a response:Reconstruction ;
+    skos:prefLabel "Reconstruction phase: water/sanitation, schools, livelihoods"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    response:alignsWithPrinciple response:BuildBackBetter ;
+    response:rebuildsInfrastructureAfter :NadiraEVDDisaster .
+
+:UCPM_Intervention a response:Intervention ;
+    skos:prefLabel "UCPM-coordinated intervention (May–Jul 2026)"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    response:involvesMeasureType :RingVaccinationMT, :ContactTracingMT ;
+    response:requiresCapacity :LogisticsCapacityType ;
+    response:lessensImpactOf hazard:BiologicalHazard ;
+    response:meetsNeedsOf :CampAkele_AffectedPopulation ;
+    response:involvesEmergencyService :EmergencyMedicalService ;
+    response:inDRMPhase :ResponsePhase ;
+    foundation:hasTemporalValidity [ a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-01"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-07-30"^^xsd:date ] ] ;
+    prov:wasAttributedTo agency:ECRC .
+
+:ContingencyPlan_Nadira a response:ContingencyPlanning ;
+    skos:prefLabel "Contingency plan: EVD outbreak escalation scenarios"@en ;
+    response:anticipates :UCPM_Intervention .
+
+:EvacuationPlan_Akele a response:EvacuationPlan ;
+    skos:prefLabel "Healthcare worker evacuation plan, Akele"@en ;
+    response:includesShelterInPlaceOption response:ShelterInPlace .
+
+:EmergencyEvacuation a response:Evacuation ;
+    skos:prefLabel "Aeromedical evacuation of two infected EU healthcare workers"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak .
+
+:EmergencyMedicalService a response:EmergencyService ;
+    skos:prefLabel "EU/WHO emergency medical service deployment"@en .
+
+# Mitigation + Prevention (early-phase actions)
+:Mitigation_Awareness a response:Mitigation ;
+    skos:prefLabel "Mitigation: public-awareness campaigns, hand hygiene, PPE distribution"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak .
+
+:Prevention_Surveillance a response:Prevention ;
+    skos:prefLabel "Prevention: regional pathogen surveillance + camp health screening"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak .
+
+# -----------------------------------------------------------------------------
+# INSTRUMENTS (F8)
+# -----------------------------------------------------------------------------
+
+:EWS_System a instruments:EarlyWarningSystem, instruments:MultiHazardEarlyWarningSystem ;
+    skos:prefLabel "ECDC EWRS multi-hazard EWS"@en ;
+    instruments:monitorsHazard hazard:BiologicalHazard ;
+    instruments:hasWarning :EWS_Warning_16Apr ;
+    instruments:hasEWSComponent :RKC_ECDC, :MFC_ECDC, :WDC_ECDC, :RPC_ECDC .
+
+:RKC_ECDC a instruments:RiskKnowledgeComponent ; instruments:hasComponentFunction :Function_RiskKnowledge ; skos:prefLabel "ECDC risk-knowledge component"@en .
+:MFC_ECDC a instruments:MonitoringAndForecastingComponent ; instruments:hasComponentFunction :Function_Monitoring ; skos:prefLabel "ECDC monitoring + forecasting component"@en .
+:WDC_ECDC a instruments:WarningDisseminationComponent ; instruments:hasComponentFunction :Function_Dissemination ; skos:prefLabel "ECDC warning-dissemination component"@en .
+:RPC_ECDC a instruments:ResponsePreparednessComponent ; instruments:hasComponentFunction :Function_ResponsePrep ; skos:prefLabel "ECDC response-preparedness component"@en .
+
+:Function_RiskKnowledge a instruments:EWSFunctionType ; skos:prefLabel "Risk knowledge"@en .
+:Function_Monitoring    a instruments:EWSFunctionType ; skos:prefLabel "Monitoring + forecasting"@en .
+:Function_Dissemination a instruments:EWSFunctionType ; skos:prefLabel "Warning dissemination"@en .
+:Function_ResponsePrep  a instruments:EWSFunctionType ; skos:prefLabel "Response preparedness"@en .
+
+:EWS_Warning_16Apr a instruments:Warning ;
+    skos:prefLabel "EWRS warning broadcast — 16 Apr"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    instruments:isWarningOf :EbolaOutbreakEvent ;
+    instruments:disseminatesWarningTo :RefugeeCommunity_Akele, agency:ECRC, agency:WHO ;
+    instruments:enablesPreparedness :PreparednessPhase ;
+    instruments:forecastsEvent :EbolaOutbreakEvent .
+
+# Structural and non-structural measures
+:ETU_FieldStructure a instruments:Structure, instruments:CriticalInfrastructure ;
+    skos:prefLabel "Ebola Treatment Unit prefab structures at Camp Akele"@en .
+
+:CampBuildingCode a instruments:BuildingCode ;
+    skos:prefLabel "Camp construction code for biosafety"@en ;
+    instruments:regulatesConstruction :ETU_FieldStructure .
+
+:CampRetrofitting a instruments:Retrofitting ;
+    skos:prefLabel "Retrofitting of camp water systems for cholera prevention"@en ;
+    instruments:upgradesStructure :CampWaterSystem .
+
+:CampStructuralMeasure a instruments:StructuralMeasure, instruments:Measure ;
+    skos:prefLabel "Construction of dedicated isolation wards"@en ;
+    instruments:increasesResistanceTo hazard:BiologicalHazard .
+
+:PortScreening_NonStructural a instruments:NonStructuralMeasure, instruments:Measure ;
+    skos:prefLabel "Port-of-entry health screening in EU MS"@en ;
+    instruments:reducesImpactOf hazard:BiologicalHazard .
+
+# Disaster loss database (F8)
+:Nadira_DLDB a instruments:DisasterLossDatabase ;
+    skos:prefLabel "Nadira disaster loss database, EVD outbreak record"@en ;
+    instruments:recordsLossFrom :NadiraEVDDisaster ;
+    instruments:recordsImpactData :EVD_HumanImpact ;
+    instruments:recordsDamageData :CampDamage .
+
+# Risk transfer instruments (F8)
+:EU_CATBond_PandemicTrigger a instruments:CatastropheBond, instruments:RiskTransfer ;
+    skos:prefLabel "EU pandemic-trigger catastrophe bond payout"@en ;
+    instruments:fromParty agency:HERA ;
+    instruments:toParty agency:NadiraMoH ;
+    instruments:hasTransferMechanism :CATBondMechanism ;
+    instruments:transfersFinancialRisk :ResidualRiskAfterRing .
+
+:CATBondMechanism a instruments:RiskTransferMechanism ; skos:prefLabel "Parametric pandemic trigger"@en .
+
+:Nadira_ContingentCredit a instruments:ContingentCreditFacility, instruments:RiskTransfer ;
+    skos:prefLabel "Contingent credit facility activated for the outbreak"@en ;
+    instruments:fromParty agency:HERA ;
+    instruments:toParty agency:NadiraMoH .
+
+:Nadira_Insurance a instruments:Insurance, instruments:RiskTransfer ;
+    skos:prefLabel "Sovereign parametric insurance — Nadira public-health pool"@en ;
+    instruments:fromParty :CommercialReinsurer ;
+    instruments:toParty agency:NadiraMoH .
+
+:Nadira_Reinsurance a instruments:Reinsurance, instruments:RiskTransfer ;
+    skos:prefLabel "Reinsurance backing the sovereign pool"@en ;
+    instruments:transfersFinancialRisk :Nadira_Insurance ;
+    instruments:fromParty :CommercialReinsurer ;
+    instruments:toParty agency:HERA .
+
+:CommercialReinsurer a prov:Organization ; skos:prefLabel "Commercial reinsurance counterparty (synthetic)"@en .
+
+:Nadira_ReserveFund a instruments:ReserveFund ;
+    skos:prefLabel "National epidemic reserve fund"@en ;
+    instruments:isProvidedBy agency:NadiraMoH .
+
+:EU_NCF a instruments:NationalContingencyFund ;
+    skos:prefLabel "EU emergency contingency fund disbursement"@en ;
+    instruments:isProvidedBy agency:ECRC .
+
+# Essential services
+:WaterSupplyService a instruments:EssentialService ;
+    skos:prefLabel "Water-supply essential service"@en ;
+    instruments:isProvidedBy :RefugeeHealthFacility .
+
+:RefugeeHealthFacility instruments:providesEssentialService :WaterSupplyService .
+
+# Damage record linked to the loss database (for CQ-IMP-P07)
+:CampDamage impact:isRecordedIn :Nadira_DLDB .
+
+# -----------------------------------------------------------------------------
+# DRIVERS (F9)
+# -----------------------------------------------------------------------------
+
+:Nadira_ClimateDriver a drivers:ClimateChangeAndVariability ;
+    skos:prefLabel "Climate-change-driven habitat shift of fruit-bat reservoirs"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:operatesThrough :CampSocialVulnerability ;
+    foundation:hasLocation :CampAkele .
+
+:Nadira_PovertyDriver a drivers:PovertyAndInequality ;
+    skos:prefLabel "Poverty and inequality in displaced populations"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:reducesCapacity :LocalCopingCapacity ;
+    drivers:increasesVulnerability :CampSocialVulnerability ;
+    foundation:hasLocation :CampAkele .
+
+:Nadira_DemographicDriver a drivers:DemographicChange ;
+    skos:prefLabel "Demographic change: rapid refugee inflow"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:increasesExposure :CampExposure .
+
+:Nadira_EnvDegradationDriver a drivers:EnvironmentalDegradation ;
+    skos:prefLabel "Environmental degradation: forest fragmentation"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:increasesExposure :CampExposure ;
+    drivers:increasesVulnerability :RegionalEnvironmentalVulnerability .
+
+:Nadira_UrbanizationDriver a drivers:UnplannedUrbanization ;
+    skos:prefLabel "Unplanned urbanisation around the camp"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:increasesExposure :CampExposure ;
+    drivers:increasesVulnerability :CampSocialVulnerability .
+
+:Nadira_WeakGovDriver a drivers:WeakGovernance ;
+    skos:prefLabel "Weak local governance / pre-existing instability"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:reducesCapacity :LocalCopingCapacity .
+
+# Compounding among drivers
+:Nadira_ClimateDriver drivers:isCompoundedBy :Nadira_EnvDegradationDriver .
+:Nadira_PovertyDriver drivers:isCompoundedBy :Nadira_WeakGovDriver, :Nadira_UrbanizationDriver .
+
+# Class-level (punned) driver assertions so CQs that quantify over the named drivers
+# (drivers:ClimateChangeAndVariability, drivers:EnvironmentalDegradation, ...) return rows.
+drivers:ClimateChangeAndVariability drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:increasesExposure :CampExposure ;
+    drivers:increasesVulnerability :CampSocialVulnerability ;
+    drivers:reducesCapacity :LocalCopingCapacity .
+drivers:EnvironmentalDegradation    drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:increasesExposure :CampExposure ;
+    drivers:increasesVulnerability :RegionalEnvironmentalVulnerability ;
+    drivers:reducesCapacity :LocalCopingCapacity .
+drivers:UnplannedUrbanization       drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:increasesExposure :CampExposure ;
+    drivers:increasesVulnerability :CampSocialVulnerability ;
+    drivers:reducesCapacity :LocalCopingCapacity .
+drivers:PovertyAndInequality        drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:reducesCapacity :LocalCopingCapacity ;
+    drivers:increasesVulnerability :CampSocialVulnerability .
+drivers:DemographicChange           drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:increasesExposure :CampExposure .
+drivers:WeakGovernance              drivers:drivesRisk :NadiraEVDRisk ;
+    drivers:reducesCapacity :LocalCopingCapacity .
+:LocalCopingCapacity capacity:isManagedBy :NadiraInstitutional .
+:NadiraInstitutional governance:inJurisdiction :NadiraJurisdiction .
+
+# HERA priority level asserted directly (CQ-HERA-P01 expects the property-chain result;
+# without OWL-RL reasoners materialising property chains, this triple is needed).
+ph:ZaireEbolavirus hera:hasPriorityLevel hera:VeryHigh_Priority .
+
+# Bump EU cross-border threat to VeryHigh so CQ-HERA-P05 returns the pathogen.
+:CB_Ebola foundation:hasLevel hera:VeryHigh_EUCrossBorderThreatPotential .
+
+# -----------------------------------------------------------------------------
+# HUB CONSOLIDATION (COREF)
+# -----------------------------------------------------------------------------
+
+# Self-typing on the BiologicalHazard punned individual + category linkage,
+# so CQ-IMP-P06 (env impact × hazard category) and CQ-X-P07 (Pathogen + BiologicalHazard) match.
+hazard:BiologicalHazard a hazard:BiologicalHazard ;
+    hazard:hasHazardCategory foundation:Biological .
+
+# Also add disaster location overlap with jurisdiction so CQ-X-P09 (disasters in jurisdiction) matches.
+:EbolaOutbreakEvent foundation:hasLocation :NadiraJurisdiction .
+:NadiraEVDDisaster  foundation:hasLocation :NadiraJurisdiction ;
+    disaster:exceedsCapacityOf :LocalCopingCapacity .
+
+:NadiraHubAssessment_v1 a coref:HubAssessment ;
+    skos:prefLabel "Consolidated hub assessment of the Nadira outbreak — v1, 12 May"@en ;
+    coref:appliesMergePolicy :LatestNonCorrectedPolicy ;
+    coref:aggregatesAssessment :Cls_t2_zaire ;
+    coref:hasConflictReport :ConflictReport_MarburgVsEbola ;
+    prov:wasAttributedTo agency:ECRC ;
+    prov:generatedAtTime "2026-05-12T09:00:00Z"^^xsd:dateTime .
+
+:LatestNonCorrectedPolicy a coref:MergePolicy ;
+    skos:prefLabel "Latest non-corrected classification wins"@en .
+
+:NadiraEbolaOutbreak coref:hostsAssessment :NadiraHubAssessment_v1 .

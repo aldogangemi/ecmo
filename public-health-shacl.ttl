@@ -1,0 +1,61 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix ph: <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix hera: <http://data.europa.eu/h8v/ecmo/hera/>  .
+@prefix shacl-ecmo: <http://data.europa.eu/h8v/ecmo/shapes/> .
+
+shacl-ecmo:PathogenCharacteristicShape
+  a sh:NodeShape ;
+  sh:targetClass hazard:PathogenCharacteristic ;
+  sh:property [
+      sh:path ph:hasObservationSource ;
+      sh:minCount 1 ;
+      sh:class ph:ObservationSource ;
+      sh:message "The property hasObservationSource for the PathogenCharacteristic class must have at least one value of type ObservationSource."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+    sh:path [ sh:inversePath ph:hasCausativeAgent ] ;
+    sh:minCount 1 ;
+    sh:message "Every instance of PathogenCharacteristic must have at least one isCausativeAgentOf property. "@en ;
+    sh:resultSeverity sh:Violation ;
+  ].
+
+shacl-ecmo:PathogenShape
+  a sh:NodeShape ;
+  sh:targetClass ph:Pathogen ;
+  sh:property [
+        sh:path ph:hasOrganismRole ;
+        sh:hasValue ph:PathogenRole ;
+        sh:minCount 1 ;
+        sh:message "Every instance of Pathogen class must have at least one hasOrganismRole property with the value PathogenRole."@€n ;
+        sh:resultSeverity sh:Violation ;
+    ] ;
+    sh:property [
+      sh:path hera:hasPriority ;
+      sh:maxCount 1 ]
+    ] .
+
+shacl-ecmo:PestShape
+  a sh:NodeShape ;
+  sh:targetClass ph:Pest ;
+  sh:property [
+        sh:path ph:hasRole ;
+        sh:hasValue ph:Biol.ogicalHazard ;
+        sh:minCount 1 ;
+        sh:message "Every instance of Pest class must have at least one hasRole property with the value BiologicalHazard."@en ;
+        sh:resultSeverity sh:Violation ;
+    ] .
+
+shacl-ecmo:SusceptibleHostShape
+  a sh:NodeShape ;
+  sh:targetClass ph:SusceptibleHost ;
+  sh:property [
+        sh:path ph:hasOrganismRole ;
+        sh:hasValue ph:SusceptibleHostRole ;
+        sh:minCount 1 ;
+        sh:message "Every instance of SusceptibleHost class must have at least one hasOrganismRole property with the value SusceptibleHostRole."@en ;
+        sh:resultSeverity sh:Violation ;
+    ] .

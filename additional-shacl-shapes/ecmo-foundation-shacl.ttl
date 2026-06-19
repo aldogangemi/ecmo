@@ -1,0 +1,50 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix shacl-ecmo: <http://data.europa.eu/h8v/ecmo/shapes/> .
+
+shacl-ecmo:EventValidationShape
+  a sh:NodeShape ;
+  sh:targetClass foundation:EventValidation ;
+  sh:property [
+      sh:path foundation:validatesSignal ;
+      sh:minCount 1 ;
+      sh:class foundation:Signal ;
+      sh:message "Every instance of the EventValidation class must have at least one value of the property validatesSignal of type Signal."@en ;
+      sh:resultSeverity sh:Violation
+  ] .
+
+shacl-ecmo:QualitativeAssessmentLevelScaleShape
+  a sh:NodeShape ;
+  sh:targetClass foudation:QualityAssessmentLevelScale ;
+  sh:property [
+      sh:path [ sh:inversePath foundation:inScale ] ;
+      sh:uniqueLang false ;
+      sh:qualifiedValueShape [ sh:path foundation:orderInScale ] ;
+      sh:qualifiedMaxCount 1 ;
+      sh:resultSeverity sh:Violation
+  ] .
+
+shacl-ecmo:RiskAssessmentReportShape
+  a sh:NodeShape ;
+  sh:targetClass foudation:RiskAssessmentReport ;
+  sh:property [
+      sh:path foundation:assessesRisk;
+      sh:minCount 1 ;
+      sh:class foundation:Risk ;
+      sh:message "Every instance of the RiskAssessmentReport class must have at least one value of the property assessesRisk of type Risk."@en ;
+      sh:resultSeverity sh:Violation
+  ] .
+
+shacl-ecmo:SignalShape
+  a sh:NodeShape ;
+  sh:targetClass foudation:Signal ;
+  sh:property [
+      sh:path foundation:hasConfidenceScore;
+      sh:minCount 1 ;
+      sh:datatype xsd:decimal ;
+      sh:message "Every instance of the Signal class must have at least one value of the property hasConfidenceScore of type xsd:decimal."@en ;
+      sh:resultSeverity sh:Violation
+  ] .

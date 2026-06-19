@@ -1,0 +1,135 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix shacl-ecmo: <http://data.europa.eu/h8v/ecmo/shapes/> .
+
+shacl-ecmo:HazardousEventShape
+  a sh:NodeShape ;
+  sh:targetClass hazard:HazardousEvent ;
+  sh:property [
+      sh:path hazard:hasLocation ;
+      sh:minCount 1 ;
+      sh:message "The property hasLocation for HazardousEvent must have at least one object."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+      sh:path hazard:hasLocation ;
+      sh:class hazard:Place ;
+      sh:message "The property hasLocation must have as range a class of type Place."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:or (
+    [ sh:path hazard:hasIntensityObservation ; sh:minCount 1 ]
+    [ sh:path hazard:hasSeverityAssessment ; sh:minCount 1 ]
+    )
+  ] ;
+  sh:property [
+      sh:path hazard:hasTemporalExtent ;
+      sh:minCount 1 ;
+      sh:message "The property hasTemporalExtent for HazardousEvent must have at least one object."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+      sh:path hazard:hasTemporalExtent ;
+      sh:class hazard:TimeInterval ;
+      sh:message "The property hasTemporalExtent must have as range a class of type TimeInterval."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+      sh:path hazard:isManifestationOf ;
+      sh:minCount 1 ;
+      sh:message "The property isManifestationOf for HazardousEvent must have at least one object."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+      sh:path hazard:isManifestationOf ;
+      sh:class hazard:Hazard ;
+      sh:message "The property isManifestationOf must have as range a class of type Hazard."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+      sh:path hazard:involvesIntervention ;
+      sh:minCount 1 ;
+      sh:message "The property involvesIntervention for HazardousEvent must have at least one object."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+      sh:path hazard:involvesIntervention ;
+      sh:class hazard:Intervention ;
+      sh:message "The property involvesIntervention must have as range a class of type Intervention."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+      sh:path hazard:hasCascadingEffect ;
+      sh:minCount 0 ;
+      sh:class harzard:Eventuality ;
+      sh:message "The property hasCascadingEffect is optional and must have as range a class of type Eventuality."en ;
+      sh:resultSeverity sh:Violation ;
+  ] .
+
+shacl-ecmo:IntensityObservationShape
+  a sh:NodeShape ;
+  sh:targetClass hazard:IntensityObservation ;
+  sh:property [
+      sh:path hazard:hasNumericValue ;
+      sh:minCount 1 ;
+      sh:datatype xsd:decimal ;
+      sh:message "The property hasNumericValue for the IntensityObservation class must have at least one value of type xsd:decimal."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+      sh:path hazard:usesScale ;
+      sh:minCount 1 ;
+      sh:class hazard:QuantitativeScale ;
+      sh:message "The property usesScale for the IntesityObservation class must have at least one value of type QuantitativeScale."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] .
+
+shacl-ecmo:MagnitudeObservationShape
+  a sh:NodeShape ;
+  sh:targetClass hazard:MagnitudeObservation ;
+  sh:property [
+      sh:path hazard:hasNumericValue ;
+      sh:minCount 1 ;
+      sh:datatype xsd:decimal ;
+      sh:message "The property hasNumericValue for the MagnitudeObservation class must have at least one value of type xsd:decimal."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] ;
+  sh:property [
+      sh:path hazard:usesScale ;
+      sh:minCount 1 ;
+      sh:class hazard:QuantitativeScale ;
+      sh:message "The property usesScale for the MagnitudeObservation class must have at least one value of type QuantitativeScale."@en ;
+      sh:resultSeverity sh:Violation ;
+  ] .
+
+shacl-ecmo:SeverityAssessmentShape
+    a sh:NodeShape ;
+    sh:targetClass hazard:SeverityAssessment ;
+    sh:property [
+        sh:path hazard:hasStringValue ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "The property hasStringValue for the SeverityAssessment class must have at least one value of type xsd:string."@en ;
+        sh:resultSeverity sh:Violation ;
+    ] ;
+    sh:property [
+        sh:path hazard:usesScale ;
+        sh:minCount 1 ;
+        sh:class hazard:QuantitativeScale ;
+        sh:message "The property usesScale for the SeverityAssessment class must have at least one value of type QuantitativeScale."@en ;
+        sh:resultSeverity sh:Violation ;
+    ] .
+
+shacl-ecmo:MultiHazardContextShape
+    a sh:NodeShape ;
+    sh:targetClass hazard:MultiHazardContext ;
+    sh:property [
+        sh:path hazard:involvesHazard ;
+        sh:minCount 2 ;
+        sh:class hazard:Hazard ;
+        sh:message "The property involvesHazard for the MultiHazardContext class must have at least two values of type Hazard."@en ;
+        sh:resultSeverity sh:Violation ;
+    ] .

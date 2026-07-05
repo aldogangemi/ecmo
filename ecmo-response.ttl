@@ -54,7 +54,7 @@ response:precedesPhase a owl:ObjectProperty,
 
 response:requiresCapacity a owl:ObjectProperty ;
     rdfs:comment "Relates an intervention/measure type to the capacity type required for its implementation."@en ;
-    rdfs:domain response:MeasureType ;
+    rdfs:domain [ owl:unionOf ( hazard:Hazard hazard:HazardousEvent ) ] ;
     rdfs:range response:CapacityType ;
     skos:prefLabel "requires capacity"@en,
         "richiede capacità"@it .

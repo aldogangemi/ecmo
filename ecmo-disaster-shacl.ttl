@@ -1,0 +1,122 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix disaster: <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix shacl-ecmo: <http://data.europa.eu/h8v/ecmo/shapes/> .
+
+shacl-ecmo:DisasterShape
+  a sh:NodeShape ;
+  sh:targetClass disaster:Disaster ;
+  sh:and (
+      [ sh:class hazard:HazardousEvent ] ;
+       [
+        sh:path hazard:hasImpact ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [
+          sh:class impact:Impact ;
+          sh:property [
+             sh:path impact:hasImpactIntensity ;
+             sh:hasValue impact:VeryHighImpactIntensity ;
+          ] ;
+        ] ;
+      ]
+ ) .
+
+shacl-ecmo:FrequentDisasterShape
+ a sh:NodeShape ;
+ sh:targetClass disaster:FrequentDisaster ;
+ sh:not [
+       sh:class disaster:InfrequentDisaster ;
+       sh:message "A FrequentDisaster is not an InfrequentDisaster."@en ;
+       sh:resultSeverity sh:Violation
+ ] ;
+ sh:property [
+      sh:path disaster:hasFrequencyType ;
+      sh:minCount 1 ;
+      sh:hasValue disaster:HighFrequency ;
+      sh:message "Every instance of the class FrequentDisaster must have at least one property hasFrequencyType with value HighFrequency"@en ;
+      sh:resultSeverity sh:Violation
+ ] .
+
+shacl-ecmo:InFrequentDisasterShape
+    a sh:NodeShape ;
+    sh:targetClass disaster:InFrequentDisaster ;
+    sh:not [
+          sh:class disaster:FrequentDisaster ;
+          sh:message "A InFrequentDisaster is not a FrequentDisaster."@en ;
+          sh:resultSeverity sh:Violation
+    ] ;
+    sh:property [
+         sh:path disaster:hasFrequencyType ;
+         sh:minCount 1 ;
+         sh:hasValue disaster:LowFrequency ;
+         sh:message "Every instance of the class InFrequentDisaster must have at least one property hasFrequencyType with value LowFrequency"@en ;
+         sh:resultSeverity sh:Violation
+] .
+
+
+shacl-ecmo:LargeScaleDisasterShape
+    a sh:NodeShape ;
+    sh:targetClass disaster:LargeScaleDisaster ;
+    sh:not [
+          sh:class disaster:SmallScaleDisaster ;
+          sh:message "A LargeScaleDisaster is not a SmallScaleDisaster."@en ;
+          sh:resultSeverity sh:Violation
+    ] ;
+    sh:property [
+         sh:path disaster:hasScaleType ;
+         sh:minCount 1 ;
+         sh:hasValue disaster:LargeScale;
+         sh:message "Every instance of the class LargeScaleDisaster must have at least one property hasScaleType with value LargeScale."@en ;
+         sh:resultSeverity sh:Violation
+] .
+
+shacl-ecmo:SmallScaleDisasterShape
+    a sh:NodeShape ;
+    sh:targetClass disaster:SmallScaleDisaster ;
+    sh:not [
+          sh:class disaster:LargeScaleDisaster ;
+          sh:message "A SmallScaleDisaster is not a LargeScaleDisaster."@en ;
+          sh:resultSeverity sh:Violation
+    ] ;
+    sh:property [
+         sh:path disaster:hasScaleType ;
+         sh:minCount 1 ;
+         sh:hasValue disaster:SmallScale;
+         sh:message "Every instance of the class SmallScaleDisaster must have at least one property hasScaleType with value SmallScale."@en ;
+         sh:resultSeverity sh:Violation
+] .
+
+shacl-ecmo:SlowOnsetDisasterShape
+    a sh:NodeShape ;
+    sh:targetClass disaster:SlowOnsetDisaster ;
+    sh:not [
+          sh:class disaster:SuddenOnsetDisaster ;
+          sh:message "A SlowOnsetDisaster is not a SuddenOnsetDisaster."@en ;
+          sh:resultSeverity sh:Violation
+    ] ;
+    sh:property [
+         sh:path disaster:hasOnsetType ;
+         sh:minCount 1 ;
+         sh:hasValue disaster:SlowOnset;
+         sh:message "Every instance of the class SlowOnsetDisaster must have at least one property hasOnsetType with value SlowOnset."@en ;
+         sh:resultSeverity sh:Violation
+] .
+
+shacl-ecmo:SuddenOnsetDisasterShape
+    a sh:NodeShape ;
+    sh:targetClass disaster:SuddenOnsetDisaster ;
+    sh:not [
+          sh:class disaster:SlowOnsetDisaster ;
+          sh:message "A SuddenOnsetDisaster is not a SlowOnsetDisaster."@en ;
+          sh:resultSeverity sh:Violation
+    ] ;
+    sh:property [
+         sh:path disaster:hasOnsetType ;
+         sh:minCount 1 ;
+         sh:hasValue disaster:SuddenOnset;
+         sh:message "Every instance of the class SuddenOnsetDisaster must have at least one property hasOnsetType with value SuddenOnset."@en ;
+         sh:resultSeverity sh:Violation
+] .

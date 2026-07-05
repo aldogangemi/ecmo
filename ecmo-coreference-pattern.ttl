@@ -1,0 +1,564 @@
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix cqs:         <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:          <http://www.w3.org/ns/shacl#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix time:        <http://www.w3.org/2006/time#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# Fixture-only prefixes (agency-local vocabularies; placeholders for the alignment module).
+@prefix ews:         <http://example.org/agency/ews/> .
+@prefix argus:       <http://example.org/agency/argus/> .
+@prefix ecrc:        <http://example.org/agency/ecrc/> .
+@prefix athina:      <http://example.org/agency/athina/> .
+@prefix ipcr:        <http://example.org/agency/ipcr/> .
+@prefix ecmp:        <http://example.org/agency/ecmp/> .
+@prefix agency:      <http://example.org/agency/> .
+@prefix ex:          <http://data.europa.eu/h8v/ecmo/examples/hondius/> .
+
+# =============================================================================
+# ECMO Data-Level Coreference Pattern (EVENT-COREF-1) — v0.1
+#
+# Solves the problem the schema-alignment layer cannot solve on its own:
+# multiple local Situations (typed via the agency-local ontologies and their
+# alignment to ECMO) all concern one world-occurrence, with classifications
+# that evolve over time and per-agency claims that may refine or correct
+# each other. Defines the Occurrence anchor, reified Classification
+# Situations, the supersession chain with refinement vs correction
+# sub-properties, and the optional Hub layer (HubAssessment + MergePolicy +
+# ConflictReport) for adjudicated consolidation.
+#
+# Schema-level cross-stakeholder Description integration is OUT OF SCOPE: it
+# is handled by the alignment module (each agency-local class -> ECMO core
+# class). This pattern operates on the ABox layer only.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/coref> a owl:Ontology ;
+    dcterms:creator    "ECMO design team" ;
+    dcterms:issued     "2026-06-03"^^xsd:date ;
+    dcterms:license    <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment       "Data-level coreference pattern for ECMO: how to associate multiple agency-local Situations that concern a single world-occurrence whose hazard classification evolves over time."@en ;
+    cpa:hasIntent      "Provide an ABox-level coreference mechanism that (i) anchors heterogeneous agency-local Situations to a single world-occurrence without owl:sameAs collapsing them, (ii) reifies hazard classification as a time-stamped Situation that can be refined or corrected over time, (iii) supports adjudicated consolidation via an optional Hub layer with reified conflict reports and merge policies."@en ;
+    cpa:scenarios      "Scenario A — Hantavirus outbreak aboard MV Hondius. A first signal on 02 May 2026 reports an outbreak of unknown etiology. On 03-06 May the etiology is narrowed to Hantaviridae. On 08 May PCR identifies Andes hantavirus. Six EU systems (EWS, ARGUS, ECRC/UCPM, ATHINA, IPCR, ECMP) emit local records at different points. All concern one Occurrence; the classification refines monotonically through the Hantaviridae taxonomy."@en ;
+    cpa:coversRequirements "CQ-COREF-P01..P09 plus CQ-COREF-N01..N04 (in this file). Pattern-specific Q+ exercise occurrence-anchored queries, time-bounded classification retrieval, supersession-chain walking and Hub aggregation. Q- guard against owl:sameAs leakage, against simultaneous conflicting classifications at the same epistemic instant, against refinedBy violating fschema:subsumedUnder, and against orphan local situations."@en ;
+    cpa:hasConsequences "Local situations remain typed under their agency-local class (via the alignment module). The Occurrence anchor adds one shared reference. Classification evolution is captured without retraction. Conflicts are reified, not erased. owl:sameAs is never asserted between local situations: coreference is computed via shared concernsOccurrence target. Backward compatibility: existing foundation:Signal/EventValidation/RiskAssessmentReport scaffolding is reused without change."@en ;
+    cpa:hasComponent   ecmocore:foundation, ecmocore:hazard, ecmocore:disaster,
+                       ecmocore:governance,
+                       <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cpa:relatedCPs     <http://www.ontologydesignpatterns.org/cp/owl/descriptionandsituation.owl> ,
+                       <http://www.w3.org/ns/prov#> ,
+                       <http://www.w3.org/2006/time#> ;
+    cpa:extractedFrom  <http://data.europa.eu/h8v/ecmo/core> ;
+    owl:imports        <http://data.europa.eu/h8v/ecmo/core> ;
+    owl:versionInfo    "0.1" ;
+    skos:prefLabel     "ECMO Data-Level Coreference Pattern"@en .
+
+# =============================================================================
+# Vocabulary stubs — classes
+# =============================================================================
+
+coref:Occurrence a owl:Class ;
+    rdfs:subClassOf dul:Situation ;
+    rdfs:comment "A minimal-commitment world-occurrence anchor. Carries only the spatio-temporal kernel that all agencies are presumed to agree on (location, opening time, and optionally a closing time). Does not carry hazard typing, severity, impacts or any claim that is subject to inter-agency disagreement. All such claims live on linked Situations (HazardClassificationSituation, StakeholderSituation, etc.) via concernsOccurrence."@en ;
+    skos:editorialNote "An Occurrence is a Situation, not an Event, because it is the referent of multiple agency-local situations rather than a happening in its own right. Local situations may type themselves as dul:Event under alignment; the Occurrence does not."@en ;
+    skos:prefLabel "Occurrence (world-event anchor)"@en .
+
+coref:HazardClassificationSituation a owl:Class ;
+    rdfs:subClassOf dul:Situation ;
+    rdfs:comment "A reified hazard typing assertion holding over a specified epistemic interval. classifiesAs points to the Hazard individual asserted to hold; foundation:hasTemporalValidity bounds when the assertion was held to be true; supersededBy chains to the next classification (with refinedBy / correctedBy sub-properties capturing whether the change is taxonomic refinement or belief retraction)."@en ;
+    skos:prefLabel "Hazard Classification Situation"@en .
+
+coref:StakeholderAssessment a owl:Class ;
+    rdfs:subClassOf dul:Description ;
+    rdfs:comment "A per-stakeholder Description used at the Hub layer when adjudicated consolidation is performed. Optional at the data layer: agency-local class typings already function as descriptions via the alignment module. Reach for StakeholderAssessment only when explicit merge bookkeeping is needed."@en ;
+    skos:prefLabel "Stakeholder Assessment"@en .
+
+coref:HubAssessment a owl:Class ;
+    rdfs:subClassOf coref:StakeholderAssessment ;
+    rdfs:comment "A consolidated, hub-curated description that aggregates a set of StakeholderAssessments (or directly a set of local situations) and applies an explicit MergePolicy to resolve conflicts among them. The HubAssessment is itself attributable (prov:wasAttributedTo) and revisable."@en ;
+    skos:prefLabel "Hub Assessment"@en .
+
+coref:MergePolicy a owl:Class ;
+    rdfs:subClassOf dul:Description ;
+    rdfs:comment "A reified policy describing how a HubAssessment selected among conflicting per-agency claims (e.g. latest-wins, highest-confidence-wins, manual-adjudication, source-priority-list). Policies are first-class so the merge is auditable and replaceable."@en ;
+    skos:prefLabel "Merge Policy"@en .
+
+coref:ConflictReport a owl:Class ;
+    rdfs:subClassOf dul:InformationObject ;
+    rdfs:comment "A reified record of disagreement between two or more Situations or Descriptions about the same property of the same Occurrence. Carries the conflicting parties, the property in dispute, the values asserted by each, and (optionally) the resolution chosen by an enclosing HubAssessment."@en ;
+    skos:prefLabel "Conflict Report"@en .
+
+# =============================================================================
+# Vocabulary stubs — properties
+# =============================================================================
+
+coref:concernsOccurrence a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range  coref:Occurrence ;
+    rdfs:subPropertyOf prov:specializationOf ;
+    rdfs:comment "Links any local Situation (an agency record, a classification situation, an impact situation, etc.) to the single Occurrence it specialises. Functional on the local-situation side: each local situation specialises at most one Occurrence. Coreference between two local situations is *computed* via shared target, never asserted via owl:sameAs."@en ;
+    skos:prefLabel "concerns occurrence"@en .
+
+coref:isConcernedBy a owl:ObjectProperty ;
+    owl:inverseOf coref:concernsOccurrence ;
+    skos:prefLabel "is concerned by"@en .
+
+coref:sameOccurrenceAs a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range  dul:Situation ;
+    rdfs:subPropertyOf prov:alternateOf ;
+    rdfs:comment "Soft equivalence: two records concern the same world-occurrence under different perspectives. Symmetric, NOT transitive at the OWL level (we deliberately exclude transitivity so that mis-asserted pairs do not propagate through the graph). Weaker than owl:sameAs: does not entail identity of properties. Use when an Occurrence anchor cannot yet be minted; otherwise prefer pointing both situations at a shared coref:Occurrence."@en ;
+    skos:editorialNote "Do NOT declare owl:TransitiveProperty on sameOccurrenceAs. A SHACL shape can flag long sameOccurrenceAs chains as candidates for promotion to a shared concernsOccurrence target."@en ;
+    skos:prefLabel "same occurrence as"@en .
+
+coref:classifiesAs a owl:ObjectProperty ;
+    rdfs:domain coref:HazardClassificationSituation ;
+    rdfs:range  hazard:Hazard ;
+    rdfs:comment "Points from a reified classification situation to the Hazard individual asserted to hold at the corresponding epistemic interval. Use Hazard individuals (e.g. ph:Hantaviridae, ph:AndesVirus), not classes — taxonomic relations among them are carried by fschema:subsumedUnder."@en ;
+    skos:prefLabel "classifies as"@en .
+
+coref:supersededBy a owl:ObjectProperty, owl:AsymmetricProperty, owl:IrreflexiveProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range  dul:Situation ;
+    rdfs:subPropertyOf prov:wasInvalidatedBy ;
+    rdfs:comment "The later situation invalidates the earlier within the epistemic chain concerning the same Occurrence. Asymmetric and irreflexive. NOT declared transitive at OWL level: we want the audit chain to be walkable step by step; transitive closure is left to query time (SPARQL property paths)."@en ;
+    skos:prefLabel "superseded by"@en .
+
+coref:supersedes a owl:ObjectProperty ;
+    owl:inverseOf coref:supersededBy ;
+    skos:prefLabel "supersedes"@en .
+
+coref:refinedBy a owl:ObjectProperty ;
+    rdfs:subPropertyOf coref:supersededBy ;
+    rdfs:comment "Taxonomic refinement: the later classification is a more specific Hazard individual subsumed (via fschema:subsumedUnder) under the earlier one. Entailments from the earlier classification REMAIN valid; the later simply tightens the bound. Example: a classification asserting ph:Hantaviridae is refinedBy a classification asserting ph:AndesVirus."@en ;
+    skos:editorialNote "A SHACL shape (see coref:RefinementMustBeTaxonomicShape below) enforces that the later classifiesAs target is fschema:subsumedUnder the earlier."@en ;
+    skos:prefLabel "refined by"@en .
+
+coref:refines a owl:ObjectProperty ;
+    owl:inverseOf coref:refinedBy ;
+    rdfs:subPropertyOf coref:supersedes ;
+    skos:prefLabel "refines"@en .
+
+coref:correctedBy a owl:ObjectProperty ;
+    rdfs:subPropertyOf coref:supersededBy ;
+    rdfs:comment "Belief retraction: the later classification replaces a wrong earlier one. Entailments from the earlier classification are NOT preserved; downstream reasoners should treat the earlier as retracted (but it remains in the graph for audit). Example: a classification asserting ph:LassaVirus is correctedBy a classification asserting ph:AndesVirus."@en ;
+    skos:prefLabel "corrected by"@en .
+
+coref:corrects a owl:ObjectProperty ;
+    owl:inverseOf coref:correctedBy ;
+    rdfs:subPropertyOf coref:supersedes ;
+    skos:prefLabel "corrects"@en .
+
+coref:aggregatesAssessment a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:domain coref:HubAssessment ;
+    rdfs:range  coref:StakeholderAssessment ;
+    rdfs:comment "From a HubAssessment to one of the StakeholderAssessments it consolidates. Transitive so a hierarchy of hubs (regional -> national -> EU-level) walks cleanly via property paths."@en ;
+    skos:prefLabel "aggregates assessment"@en .
+
+coref:appliesMergePolicy a owl:ObjectProperty ;
+    rdfs:domain coref:HubAssessment ;
+    rdfs:range  coref:MergePolicy ;
+    rdfs:comment "Links a HubAssessment to the MergePolicy that governed its consolidation choices. Multiple policies can be applied if the merge proceeded in stages."@en ;
+    skos:prefLabel "applies merge policy"@en .
+
+coref:hostsAssessment a owl:ObjectProperty ;
+    rdfs:domain coref:Occurrence ;
+    rdfs:range  coref:HubAssessment ;
+    rdfs:comment "Convenience reverse-direction shortcut from an Occurrence to the HubAssessment(s) currently maintaining a consolidated view of it."@en ;
+    skos:prefLabel "hosts assessment"@en .
+
+coref:conflictsWith a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range  dul:Situation ;
+    rdfs:comment "Symmetric: marks two co-occurrence-anchored situations as known to disagree on at least one property. The disagreement detail is reified by an associated ConflictReport via hasConflictReport."@en ;
+    skos:prefLabel "conflicts with"@en .
+
+coref:hasConflictReport a owl:ObjectProperty ;
+    rdfs:range coref:ConflictReport ;
+    rdfs:comment "From a Situation (or a HubAssessment) to a reified ConflictReport detailing a disagreement it is party to or has adjudicated."@en ;
+    skos:prefLabel "has conflict report"@en .
+
+coref:disputedProperty a owl:ObjectProperty ;
+    rdfs:domain coref:ConflictReport ;
+    rdfs:range  rdf:Property ;
+    rdfs:comment "Points to the property the parties to the conflict disagree about (e.g. hazard:isManifestationOf, hazard:hasSeverityLevel)."@en ;
+    skos:prefLabel "disputed property"@en .
+
+# =============================================================================
+# SHACL shapes — safety constraints
+# =============================================================================
+
+coref:RefinementMustBeTaxonomicShape a sh:NodeShape ;
+    sh:targetSubjectsOf coref:refinedBy ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "coref:refinedBy used between classifications whose later classifiesAs target is not fschema:subsumedUnder the earlier — should be coref:correctedBy instead."@en ;
+        sh:select """
+            PREFIX coref:   <http://data.europa.eu/h8v/ecmo/coref/>
+            PREFIX fschema: <https://w3id.org/framester/schema/>
+            SELECT $this ?later ?earlierHz ?laterHz WHERE {
+                $this coref:refinedBy ?later .
+                $this coref:classifiesAs ?earlierHz .
+                ?later coref:classifiesAs ?laterHz .
+                FILTER NOT EXISTS { ?laterHz fschema:subsumedUnder* ?earlierHz . }
+            }
+        """
+    ] .
+
+coref:NoConflictingClassificationAtSameInstantShape a sh:NodeShape ;
+    sh:targetClass coref:Occurrence ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Two non-comparable classifications hold simultaneously at the same instant for this Occurrence — exactly one should be valid (the others should be supersededBy)."@en ;
+        sh:select """
+            PREFIX coref:     <http://data.europa.eu/h8v/ecmo/coref/>
+            PREFIX foundation:<http://data.europa.eu/h8v/ecmo/core/foundation/>
+            PREFIX time:      <http://www.w3.org/2006/time#>
+            SELECT $this ?c1 ?c2 WHERE {
+                ?c1 a coref:HazardClassificationSituation ; coref:concernsOccurrence $this .
+                ?c2 a coref:HazardClassificationSituation ; coref:concernsOccurrence $this .
+                FILTER (STR(?c1) < STR(?c2))
+                FILTER NOT EXISTS { ?c1 coref:supersededBy+ ?c2 . }
+                FILTER NOT EXISTS { ?c2 coref:supersededBy+ ?c1 . }
+                ?c1 foundation:hasTemporalValidity ?i1 .
+                ?c2 foundation:hasTemporalValidity ?i2 .
+                ?i1 time:hasBeginning ?b1 .   OPTIONAL { ?i1 time:hasEnd ?e1 }
+                ?i2 time:hasBeginning ?b2 .   OPTIONAL { ?i2 time:hasEnd ?e2 }
+                FILTER ( BOUND(?e1) && BOUND(?e2) && ?b1 < ?e2 && ?b2 < ?e1 )
+            }
+        """
+    ] .
+
+coref:NoOwlSameAsBetweenLocalSituationsShape a sh:NodeShape ;
+    sh:targetClass dul:Situation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "owl:sameAs asserted between two local Situations that share a coref:Occurrence target — use shared concernsOccurrence instead; sameAs collapses provenance and is forbidden in this pattern."@en ;
+        sh:select """
+            PREFIX coref: <http://data.europa.eu/h8v/ecmo/coref/>
+            PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+            SELECT $this ?other WHERE {
+                $this owl:sameAs ?other .
+                $this coref:concernsOccurrence ?o .
+                ?other coref:concernsOccurrence ?o .
+                FILTER ($this != ?other)
+            }
+        """
+    ] .
+
+coref:NoOrphanStakeholderSituationShape a sh:NodeShape ;
+    sh:targetClass foundation:Signal ;
+    sh:property [
+        sh:path coref:concernsOccurrence ;
+        sh:minCount 1 ;
+        sh:message "Signal lacks a coref:concernsOccurrence link — orphan local record cannot participate in cross-agency coreference."@en
+    ] .
+
+# =============================================================================
+# Fixture A+ — Hantavirus outbreak aboard MV Hondius (the screenshot scenario)
+# =============================================================================
+
+# Hazard individuals used by the classifications (placeholders; the real
+# vocabulary lives in ecmo-public-health / a future viral taxonomy module).
+ex:UnknownDisease a hazard:BiologicalHazard, owl:NamedIndividual ;
+    skos:prefLabel "Unknown biological agent (etiology unknown)"@en .
+
+ph:Hantaviridae a hazard:BiologicalHazard, owl:NamedIndividual ;
+    fschema:subsumedUnder ph:Pathogen ;
+    skos:prefLabel "Hantaviridae"@en .
+
+ph:AndesVirus a hazard:BiologicalHazard, owl:NamedIndividual ;
+    fschema:subsumedUnder ph:Hantaviridae ;
+    skos:prefLabel "Andes orthohantavirus"@en .
+
+# Agencies
+agency:EWS   a prov:Organization ; skos:prefLabel "ECDC Early Warning System"@en .
+agency:ARGUS a prov:Organization ; skos:prefLabel "EU Commission ARGUS"@en .
+agency:ECRC  a prov:Organization ; skos:prefLabel "Emergency Response Coordination Centre (ECHO)"@en .
+agency:ATHINA a prov:Organization ; skos:prefLabel "ATHINA platform"@en .
+agency:IPCR  a prov:Organization ; skos:prefLabel "Integrated Political Crisis Response (Council)"@en .
+agency:ECMP  a prov:Organization ; skos:prefLabel "ECMP platform"@en .
+
+# The Occurrence anchor — minimal, agreed-upon kernel
+ex:HondiusOutbreak a coref:Occurrence ;
+    skos:prefLabel "Hantavirus outbreak aboard MV Hondius (May 2026)"@en ;
+    foundation:hasLocation ex:MV_Hondius_SouthAtlantic ;
+    disaster:hasTemporalExtent [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ]
+    ] .
+
+# Three reified hazard classifications, chained by refinedBy (all taxonomic)
+ex:Cls_t0_unknown a coref:HazardClassificationSituation ;
+    skos:prefLabel "Classification at t0 — unknown etiology"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    coref:classifiesAs ex:UnknownDisease ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-05-03"^^xsd:date ]
+    ] ;
+    coref:refinedBy ex:Cls_t1_hantaviridae ;
+    prov:wasAttributedTo agency:EWS .
+
+ex:Cls_t1_hantaviridae a coref:HazardClassificationSituation ;
+    skos:prefLabel "Classification at t1 — Hantaviridae family"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    coref:classifiesAs ph:Hantaviridae ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-03"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    coref:refinedBy ex:Cls_t2_andesvirus ;
+    prov:wasAttributedTo agency:ARGUS, agency:ECRC .
+
+ex:Cls_t2_andesvirus a coref:HazardClassificationSituation ;
+    skos:prefLabel "Classification at t2 — Andes hantavirus (PCR-confirmed)"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    coref:classifiesAs ph:AndesVirus ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    prov:wasAttributedTo agency:IPCR .
+
+# Per-agency local Situations — typed via the alignment module to ECMO foundation classes.
+# The local class typings (ews:Notification, argus:Phase1_Event, etc.) are kept as the
+# stakeholder descriptions at the data layer — no separate StakeholderAssessment needed.
+ex:s_ews_n1 a ews:Notification, foundation:Signal ;
+    skos:prefLabel "EWS notification of unknown outbreak — 02 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:EWS ;
+    foundation:hasConfidenceScore 0.4 .
+
+ex:s_ecmp_sig1 a ecmp:Signal, foundation:Signal ;
+    skos:prefLabel "ECMP signal — 02 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ECMP .
+
+ex:s_argus_p1 a argus:Phase1_Event, foundation:Signal ;
+    skos:prefLabel "ARGUS Phase 1 event activation — 06 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ARGUS .
+
+ex:s_ecrc_act a ecrc:UCPM_Activation, governance:EmergencyManagement ;
+    skos:prefLabel "ECRC / UCPM activation — 06 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ] ;
+    prov:wasAttributedTo agency:ECRC .
+
+ex:s_athina_sig a athina:Signal, foundation:Signal ;
+    skos:prefLabel "ATHINA signal — 06 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ATHINA .
+
+ex:s_ipcr_ism a ipcr:InfoSharingMode_Event, governance:EmergencyManagement ;
+    skos:prefLabel "IPCR information-sharing-mode event — 08 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ] ] ;
+    prov:wasAttributedTo agency:IPCR .
+
+ex:s_athina_threat a athina:Threat, foundation:Signal ;
+    skos:prefLabel "ATHINA threat record — 08 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ATHINA .
+
+ex:s_ews_n2 a ews:Notification, foundation:Signal ;
+    skos:prefLabel "EWS notification (revised) — 13 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-13"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:EWS ;
+    coref:supersedes ex:s_ews_n1 .
+
+# A consolidated HubAssessment (optional; appears once a coordinating hub adjudicates).
+ex:HondiusHubAssessment_v1 a coref:HubAssessment ;
+    skos:prefLabel "Consolidated assessment of the MV Hondius outbreak — v1, 09 May"@en ;
+    coref:appliesMergePolicy ex:LatestNonCorrectedPolicy ;
+    coref:aggregatesAssessment ex:Cls_t2_andesvirus ;
+    prov:wasAttributedTo agency:ECRC ;
+    prov:generatedAtTime "2026-05-09T12:00:00Z"^^xsd:dateTime .
+
+ex:HondiusOutbreak coref:hostsAssessment ex:HondiusHubAssessment_v1 .
+
+ex:LatestNonCorrectedPolicy a coref:MergePolicy ;
+    skos:prefLabel "Latest non-corrected classification wins"@en ;
+    rdfs:comment "Of the classifications concerning a given Occurrence, select the one with the highest hasTemporalValidity beginning that has no outgoing correctedBy. Refinements are preserved; corrections invalidate their predecessors."@en .
+
+# =============================================================================
+# Competency questions — CQ-COREF-P*/N* (pattern-specific)
+# =============================================================================
+
+cqs:CQ-COREF-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "List all local Situations that concern a given Occurrence." ;
+    cqs:exercisesPattern "concernsOccurrence inverse" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?s WHERE { ?s coref:concernsOccurrence ex:HondiusOutbreak . }""" .
+
+cqs:CQ-COREF-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "What was the identified hazard for the Occurrence at a given date (e.g. 04 May 2026)?" ;
+    cqs:exercisesPattern "HazardClassificationSituation × time filter" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?hazard WHERE {
+  ?c a coref:HazardClassificationSituation ; coref:concernsOccurrence ex:HondiusOutbreak ;
+     coref:classifiesAs ?hazard ; foundation:hasTemporalValidity ?i .
+  ?i time:hasBeginning/time:inXSDDate ?b .
+  OPTIONAL { ?i time:hasEnd/time:inXSDDate ?e . }
+  FILTER (?b <= "2026-05-04"^^xsd:date && (!BOUND(?e) || "2026-05-04"^^xsd:date < ?e))
+}""" .
+
+cqs:CQ-COREF-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Give the latest non-superseded hazard classification for an Occurrence." ;
+    cqs:exercisesPattern "leaf of the supersededBy chain" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?hazard WHERE {
+  ?c a coref:HazardClassificationSituation ; coref:concernsOccurrence ex:HondiusOutbreak ;
+     coref:classifiesAs ?hazard .
+  FILTER NOT EXISTS { ?c coref:supersededBy ?later . }
+}""" .
+
+cqs:CQ-COREF-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Walk the refinement chain of classifications for an Occurrence, oldest to newest." ;
+    cqs:exercisesPattern "refinedBy transitive walk (property path)" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?earlier ?later WHERE {
+  ?earlier coref:concernsOccurrence ex:HondiusOutbreak ; coref:refinedBy+ ?later .
+}""" .
+
+cqs:CQ-COREF-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Which agencies have contributed to the assessment of an Occurrence?" ;
+    cqs:exercisesPattern "prov:wasAttributedTo aggregation across concernsOccurrence" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT DISTINCT ?agency WHERE {
+  ?s coref:concernsOccurrence ex:HondiusOutbreak ; prov:wasAttributedTo ?agency .
+}""" .
+
+cqs:CQ-COREF-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Retrieve the current HubAssessment of an Occurrence and the merge policy it applied." ;
+    cqs:exercisesPattern "hostsAssessment + appliesMergePolicy" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?hub ?policy WHERE {
+  ex:HondiusOutbreak coref:hostsAssessment ?hub .
+  ?hub coref:appliesMergePolicy ?policy .
+}""" .
+
+cqs:CQ-COREF-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Find all local Signals that concern the same Occurrence as a given local record (computed coreference, no sameAs)." ;
+    cqs:exercisesPattern "shared concernsOccurrence target" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?other WHERE {
+  ex:s_argus_p1 coref:concernsOccurrence ?o .
+  ?other coref:concernsOccurrence ?o .
+  FILTER (?other != ex:s_argus_p1)
+}""" .
+
+cqs:CQ-COREF-P08 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Distinguish refinements from corrections in the classification history of an Occurrence." ;
+    cqs:exercisesPattern "refinedBy vs correctedBy" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?earlier ?later ?kind WHERE {
+  ?earlier coref:concernsOccurrence ex:HondiusOutbreak .
+  { ?earlier coref:refinedBy ?later . BIND ("refinement" AS ?kind) }
+  UNION
+  { ?earlier coref:correctedBy ?later . BIND ("correction" AS ?kind) }
+}""" .
+
+cqs:CQ-COREF-P09 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Return all open ConflictReports on an Occurrence — disagreements not yet resolved by a HubAssessment." ;
+    cqs:exercisesPattern "ConflictReport not aggregated by any HubAssessment" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?conflict WHERE {
+  ?s coref:concernsOccurrence ex:HondiusOutbreak ; coref:hasConflictReport ?conflict .
+  FILTER NOT EXISTS { ?hub a coref:HubAssessment ; coref:hasConflictReport ?conflict . }
+}""" .
+
+cqs:CQ-COREF-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Is owl:sameAs ever asserted between two local Situations that share a concernsOccurrence target?" ;
+    cqs:exercisesPattern "sameAs leakage between local situations" ;
+    cqs:testKind "sparql_ask" ;
+    cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK {
+  ?a owl:sameAs ?b . FILTER (?a != ?b)
+  ?a coref:concernsOccurrence ?o . ?b coref:concernsOccurrence ?o .
+}""" .
+
+cqs:CQ-COREF-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Do two non-comparable hazard classifications hold simultaneously at the same epistemic instant for one Occurrence?" ;
+    cqs:exercisesPattern "epistemic singleton at each instant (SHACL)" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """# See coref:NoConflictingClassificationAtSameInstantShape""" .
+
+cqs:CQ-COREF-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Is coref:refinedBy ever used between classifications whose later target is NOT fschema:subsumedUnder the earlier?" ;
+    cqs:exercisesPattern "taxonomic-monotonicity of refinement (SHACL)" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """# See coref:RefinementMustBeTaxonomicShape""" .
+
+cqs:CQ-COREF-N04 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Are there foundation:Signal instances lacking a concernsOccurrence link (orphan local records)?" ;
+    cqs:exercisesPattern "orphan-record check (SHACL)" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """# See coref:NoOrphanStakeholderSituationShape""" .
+
+# Cross-references to the master CQ catalogue
+<http://data.europa.eu/h8v/ecmo/coref> cpa:relatedCPs
+    cqs:CQ-COREF-P01, cqs:CQ-COREF-P02, cqs:CQ-COREF-P03, cqs:CQ-COREF-P04,
+    cqs:CQ-COREF-P05, cqs:CQ-COREF-P06, cqs:CQ-COREF-P07, cqs:CQ-COREF-P08,
+    cqs:CQ-COREF-P09,
+    cqs:CQ-COREF-N01, cqs:CQ-COREF-N02, cqs:CQ-COREF-N03, cqs:CQ-COREF-N04 .

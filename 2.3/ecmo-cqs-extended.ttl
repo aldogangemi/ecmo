@@ -1,0 +1,2157 @@
+@prefix cpa:    <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix cqs:    <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix dcterms:<http://purl.org/dc/terms/> .
+@prefix ecmocore:<http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation:<http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hera:   <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix ph:     <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix bio:    <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:     <http://www.w3.org/ns/shacl#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.europa.eu/h8v/ecmo/cqs> a owl:Ontology ;
+    dcterms:issued "2026-05-06"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Competency Questions catalogue (Q+ and Q-) for the ECMO 2.2 ontology network. Each CQ is a cqs:CompetencyQuestion individual annotated with cpa:hasUnitTest. SPARQL skeletons assume the ECMO module prefixes (capacity:, disaster:, drivers:, expvuln:, governance:, hazard:, impact:, instruments:, response:, risk:) plus dul: and bio:. Prepare runtime by binding these prefixes."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
+                <http://data.europa.eu/h8v/ecmo/coref> ;
+    owl:versionInfo "0.1" ;
+    skos:prefLabel "ECMO CQ Catalogue v0.1"@en .
+
+# -- Vocabulary stubs ---------------------------------------------------------
+
+cqs:CompetencyQuestion a owl:Class ;
+    rdfs:comment "A competency question motivating the ontology. Carries a natural-language formulation, a polarity (positive or negative), the module(s) it targets, the design pattern it exercises, and an executable unit test (SPARQL or SHACL)."@en ;
+    skos:prefLabel "Competency Question"@en .
+
+cqs:NegativeCompetencyQuestion a owl:Class ;
+    rdfs:subClassOf cqs:CompetencyQuestion ;
+    rdfs:comment "A competency question whose YES answer would be a defect (b33-NEGCQ). Used to make over-commitment visible."@en ;
+    skos:prefLabel "Negative Competency Question"@en .
+
+cqs:hasNLText a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has NL text"@en .
+
+cqs:targetsModule a owl:ObjectProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range owl:Ontology ;
+    skos:prefLabel "targets module"@en .
+
+cqs:exercisesPattern a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "exercises pattern"@en .
+
+cqs:hasPolarity a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has polarity"@en .
+
+cqs:expectedAnswer a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Expected answer when the test is run against fixture A+/A-: 'non_empty', 'empty', 'true', 'false', or 'violation'."@en ;
+    skos:prefLabel "expected answer"@en .
+
+cqs:testKind a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:comment "One of: sparql_select, sparql_ask, shacl."@en ;
+    skos:prefLabel "test kind"@en .
+
+# =============================================================================
+# §3 Foundation
+# =============================================================================
+
+cqs:CQ-FOUND-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "Which FrameCluster does a given class, property or individual belong to?" ;
+    cqs:exercisesPattern "frameCluster (subPropertyOf dul:isDescribedBy)" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?cluster WHERE { ?x foundation:frameCluster ?cluster . }""" .
+
+cqs:CQ-FOUND-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "List the SKOS top-concepts of the Sendai Framework Terminology and the cluster each is anchored to." ;
+    cqs:exercisesPattern "SKOS top-concept anchoring" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?topConcept ?cluster WHERE {
+  foundation:SendaiFrameworkTerminology skos:hasTopConcept ?topConcept .
+  ?topConcept foundation:frameCluster ?cluster .
+}""" .
+
+cqs:CQ-FOUND-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "Given a Signal, retrieve its source, its confidence score, the candidate HazardousEvent it pertains to, and any EventValidation that has examined it." ;
+    cqs:exercisesPattern "Signal -> EventValidation -> HazardousEvent observation chain" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?signal ?src ?conf ?event ?val WHERE {
+  ?signal a foundation:Signal ; foundation:hasConfidenceScore ?conf ;
+          foundation:isSignalFrom ?src ; foundation:pertainsToEvent ?event .
+  OPTIONAL { ?val a foundation:EventValidation ; foundation:validatesSignal ?signal . }
+}""" .
+
+cqs:CQ-FOUND-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "For an entity ?x, retrieve every QualitativeAssessment, its level value, its scale, the assessment domain and the temporal validity." ;
+    cqs:exercisesPattern "QualitativeAssessment scale/value pattern" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?x ?qa ?level ?scale ?domain ?valid WHERE {
+  ?x foundation:hasQualitativeAssessment ?qa .
+  ?qa foundation:hasLevel ?level .
+  ?level foundation:inScale ?scale .
+  ?scale foundation:hasAssessmentDomain ?domain .
+  OPTIONAL { ?qa foundation:hasTemporalValidity ?valid . }
+}""" .
+
+cqs:CQ-FOUND-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "Walk a qualitative scale from min to max via nextValue, returning all level values in order." ;
+    cqs:exercisesPattern "ordered discrete scale" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?scale ?value ?order WHERE {
+  ?scale a foundation:QualitativeAssessmentLevelScale .
+  ?value foundation:inScale ?scale ; foundation:orderInScale ?order .
+} ORDER BY ?scale ?order""" .
+
+cqs:CQ-FOUND-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "For a RiskAssessmentReport, retrieve the HazardousEvent it covers, its report date, and the MeasureType it recommends." ;
+    cqs:exercisesPattern "RiskAssessmentReport -> HazardousEvent / MeasureType" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?report ?event ?date ?measure WHERE {
+  ?report a foundation:RiskAssessmentReport ;
+          foundation:isReportFor ?event ;
+          foundation:hasReportDate ?date .
+  OPTIONAL { ?report foundation:recommendsMeasure ?measure . }
+}""" .
+
+cqs:CQ-FOUND-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "Identify all transitive includesEvent chains starting from a given Eventuality." ;
+    cqs:exercisesPattern "transitive sub-property of dul:includesEvent" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?root ?nested WHERE { ?root foundation:includesEvent+ ?nested . }""" .
+
+cqs:CQ-FOUND-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "Can two distinct level values belonging to the same scale share the same orderInScale?" ;
+    cqs:exercisesPattern "scale uniqueness invariant" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """# SHACL: each scale should have unique orderInScale values
+[ a sh:NodeShape ; sh:targetClass foundation:QualitativeAssessmentLevelScale ;
+  sh:property [ sh:path [ sh:inversePath foundation:inScale ] ;
+                sh:uniqueLang false ; sh:qualifiedValueShape [ sh:path foundation:orderInScale ] ;
+                sh:qualifiedMaxCount 1 ] ] .""" .
+
+cqs:CQ-FOUND-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "Does the ontology entail an entity assigned to more than one FrameCluster on the same axis without justification?" ;
+    cqs:exercisesPattern "frame coherence audit" ;
+    cqs:testKind "sparql_ask" ;
+    cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?x foundation:frameCluster ?c1, ?c2 . FILTER(?c1 != ?c2) }""" .
+
+cqs:CQ-FOUND-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule ecmocore:foundation ;
+    cqs:hasNLText "Can a Signal confirm a HazardousEvent without being validated?" ;
+    cqs:exercisesPattern "Signal -> Validation requirement" ;
+    cqs:testKind "sparql_ask" ;
+    cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK {
+  ?val foundation:confirmsEvent ?e .
+  FILTER NOT EXISTS { ?val foundation:validatesSignal ?s . }
+}""" .
+
+# =============================================================================
+# §4 Risk (F1)
+# =============================================================================
+
+cqs:CQ-RISK-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "What are the four determinants (hazard, exposure, vulnerability, capacity) of a given risk?" ;
+    cqs:exercisesPattern "Risk someValuesFrom four-determinants axiom" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?r ?h ?e ?v ?c WHERE {
+  ?r a risk:Risk ;
+     risk:hasHazardDeterminant ?h ;
+     risk:hasExposureDeterminant ?e ;
+     risk:hasVulnerabilityDeterminant ?v ;
+     risk:hasCapacityDeterminant ?c .
+}""" .
+
+cqs:CQ-RISK-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "Which Risk instances are classified Extensive vs Intensive based on hasRiskIntensityProfile?" ;
+    cqs:exercisesPattern "RiskIntensityProfile hasValue restriction" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?r ?profile WHERE {
+  ?r risk:hasRiskIntensityProfile ?profile .
+  FILTER(?profile IN (risk:ExtensiveProfile, risk:IntensiveProfile))
+}""" .
+
+cqs:CQ-RISK-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "For a given measure, what residual risk remains after its application?" ;
+    cqs:exercisesPattern "ResidualRisk remainsAfter Measure" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?measure ?residual WHERE {
+  ?residual a risk:ResidualRisk ; risk:remainsAfter ?measure .
+}""" .
+
+cqs:CQ-RISK-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "Which HazardousEvent materialises a given Risk, and inversely which Risk does an event realise?" ;
+    cqs:exercisesPattern "materializesAs / realizesRisk D&S linkage" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?r ?event WHERE {
+  { ?r risk:materializesAs ?event . } UNION { ?event disaster:realizesRisk ?r . }
+}""" .
+
+cqs:CQ-RISK-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "Retrieve the risk's frequency profile and risk intensity profile in one query." ;
+    cqs:exercisesPattern "two profile axes" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?r ?freq ?intensity WHERE {
+  ?r a risk:Risk .
+  OPTIONAL { ?r risk:hasFrequencyProfile ?freq . }
+  OPTIONAL { ?r risk:hasRiskIntensityProfile ?intensity . }
+}""" .
+
+cqs:CQ-RISK-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "Which RiskAssessmentReport assesses a given Risk?" ;
+    cqs:exercisesPattern "FOUND/F1/F2 navigation chain" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?r ?report WHERE {
+  ?report foundation:isReportFor ?event . ?event disaster:realizesRisk ?r .
+}""" .
+
+cqs:CQ-RISK-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "List risks classified Acceptable for a community, with the justification recorded on the qualitative assessment." ;
+    cqs:exercisesPattern "AcceptableRisk + QA justification" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?r ?just WHERE {
+  ?r a risk:AcceptableRisk ; foundation:hasQualitativeAssessment ?qa .
+  ?qa foundation:hasJustification ?just .
+}""" .
+
+cqs:CQ-RISK-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "Can the same individual be classified both ExtensiveRisk and IntensiveRisk?" ;
+    cqs:exercisesPattern "missing disjointness — candidate refactor" ;
+    cqs:testKind "sparql_ask" ;
+    cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?r a risk:ExtensiveRisk, risk:IntensiveRisk . }""" .
+
+cqs:CQ-RISK-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "Does the ontology entail a Risk lacking any of the four determinants?" ;
+    cqs:exercisesPattern "four-determinant conservativity" ;
+    cqs:testKind "sparql_ask" ;
+    cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK {
+  ?r a risk:Risk .
+  FILTER NOT EXISTS { ?r risk:hasHazardDeterminant ?h . }
+}""" .
+
+cqs:CQ-RISK-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "Can a ResidualRisk exist without any Measure it remains after?" ;
+    cqs:exercisesPattern "ResidualRisk someValuesFrom Measure" ;
+    cqs:testKind "sparql_ask" ;
+    cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK {
+  ?r a risk:ResidualRisk .
+  FILTER NOT EXISTS { ?r risk:remainsAfter ?m . }
+}""" .
+
+cqs:CQ-RISK-N04 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule ecmocore:risk ;
+    cqs:hasNLText "Should risk:Risk and the deprecated Risk yield identical answers to all CQs above?" ;
+    cqs:exercisesPattern "deprecation regression test" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """# Compare counts via owl:equivalentClass alias; mismatch indicates a defect.
+SELECT (COUNT(?r1) AS ?n1) (COUNT(?r2) AS ?n2) WHERE {
+  { ?r1 a risk:Risk } UNION { ?r2 a risk:DisasterRisk }
+}""" .
+
+# =============================================================================
+# §5 Hazard (F2)
+# =============================================================================
+
+cqs:CQ-HAZ-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Given a HazardousEvent, which Hazard is it a manifestation of, with location, temporal extent, and cascading effects?" ;
+    cqs:exercisesPattern "isManifestationOf + foundation:hasLocation + hasTemporalExtent + hasCascadingEffect" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?event ?hazard ?place ?interval ?cascade WHERE {
+  ?event a hazard:HazardousEvent ; hazard:isManifestationOf ?hazard ;
+         foundation:hasLocation ?place ; disaster:hasTemporalExtent ?interval .
+  OPTIONAL { ?event hazard:hasCascadingEffect ?cascade . }
+}""" .
+
+cqs:CQ-HAZ-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Retrieve all hazard subtypes belonging to a given HazardCategory." ;
+    cqs:exercisesPattern "hasHazardCategory hasValue enumeration" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?subtype ?category WHERE { ?subtype rdfs:subClassOf [ owl:onProperty hazard:hasHazardCategory ; owl:hasValue ?category ] . }""" .
+
+cqs:CQ-HAZ-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "For a HazardousEvent, retrieve its intensity, magnitude, severity assessment, scale used and observation source." ;
+    cqs:exercisesPattern "observation infrastructure" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?event ?int ?mag ?sev ?scale ?src WHERE {
+  ?event a hazard:HazardousEvent .
+  OPTIONAL { ?event hazard:hasIntensityObservation ?int . }
+  OPTIONAL { ?event hazard:hasMagnitudeObservation ?mag . }
+  OPTIONAL { ?event hazard:hasSeverityAssessment ?sev . }
+  OPTIONAL { ?event hazard:usesScale ?scale . }
+  OPTIONAL { ?event hazard:hasObservationSource ?src . }
+}""" .
+
+cqs:CQ-HAZ-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Find every event triggered by another event (cascading hazards)." ;
+    cqs:exercisesPattern "triggers / isTriggeredBy" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?source ?target WHERE { ?source hazard:triggers ?target . }""" .
+
+cqs:CQ-HAZ-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "List events grouped under the same MultiHazardContext." ;
+    cqs:exercisesPattern "MultiHazardContext membership" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ctx ?event WHERE { ?ctx a hazard:MultiHazardContext ; foundation:includesEvent ?event . }""" .
+
+cqs:CQ-HAZ-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Which places host events of a Biological or Chemical hazard?" ;
+    cqs:exercisesPattern "hazard subtype × place" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?place ?event WHERE {
+  ?event hazard:isManifestationOf ?h ; foundation:hasLocation ?place .
+  ?h a ?type . FILTER(?type IN (hazard:BiologicalHazard, hazard:ChemicalHazard))
+}""" .
+
+cqs:CQ-HAZ-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Retrieve the propagation chain Hazard -> HazardousEvent -> triggers -> HazardousEvent -> hasImpact -> Impact." ;
+    cqs:exercisesPattern "end-to-end event-impact chain" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?h ?e1 ?e2 ?impact WHERE {
+  ?h a hazard:Hazard . ?e1 hazard:isManifestationOf ?h ; hazard:triggers ?e2 .
+  ?e2 hazard:hasImpact ?impact .
+}""" .
+
+cqs:CQ-HAZ-P08 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Walk fschema:subsumedUnder / spec:specializes from a specific hazard up to Hazard." ;
+    cqs:exercisesPattern "individual-level subsumption (transitive)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """PREFIX fschema: <https://w3id.org/framester/schema/>
+SELECT ?ancestor WHERE { ?specific fschema:subsumedUnder+ ?ancestor . }""" .
+
+cqs:CQ-HAZ-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Does a HazardousEvent ever fail to be both Event and Situation?" ;
+    cqs:exercisesPattern "dual-typing axiom" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """PREFIX dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+ASK { ?e a hazard:HazardousEvent . FILTER NOT EXISTS { ?e a dul:Event . ?e a dul:Situation . } }""" .
+
+cqs:CQ-HAZ-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Can armed conflict or social-tension events be classified as Hazard? scopeExclusion says no." ;
+    cqs:exercisesPattern "annotation-only scope exclusion" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """# A label-based heuristic ASK; no formal axiom currently enforces this.
+ASK { ?e a hazard:HazardousEvent ; rdfs:label ?l . FILTER(REGEX(?l, "armed conflict|war|tension", "i")) }""" .
+
+cqs:CQ-HAZ-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Does an event lacking both an intensity observation and a severity assessment satisfy the implicit observability requirement?" ;
+    cqs:exercisesPattern "observability completeness — SHACL candidate" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass hazard:HazardousEvent ;
+  sh:or ( [ sh:path hazard:hasIntensityObservation ; sh:minCount 1 ]
+          [ sh:path hazard:hasSeverityAssessment ; sh:minCount 1 ] ) ] .""" .
+
+cqs:CQ-HAZ-N04 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:hazard ;
+    cqs:hasNLText "Can a Hazard (Description) be a manifestation of itself (isManifestationOf reflexive)?" ;
+    cqs:exercisesPattern "type discipline" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?h a hazard:Hazard . ?h hazard:isManifestationOf ?h . }""" .
+
+# =============================================================================
+# §6 Disaster (F3)
+# =============================================================================
+
+cqs:CQ-DIS-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "Which HazardousEvent instances are entailed Disaster because of VeryHighImpactIntensity?" ;
+    cqs:exercisesPattern "Disaster equivalentClass axiom" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d WHERE { ?d a disaster:Disaster . }""" .
+
+cqs:CQ-DIS-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "Retrieve disasters classified along onset, scale, and frequency axes." ;
+    cqs:exercisesPattern "three classification axes" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?onset ?scale ?freq WHERE {
+  ?d a disaster:Disaster .
+  OPTIONAL { ?d disaster:hasOnsetType ?onset . }
+  OPTIONAL { ?d disaster:hasScaleType ?scale . }
+  OPTIONAL { ?d disaster:hasFrequencyType ?freq . }
+}""" .
+
+cqs:CQ-DIS-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "List directly and indirectly affected populations of a disaster." ;
+    cqs:exercisesPattern "AffectednessType pun" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?pop ?affectedness WHERE {
+  ?d a disaster:Disaster ; hazard:affectsPopulation ?pop .
+  ?pop disaster:hasAffectednessType ?affectedness .
+}""" .
+
+cqs:CQ-DIS-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "Which capacities does a disaster exceed and what is the qualitative assessment of exceedance?" ;
+    cqs:exercisesPattern "exceedsCapacityOf + CapacityExceedanceAssessment" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?cap ?assess ?level WHERE {
+  ?d disaster:exceedsCapacityOf ?cap ; disaster:hasCapacityExceedanceAssessment ?assess .
+  ?assess foundation:hasLevel ?level .
+}""" .
+
+cqs:CQ-DIS-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "Retrieve human, environmental and economic consequences of a disaster." ;
+    cqs:exercisesPattern "subPropertyOf hazard:hasImpact" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?human ?envi ?loss ?dmg WHERE {
+  ?d a disaster:Disaster .
+  OPTIONAL { ?d disaster:hasHumanImpact ?human . }
+  OPTIONAL { ?d disaster:hasEnvironmentalImpact ?envi . }
+  OPTIONAL { ?d disaster:causesEconomicLoss ?loss . }
+  OPTIONAL { ?d disaster:causesDamage ?dmg . }
+}""" .
+
+cqs:CQ-DIS-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "Which disasters are SlowOnset, span more than one year, and affect a Community?" ;
+    cqs:exercisesPattern "combined onset + temporal + agent filter" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?community WHERE {
+  ?d a disaster:SlowOnsetDisaster ; disaster:hasTemporalExtent ?int ;
+     hazard:affectsPopulation ?community .
+  ?community a disaster:Community .
+}""" .
+
+cqs:CQ-DIS-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "Which Risk does a disaster realise, and which Vulnerability is its hasVulnerabilityContext?" ;
+    cqs:exercisesPattern "realizesRisk + hasVulnerabilityContext" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?risk ?vuln WHERE {
+  ?d disaster:realizesRisk ?risk ; disaster:hasVulnerabilityContext ?vuln .
+}""" .
+
+cqs:CQ-DIS-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "Can a single instance be both FrequentDisaster and InfrequentDisaster?" ;
+    cqs:exercisesPattern "owl:disjointWith enforcement" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?d a disaster:FrequentDisaster, disaster:InfrequentDisaster . }""" .
+
+cqs:CQ-DIS-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "Can a single instance be both SuddenOnsetDisaster and SlowOnsetDisaster?" ;
+    cqs:exercisesPattern "owl:disjointWith enforcement" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?d a disaster:SuddenOnsetDisaster, disaster:SlowOnsetDisaster . }""" .
+
+cqs:CQ-DIS-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:disaster ;
+    cqs:hasNLText "Is an Emergency automatically a Disaster?" ;
+    cqs:exercisesPattern "Sendai distinction conservativity" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?e a disaster:Emergency . ?e a disaster:Disaster . }""" .
+
+# =============================================================================
+# §7 Exposure & Vulnerability (F4)
+# =============================================================================
+
+cqs:CQ-EXV-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "Which exposed elements does a given Exposure expose, and to which hazard?" ;
+    cqs:exercisesPattern "Exposure restrictions" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?exp ?elem ?type ?hazard WHERE {
+  ?exp a expvuln:Exposure .
+  OPTIONAL { ?exp expvuln:hasExposedElement ?elem . }
+  OPTIONAL { ?exp expvuln:hasExposedElementType ?type . }
+  OPTIONAL { ?exp expvuln:isExposedTo ?hazard . }
+}""" .
+
+cqs:CQ-EXV-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "Group ExposedElementTypes by AssetDomain." ;
+    cqs:exercisesPattern "hasAssetDomain hasValue" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?type ?domain WHERE { ?type expvuln:hasAssetDomain ?domain . }""" .
+
+cqs:CQ-EXV-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "What is the count of population in an Exposure and which PopulationGroupType?" ;
+    cqs:exercisesPattern "datatype + group-type" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?exp ?count ?group WHERE {
+  ?exp a expvuln:Exposure ; expvuln:hasExposedPopulationCount ?count ;
+       expvuln:hasExposedElementType ?group .
+  ?group a expvuln:PopulationGroupType .
+}""" .
+
+cqs:CQ-EXV-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "Which Vulnerability dimensions hold for a community, and to which hazard?" ;
+    cqs:exercisesPattern "hasVulnerabilityDimension + increasesSusceptibilityTo" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?v ?dim ?h WHERE {
+  ?v a expvuln:Vulnerability ; expvuln:hasVulnerabilityDimension ?dim ;
+     expvuln:increasesSusceptibilityTo ?h .
+}""" .
+
+cqs:CQ-EXV-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "Which critical-infrastructure or service instances belong to which sector?" ;
+    cqs:exercisesPattern "CriticalInfrastructureOrService + InfrastructureSector" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ci ?sector WHERE {
+  ?ci a expvuln:CriticalInfrastructureOrService ; expvuln:hasInfrastructureSector ?sector .
+}""" .
+
+cqs:CQ-EXV-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "Retrieve every ExposedElement whose affects situation co-locates with a HazardousEvent." ;
+    cqs:exercisesPattern "affects + co-location" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?elem ?event WHERE {
+  ?sit expvuln:affects ?elem . ?event a hazard:HazardousEvent ; foundation:hasLocation ?p .
+  ?elem foundation:hasLocation ?p .
+}""" .
+
+cqs:CQ-EXV-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "List vulnerabilities marked isComplementaryTo Capacity." ;
+    cqs:exercisesPattern "symmetric isComplementaryTo" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?v ?c WHERE { ?v foundation:isComplementaryTo ?c . ?v a expvuln:Vulnerability . }""" .
+
+cqs:CQ-EXV-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "Can Exposure exist without ExposedElement and without isExposedTo Hazard?" ;
+    cqs:exercisesPattern "Exposure someValuesFrom" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?e a expvuln:Exposure .
+  FILTER NOT EXISTS { ?e expvuln:exposesElement ?x . }
+  FILTER NOT EXISTS { ?e expvuln:isExposedTo ?h . } }""" .
+
+cqs:CQ-EXV-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "Can a Vulnerability instance hold two different VulnerabilityDimension values?" ;
+    cqs:exercisesPattern "dimension singleton — SHACL candidate" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass expvuln:Vulnerability ;
+  sh:property [ sh:path expvuln:hasVulnerabilityDimension ; sh:maxCount 1 ] ] .""" .
+
+cqs:CQ-EXV-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:expvuln ;
+    cqs:hasNLText "Are armed-conflict displacements counted as Exposure?" ;
+    cqs:exercisesPattern "scope alignment with Hazard exclusion" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?e a expvuln:Exposure ; rdfs:label ?l . FILTER(REGEX(?l, "armed conflict|war", "i")) }""" .
+
+# =============================================================================
+# §8 Capacity & Resilience (F5)
+# =============================================================================
+
+cqs:CQ-CAP-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "List the constituents of a community's Capacity." ;
+    cqs:exercisesPattern "includes* sub-properties" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?c ?ca ?k ?r ?inst WHERE {
+  ?c a capacity:Capacity .
+  OPTIONAL { ?c capacity:includesCollectiveAttribute ?ca . }
+  OPTIONAL { ?c capacity:includesKnowledge ?k . }
+  OPTIONAL { ?c capacity:includesResource ?r . }
+  OPTIONAL { ?c capacity:includesInstitution ?inst . }
+}""" .
+
+cqs:CQ-CAP-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "Which EssentialFunctions does a Capacity preserve, and which adversities does it manage?" ;
+    cqs:exercisesPattern "preservesFunction + managesAdversity" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?c ?fn ?adv WHERE {
+  ?c capacity:preservesFunction ?fn ; capacity:managesAdversity ?adv .
+}""" .
+
+cqs:CQ-CAP-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "Retrieve CapacityAssessment results for a target community." ;
+    cqs:exercisesPattern "CapacityAssessment + QualitativeAssessment" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ca ?target ?level ?just WHERE {
+  ?ca a capacity:CapacityAssessment ; capacity:assessesCapacityOf ?target ;
+      foundation:hasLevel ?level ; foundation:hasJustification ?just .
+}""" .
+
+cqs:CQ-CAP-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "Which CapacityDevelopment processes strengthen which Capacity?" ;
+    cqs:exercisesPattern "developsCapacityOf" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?dev ?c WHERE {
+  ?dev a capacity:CapacityDevelopment ; capacity:developsCapacityOf ?c .
+}""" .
+
+cqs:CQ-CAP-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "When a disaster exceedsCapacityOf a community, retrieve the assessment and degree." ;
+    cqs:exercisesPattern "CapacityExceedanceAssessment + hasExceedanceDegree" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?cap ?assess ?deg WHERE {
+  ?d disaster:exceedsCapacityOf ?cap ; disaster:hasCapacityExceedanceAssessment ?assess .
+  ?assess capacity:hasExceedanceDegree ?deg .
+}""" .
+
+cqs:CQ-CAP-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "List Capacities marked isComplementaryTo Vulnerability and verify symmetric closure." ;
+    cqs:exercisesPattern "symmetric property semantics" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?c ?v WHERE { ?c foundation:isComplementaryTo ?v . ?c a capacity:Capacity . }""" .
+
+cqs:CQ-CAP-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "Which Capacity strengthens Resilience of which target?" ;
+    cqs:exercisesPattern "strengthensResilience" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?c ?target WHERE { ?c capacity:strengthensResilience ?target . }""" .
+
+cqs:CQ-CAP-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "Should a Capacity be entailed Vulnerability simply because both share dul:Quality?" ;
+    cqs:exercisesPattern "parallel siblings, not subsumption" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?c a capacity:Capacity . ?c a expvuln:Vulnerability . }""" .
+
+cqs:CQ-CAP-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "Is Resilience entailed when only Capacity is asserted?" ;
+    cqs:exercisesPattern "explicit assertion required" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?x a capacity:Capacity . ?x a capacity:Resilience .
+  FILTER NOT EXISTS { ?x capacity:strengthensResilience ?x . } }""" .
+
+cqs:CQ-CAP-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:capacity ;
+    cqs:hasNLText "Can a CapacityExceedanceAssessment exist without an exceeded capacity and an exceeding event?" ;
+    cqs:exercisesPattern "structural completeness" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?a a capacity:CapacityExceedanceAssessment .
+  FILTER NOT EXISTS { ?d disaster:hasCapacityExceedanceAssessment ?a . } }""" .
+
+# =============================================================================
+# §9 Governance (F6)
+# =============================================================================
+
+cqs:CQ-GOV-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "Which RiskManagement instances are prospective vs corrective vs compensatory vs community-based?" ;
+    cqs:exercisesPattern "four named subclasses" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?rm ?type WHERE { ?rm a ?type .
+  FILTER(?type IN (governance:CorrectiveRiskManagement, governance:CompensatoryRiskManagement,
+                   governance:ProspectiveRiskManagement, governance:CommunityBasedRiskManagement)) }""" .
+
+cqs:CQ-GOV-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "For a RiskManagementPlan, retrieve its policy, legal and institutional framework." ;
+    cqs:exercisesPattern "three governance frameworks" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p ?pf ?lf ?if WHERE {
+  ?p a governance:RiskManagementPlan ;
+     governance:hasPolicyFramework ?pf ; governance:hasLegalFramework ?lf ;
+     governance:hasInstitutionalFramework ?if .
+}""" .
+
+cqs:CQ-GOV-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "Jurisdiction, sectors, stakeholders involved by a governance instance?" ;
+    cqs:exercisesPattern "involves* + inJurisdiction" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?g ?j ?s ?st WHERE {
+  ?g governance:inJurisdiction ?j .
+  OPTIONAL { ?g governance:involvesSector ?s . }
+  OPTIONAL { ?g governance:involvesStakeholder ?st . }
+}""" .
+
+cqs:CQ-GOV-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "Which Hazards does a RiskAssessment analyse and which CopingCapacity does it evaluate?" ;
+    cqs:exercisesPattern "analysesHazard + evaluates*" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ra ?h ?cap ?exp ?vuln WHERE {
+  ?ra a governance:RiskAssessment ; governance:analysesHazard ?h .
+  OPTIONAL { ?ra governance:evaluatesCopingCapacity ?cap . }
+  OPTIONAL { ?ra governance:evaluatesExposure ?exp . }
+  OPTIONAL { ?ra governance:evaluatesVulnerability ?vuln . }
+}""" .
+
+cqs:CQ-GOV-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "Which interventions preventNewRisk, reduceExistingRisk, manageResidualRisk?" ;
+    cqs:exercisesPattern "three governance functions" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?g ?fn ?target WHERE {
+  ?g ?fn ?target . FILTER(?fn IN (governance:preventsNewRisk, governance:reducesExistingRisk, governance:managesResidualRisk))
+}""" .
+
+cqs:CQ-GOV-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "List governance regimes that use traditional knowledge." ;
+    cqs:exercisesPattern "LocalAndIndigenousApproach" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?g WHERE { ?g governance:usesTraditionalKnowledge ?k . }""" .
+
+cqs:CQ-GOV-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "Walk isSubPhaseOf to retrieve the full DRM phase tree for a plan." ;
+    cqs:exercisesPattern "phase hierarchy" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?phase ?parent WHERE { ?phase governance:isSubPhaseOf+ ?parent . }""" .
+
+cqs:CQ-GOV-P08 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "Trace RiskGovernance -> guides -> RiskReductionStrategy -> appliesStrategy -> Plan -> implementsPlan -> Intervention." ;
+    cqs:exercisesPattern "governance-to-implementation chain" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?gov ?strat ?plan ?inter WHERE {
+  ?gov a governance:RiskGovernance ; governance:guides ?strat .
+  ?strat governance:appliesStrategy ?plan . ?plan governance:implementsPlan ?inter .
+}""" .
+
+cqs:CQ-GOV-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "Are CorrectiveRiskManagement and ProspectiveRiskManagement disjoint?" ;
+    cqs:exercisesPattern "disjointness audit" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?rm a governance:CorrectiveRiskManagement, governance:ProspectiveRiskManagement . }""" .
+
+cqs:CQ-GOV-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "Can a Policy be applied with no Jurisdiction?" ;
+    cqs:exercisesPattern "jurisdictional anchoring" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass governance:Policy ;
+  sh:property [ sh:path governance:inJurisdiction ; sh:minCount 1 ] ] .""" .
+
+cqs:CQ-GOV-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:governance ;
+    cqs:hasNLText "Are RiskGovernance and RiskReduction inadvertently equated?" ;
+    cqs:exercisesPattern "D&S boundary" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?x a governance:RiskGovernance, governance:RiskReduction . }""" .
+
+# =============================================================================
+# §10 Response & Recovery (F7)
+# =============================================================================
+
+cqs:CQ-RES-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Order the DRM phases for a plan via precedesPhase." ;
+    cqs:exercisesPattern "phase ordering" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?early ?late WHERE { ?early response:precedesPhase+ ?late . }""" .
+
+cqs:CQ-RES-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Which interventions lessensImpactOf a hazard, meetsNeedsOf, or restoresAssetsAfter?" ;
+    cqs:exercisesPattern "core response/recovery verbs" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?i ?fn ?target WHERE {
+  ?i ?fn ?target . FILTER(?fn IN (response:lessensImpactOf, response:meetsNeedsOf, response:restoresAssetsAfter, response:restoresBasicServicesAfter))
+}""" .
+
+cqs:CQ-RES-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Which MeasureType does an intervention involve, and which CapacityType does it require?" ;
+    cqs:exercisesPattern "involvesMeasureType + requiresCapacity" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?i ?mt ?ct WHERE {
+  ?i response:involvesMeasureType ?mt ; response:requiresCapacity ?ct .
+}""" .
+
+cqs:CQ-RES-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Which Evacuation events have an EvacuationPlan, and what ShelterInPlace option?" ;
+    cqs:exercisesPattern "evacuation pattern" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ev ?plan ?shelter WHERE {
+  ?ev a response:Evacuation . ?plan a response:EvacuationPlan .
+  OPTIONAL { ?plan response:includesShelterInPlaceOption ?shelter . }
+}""" .
+
+cqs:CQ-RES-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Which EmergencyService instances participate in a Response phase?" ;
+    cqs:exercisesPattern "involvesEmergencyService" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?phase ?es WHERE {
+  ?phase a response:Response ; response:involvesEmergencyService ?es .
+}""" .
+
+cqs:CQ-RES-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Which Recovery interventions alignsWithPrinciple BuildBackBetter?" ;
+    cqs:exercisesPattern "alignsWithPrinciple" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?i WHERE { ?i a response:Recovery ; response:alignsWithPrinciple response:BuildBackBetter . }""" .
+
+cqs:CQ-RES-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Which interventions are anticipated by ContingencyPlanning for a hazard scenario?" ;
+    cqs:exercisesPattern "anticipates / isAnticipatedBy" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?cp ?i WHERE {
+  ?cp a response:ContingencyPlanning ; response:anticipates ?i .
+}""" .
+
+cqs:CQ-RES-P08 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Walk linksToEWS from a Preparedness intervention to an EarlyWarningSystem." ;
+    cqs:exercisesPattern "F7 × F8 link" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?prep ?ews WHERE { ?prep a response:Preparedness ; response:linksToEWS ?ews . }""" .
+
+cqs:CQ-RES-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Are Preparedness and Response disjoint along temporal phase ordering?" ;
+    cqs:exercisesPattern "phase disjointness" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?x a response:Preparedness, response:Response . }""" .
+
+cqs:CQ-RES-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Can a Recovery intervention precede the disaster it recovers from?" ;
+    cqs:exercisesPattern "temporal soundness — SHACL" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass response:Recovery ;
+  sh:sparql [ a sh:SPARQLConstraint ; sh:select \"\"\"
+    SELECT $this WHERE {
+      $this response:restoresAssetsAfter ?d . ?d disaster:hasTemporalExtent ?dt .
+      $this disaster:hasTemporalExtent ?rt . FILTER(?rt < ?dt)
+    } \"\"\" ] ] .""" .
+
+cqs:CQ-RES-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:response ;
+    cqs:hasNLText "Is BuildBackBetter ever entailed for any Reconstruction, or only when explicitly aligned?" ;
+    cqs:exercisesPattern "conservativity" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?r a response:Reconstruction .
+  FILTER NOT EXISTS { ?r response:alignsWithPrinciple response:BuildBackBetter . }
+  ?r response:alignsWithPrinciple response:BuildBackBetter . }""" .
+
+# =============================================================================
+# §11 Instruments (F8)
+# =============================================================================
+
+cqs:CQ-INS-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Retrieve a MultiHazardEarlyWarningSystem with its four EWSComponent instances and the hazards monitored." ;
+    cqs:exercisesPattern "EWS structural completeness" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ews ?comp ?hazard WHERE {
+  ?ews a instruments:MultiHazardEarlyWarningSystem ;
+       instruments:hasEWSComponent ?comp ; instruments:monitorsHazard ?hazard .
+}""" .
+
+cqs:CQ-INS-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "List warnings disseminated by an EWS to a target population, and the events they forecast." ;
+    cqs:exercisesPattern "Warning + dissemination + forecast" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ews ?w ?target ?ev WHERE {
+  ?ews a instruments:EarlyWarningSystem ; instruments:hasWarning ?w .
+  ?w instruments:disseminatesWarningTo ?target ; instruments:isWarningOf ?ev .
+}""" .
+
+cqs:CQ-INS-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Which BuildingCode regulates the construction of a Structure, and which Retrofitting upgrades it?" ;
+    cqs:exercisesPattern "regulatesConstruction + upgradesStructure" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?bc ?s ?retro WHERE {
+  ?bc instruments:regulatesConstruction ?s .
+  OPTIONAL { ?retro instruments:upgradesStructure ?s . }
+}""" .
+
+cqs:CQ-INS-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Retrieve a RiskTransfer with mechanism, fromParty, toParty." ;
+    cqs:exercisesPattern "RiskTransferMechanism + counterparties" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?rt ?mech ?from ?to WHERE {
+  ?rt a instruments:RiskTransfer ; instruments:hasTransferMechanism ?mech ;
+      instruments:fromParty ?from ; instruments:toParty ?to .
+}""" .
+
+cqs:CQ-INS-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Which losses are recorded in a DisasterLossDatabase?" ;
+    cqs:exercisesPattern "DisasterLossDatabase records*" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?db ?loss ?impact ?dmg WHERE {
+  ?db a instruments:DisasterLossDatabase .
+  OPTIONAL { ?db instruments:recordsLossFrom ?loss . }
+  OPTIONAL { ?db instruments:recordsImpactData ?impact . }
+  OPTIONAL { ?db instruments:recordsDamageData ?dmg . }
+}""" .
+
+cqs:CQ-INS-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Which EssentialService instances are provided to which exposed populations?" ;
+    cqs:exercisesPattern "providesEssentialService" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?prov ?es ?target WHERE {
+  ?prov instruments:providesEssentialService ?es . ?es instruments:isProvidedBy ?prov .
+}""" .
+
+cqs:CQ-INS-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Which StructuralMeasure instances increase resistance to which hazard?" ;
+    cqs:exercisesPattern "increasesResistanceTo" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?m ?h WHERE { ?m a instruments:StructuralMeasure ; instruments:increasesResistanceTo ?h . }""" .
+
+cqs:CQ-INS-P08 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Retrieve the EWSFunctionType of every component of a given EWS." ;
+    cqs:exercisesPattern "hasComponentFunction" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ews ?comp ?fn WHERE {
+  ?ews instruments:hasEWSComponent ?comp . ?comp instruments:hasComponentFunction ?fn .
+}""" .
+
+cqs:CQ-INS-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Can an EarlyWarningSystem lack the MonitoringAndForecastingComponent?" ;
+    cqs:exercisesPattern "EWS structural completeness — SHACL" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass instruments:MultiHazardEarlyWarningSystem ;
+  sh:property [ sh:path instruments:hasEWSComponent ; sh:qualifiedValueShape [
+    sh:class instruments:MonitoringAndForecastingComponent ] ; sh:qualifiedMinCount 1 ] ] .""" .
+
+cqs:CQ-INS-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Can a RiskTransfer exist without fromParty and toParty?" ;
+    cqs:exercisesPattern "counterparty completeness" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass instruments:RiskTransfer ;
+  sh:property [ sh:path instruments:fromParty ; sh:minCount 1 ] ;
+  sh:property [ sh:path instruments:toParty ; sh:minCount 1 ] ] .""" .
+
+cqs:CQ-INS-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:instruments ;
+    cqs:hasNLText "Is Insurance distinguishable from Reinsurance purely structurally?" ;
+    cqs:exercisesPattern "distinguishing-axiom audit" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?r a instruments:Reinsurance . FILTER NOT EXISTS { ?r instruments:transfersFinancialRisk ?ins . ?ins a instruments:Insurance . } }""" .
+
+# =============================================================================
+# §12 Drivers (F9)
+# =============================================================================
+
+cqs:CQ-DRV-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:drivers ;
+    cqs:hasNLText "Which Risk is driven by which RiskDriver, and through which mechanism?" ;
+    cqs:exercisesPattern "drivesRisk + operatesThrough + mechanism props" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?r ?mech WHERE {
+  ?d drivers:drivesRisk ?r .
+  OPTIONAL { ?d drivers:operatesThrough ?mech . }
+}""" .
+
+cqs:CQ-DRV-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:drivers ;
+    cqs:hasNLText "Which drivers are compounding each other?" ;
+    cqs:exercisesPattern "isCompoundedBy" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?a ?b WHERE { ?a drivers:isCompoundedBy ?b . }""" .
+
+cqs:CQ-DRV-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:drivers ;
+    cqs:hasNLText "List Vulnerability instances increased by EnvironmentalDegradation and UnplannedUrbanization." ;
+    cqs:exercisesPattern "increasesVulnerability" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?v WHERE {
+  ?d drivers:increasesVulnerability ?v .
+  FILTER(?d IN (drivers:EnvironmentalDegradation, drivers:UnplannedUrbanization))
+}""" .
+
+cqs:CQ-DRV-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:drivers ;
+    cqs:hasNLText "Retrieve hazards whose frequency profile is altered by ClimateChangeAndVariability." ;
+    cqs:exercisesPattern "driver -> risk -> hazard determinant chain" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?h WHERE {
+  drivers:ClimateChangeAndVariability drivers:drivesRisk ?r .
+  ?r risk:hasHazardDeterminant ?h .
+}""" .
+
+cqs:CQ-DRV-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:drivers ;
+    cqs:hasNLText "Which Capacities does WeakGovernance reduce, and which jurisdictions are affected?" ;
+    cqs:exercisesPattern "F9 × F6" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?c ?j WHERE {
+  drivers:WeakGovernance drivers:reducesCapacity ?c . ?c capacity:isManagedBy ?inst .
+  ?inst governance:inJurisdiction ?j .
+}""" .
+
+cqs:CQ-DRV-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:drivers ;
+    cqs:hasNLText "List drivers that simultaneously increase exposure, increase vulnerability and reduce capacity." ;
+    cqs:exercisesPattern "conjunctive over three mechanisms" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d WHERE {
+  ?d drivers:increasesExposure ?e ; drivers:increasesVulnerability ?v ; drivers:reducesCapacity ?c .
+}""" .
+
+cqs:CQ-DRV-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:drivers ;
+    cqs:hasNLText "Can ClimateChangeAndVariability directly drive Risk without operating through E/V/C?" ;
+    cqs:exercisesPattern "mechanism completeness — SHACL" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass drivers:RiskDriver ;
+  sh:or ( [ sh:path drivers:increasesExposure ; sh:minCount 1 ]
+          [ sh:path drivers:increasesVulnerability ; sh:minCount 1 ]
+          [ sh:path drivers:reducesCapacity ; sh:minCount 1 ] ) ] .""" .
+
+cqs:CQ-DRV-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:drivers ;
+    cqs:hasNLText "Are armed conflict, war and political instability classifiable as RiskDriver?" ;
+    cqs:exercisesPattern "scope alignment with Hazard exclusion" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?d a drivers:RiskDriver ; rdfs:label ?l . FILTER(REGEX(?l, "war|armed conflict|political instability", "i")) }""" .
+
+cqs:CQ-DRV-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:drivers ;
+    cqs:hasNLText "Can WeakGovernance be entailed both as a RiskDriver and as an F6 governance member with same identity?" ;
+    cqs:exercisesPattern "cross-frame coherence" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { drivers:WeakGovernance a governance:RiskGovernance . }""" .
+
+# =============================================================================
+# §13 Impact (F10)
+# =============================================================================
+
+cqs:CQ-IMP-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "Retrieve all impacts of a HazardousEvent classified by hasImpactType." ;
+    cqs:exercisesPattern "hasImpactType (Human/Environmental/Economic/Infrastructure)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?e ?impact ?type WHERE {
+  ?e hazard:hasImpact ?impact . ?impact impact:hasImpactType ?type .
+}""" .
+
+cqs:CQ-IMP-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "Sum monetary value of Direct vs Indirect economic losses for a disaster." ;
+    cqs:exercisesPattern "EconomicLoss + monetary value" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?scope (SUM(?val) AS ?total) (SAMPLE(?cur) AS ?currency) WHERE {
+  ?d disaster:causesEconomicLoss ?l .
+  ?l impact:hasEconomicScopeType ?scope ; impact:hasMonetaryValue ?val ; impact:hasCurrency ?cur .
+} GROUP BY ?d ?scope""" .
+
+cqs:CQ-IMP-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "Which impacts are reported vs estimated?" ;
+    cqs:exercisesPattern "hasReportedImpactType vs hasEstimatedImpactType" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?event ?reported ?estimated WHERE {
+  OPTIONAL { ?event impact:hasReportedImpactType ?reported . }
+  OPTIONAL { ?event impact:hasEstimatedImpactType ?estimated . }
+}""" .
+
+cqs:CQ-IMP-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "List events whose Impact has VeryHighImpactIntensity (= Disaster by definition)." ;
+    cqs:exercisesPattern "feeds Disaster equivalence" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?event WHERE {
+  ?event hazard:hasImpact ?i . ?i impact:hasImpactIntensity impact:VeryHighImpactIntensity .
+}""" .
+
+cqs:CQ-IMP-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "Retrieve HumanImpact of each disaster, broken down by AffectednessType." ;
+    cqs:exercisesPattern "F3 × F10 join" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?hi ?aff WHERE {
+  ?d disaster:hasHumanImpact ?hi ; hazard:affectsPopulation ?p .
+  ?p disaster:hasAffectednessType ?aff .
+}""" .
+
+cqs:CQ-IMP-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "Which environmental impacts are attributed to industrial vs hydrometeorological events?" ;
+    cqs:exercisesPattern "impact attribution by hazard category" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ei ?cat WHERE {
+  ?event hazard:hasImpact ?ei . ?ei a impact:EnvironmentalImpact .
+  ?event hazard:isManifestationOf ?h . ?h hazard:hasHazardCategory ?cat .
+}""" .
+
+cqs:CQ-IMP-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "Which HazardousEventDamage records are linked to DisasterLossDatabase entries?" ;
+    cqs:exercisesPattern "F8 × F10" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?dmg ?db WHERE {
+  ?dmg a impact:HazardousEventDamage ; impact:isRecordedIn ?db .
+  ?db a instruments:DisasterLossDatabase .
+}""" .
+
+cqs:CQ-IMP-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "Can an instance be both DirectEconomicLoss and IndirectEconomicLoss?" ;
+    cqs:exercisesPattern "owl:disjointWith" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?l a impact:DirectEconomicLoss, impact:IndirectEconomicLoss . }""" .
+
+cqs:CQ-IMP-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "Can an Impact carry conflicting reported and estimated ImpactType values?" ;
+    cqs:exercisesPattern "reported/estimated coherence" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "empty" ;
+    cpa:hasUnitTest """SELECT ?event ?r ?e WHERE {
+  ?event impact:hasReportedImpactType ?r ; impact:hasEstimatedImpactType ?e . FILTER(?r != ?e)
+}""" .
+
+cqs:CQ-IMP-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule ecmocore:impact ;
+    cqs:hasNLText "Does Impact require at least one hasImpactIntensity?" ;
+    cqs:exercisesPattern "minimal observability — SHACL" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass impact:Impact ;
+  sh:property [ sh:path impact:hasImpactIntensity ; sh:minCount 1 ] ] .""" .
+
+# =============================================================================
+# §14 Public Health (PH)
+# =============================================================================
+
+cqs:CQ-PH-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "Pathogen causative role: which disease, via which route, in which susceptible host?" ;
+    cqs:exercisesPattern "hasCausativeAgent / hasRouteOfTransmission / hasSusceptibleHost" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p ?d ?route ?host WHERE {
+  ?p a ph:Pathogen . ?d ph:hasCausativeAgent ?p ; ph:hasRouteOfTransmission ?route ;
+     ph:hasSusceptibleHost ?host .
+}""" .
+
+cqs:CQ-PH-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "Walk a disease's signs/symptoms and outcomes." ;
+    cqs:exercisesPattern "hasSignOrSymptom + hasOutcome" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?ss ?out WHERE {
+  ?d a ph:DiseaseOrSyndrome .
+  OPTIONAL { ?d ph:hasSignOrSymptom ?ss . }
+  OPTIONAL { ?d ph:hasOutcome ?out . }
+}""" .
+
+cqs:CQ-PH-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "Which Toxin is produced by which Pathogen, and which BiologicalHazard event involves it?" ;
+    cqs:exercisesPattern "producesToxin + BiologicalHazard link" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p ?t ?event WHERE {
+  ?p ph:producesToxin ?t .
+  OPTIONAL { ?event a hazard:BiologicalEvent ; hazard:hasCausativeAgent ?t . }
+}""" .
+
+cqs:CQ-PH-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "Retrieve the five PathogenRiskAssessment characteristics for a pathogen." ;
+    cqs:exercisesPattern "shortcut datatype + reified" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p ?cfr ?inc ?infect ?tox ?trans WHERE {
+  ?p a ph:Pathogen .
+  OPTIONAL { ?p ph:hasCaseFatalityRate ?cfr . }
+  OPTIONAL { ?p ph:hasIncubationPeriod ?inc . }
+  OPTIONAL { ?p ph:hasInfectiousness ?infect . }
+  OPTIONAL { ?p ph:hasToxicity ?tox . }
+  OPTIONAL { ?p ph:hasTransmissibility ?trans . }
+}""" .
+
+cqs:CQ-PH-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "List DiseaseVector instances and the diseases they vector." ;
+    cqs:exercisesPattern "hasVector / isVectorOf" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?vec ?disease WHERE { ?vec a ph:DiseaseVector ; ph:isVectorOf ?disease . }""" .
+
+cqs:CQ-PH-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "Walk fschema:subsumedUnder from a specific pathogen up the hierarchy." ;
+    cqs:exercisesPattern "individual-level subsumption" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """PREFIX fschema: <https://w3id.org/framester/schema/>
+SELECT ?ancestor WHERE { ph:COVID19 fschema:subsumedUnder+ ?ancestor . }""" .
+
+cqs:CQ-PH-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "Which HealthConditionCategory does a HealthCondition belong to?" ;
+    cqs:exercisesPattern "hasHealthConditionCategory" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?hc ?cat WHERE { ?hc a ph:HealthCondition ; ph:hasHealthConditionCategory ?cat . }""" .
+
+cqs:CQ-PH-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "Can a Pathogen be entailed Toxin merely because both can be hasCausativeAgent?" ;
+    cqs:exercisesPattern "range-union vs subsumption" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?x a ph:Pathogen, ph:Toxin . }""" .
+
+cqs:CQ-PH-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "Can PathogenCharacteristic exist without an associated pathogen?" ;
+    cqs:exercisesPattern "dangling characteristics — SHACL" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass ph:PathogenCharacteristic ;
+  sh:property [ sh:path [ sh:inversePath ph:hasCausativeAgent ] ; sh:minCount 1 ] ] .""" .
+
+cqs:CQ-PH-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cqs:hasNLText "Are non-infectious diseases inadvertently caught by InfectiousDiseaseOrSyndrome?" ;
+    cqs:exercisesPattern "OR-class conservativity" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?d a ph:InfectiousDiseaseOrSyndrome . FILTER NOT EXISTS { ?d ph:hasCausativeAgent ?p . } }""" .
+
+# =============================================================================
+# §15 Bio
+# =============================================================================
+
+cqs:CQ-BIO-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/bio> ;
+    cqs:hasNLText "Retrieve all Organisms with a given TaxonomicRank." ;
+    cqs:exercisesPattern "hasRank" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?o ?rank WHERE { ?o bio:hasRank ?rank . }""" .
+
+cqs:CQ-BIO-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/bio> ;
+    cqs:hasNLText "List Animals acting as Vector or Reservoir for a pathogen." ;
+    cqs:exercisesPattern "OrganismRole bridging bio + ph" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?a ?role ?path WHERE {
+  ?a a bio:Animal ; bio:hasOrganismRole ?role .
+  OPTIONAL { ?role ph:isVectorOf ?path . }
+}""" .
+
+cqs:CQ-BIO-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/bio> ;
+    cqs:hasNLText "Which Bacterium / Virus / Fungus instances are also referenced as ph:Pathogen?" ;
+    cqs:exercisesPattern "bridge bio↔ph" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?o WHERE { ?o a ph:Pathogen . ?o a ?bio_t .
+  FILTER(?bio_t IN (bio:Bacterium, bio:Virus, bio:Fungus)) }""" .
+
+cqs:CQ-BIO-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/bio> ;
+    cqs:hasNLText "Walk belongsTo from an organism up the taxonomy." ;
+    cqs:exercisesPattern "belongsTo (transitive?)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?o ?ancestor WHERE { ?o bio:belongsTo+ ?ancestor . }""" .
+
+cqs:CQ-BIO-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/bio> ;
+    cqs:hasNLText "List taxa at rank Species." ;
+    cqs:exercisesPattern "rank filter" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?o WHERE { ?o bio:hasRank ?r . ?r skos:prefLabel "Species"@en . }""" .
+
+cqs:CQ-BIO-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/bio> ;
+    cqs:hasNLText "Retrieve Organisms typed as both bio:Animal and ph:SusceptibleHost." ;
+    cqs:exercisesPattern "cross-module typing" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?o WHERE { ?o a bio:Animal, ph:SusceptibleHost . }""" .
+
+cqs:CQ-BIO-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/bio> ;
+    cqs:hasNLText "Is Virus correctly modelled as BiologicalEntity but not Organism?" ;
+    cqs:exercisesPattern "viral status design choice" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { bio:Virus rdfs:subClassOf bio:Organism . }""" .
+
+cqs:CQ-BIO-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/bio> ;
+    cqs:hasNLText "Can a single Organism be classified under two mutually-exclusive top kingdoms?" ;
+    cqs:exercisesPattern "kingdom disjointness audit" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?o a bio:Animal, bio:Plant . }""" .
+
+# =============================================================================
+# §16 HERA
+# =============================================================================
+
+cqs:CQ-HERA-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Overall priority level of a pathogen via property chain." ;
+    cqs:exercisesPattern "hasPriorityLevel chain (hasPriority, foundation:hasLevel)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p ?level WHERE { ?p hera:hasPriorityLevel ?level . }""" .
+
+cqs:CQ-HERA-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Pathogens with PHEIC potential >= High (orderInScale >= 3)." ;
+    cqs:exercisesPattern "orderInScale filter" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p ?lvl ?ord WHERE {
+  ?p hera:hasPHEICPotential ?ass . ?ass foundation:hasLevel ?lvl . ?lvl foundation:orderInScale ?ord .
+  FILTER(?ord >= 3)
+}""" .
+
+cqs:CQ-HERA-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Retrieve seven HERA criteria values for a pathogen in one row." ;
+    cqs:exercisesPattern "HERA criteria union" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p ?path ?trans ?phe ?cb ?immu ?ther ?vac WHERE {
+  ?p a ph:Pathogen .
+  OPTIONAL { ?p hera:hasPathogenicity ?path . }
+  OPTIONAL { ?p hera:hasTransmissibilityAssessment ?trans . }
+  OPTIONAL { ?p hera:hasPHEICPotential ?phe . }
+  OPTIONAL { ?p hera:hasEUCrossBorderThreatPotential ?cb . }
+  OPTIONAL { ?p hera:hasPopulationImmunity ?immu . }
+  OPTIONAL { ?p hera:hasAvailabilityOfTherapeutics ?ther . }
+  OPTIONAL { ?p hera:hasAvailabilityOfVaccines ?vac . }
+}""" .
+
+cqs:CQ-HERA-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Pathogens with Limited or NotAvailable therapeutics AND vaccines." ;
+    cqs:exercisesPattern "MCM availability conjunction" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p WHERE {
+  ?p hera:hasAvailabilityOfTherapeutics ?t ; hera:hasAvailabilityOfVaccines ?v .
+  ?t foundation:hasLevel ?tl . ?v foundation:hasLevel ?vl .
+  FILTER(?tl IN (hera:Limited_Therapeutics, hera:NotAvailable_Therapeutics))
+  FILTER(?vl IN (hera:Limited_Vaccines, hera:NotAvailable_Vaccines))
+}""" .
+
+cqs:CQ-HERA-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Pathogens with VeryHigh EU cross-border threat AND High pathogenicity." ;
+    cqs:exercisesPattern "criterion conjunction" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p WHERE {
+  ?p hera:hasEUCrossBorderThreatPotential ?cb ; hera:hasPathogenicity ?path .
+  ?cb foundation:hasLevel hera:VeryHigh_EUCrossBorderThreatPotential .
+  ?path foundation:hasLevel hera:High_Pathogenicity .
+}""" .
+
+cqs:CQ-HERA-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Walk nextValue to count distinct levels in each HERA scale." ;
+    cqs:exercisesPattern "scale completeness" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?scale (COUNT(?v) AS ?nLevels) WHERE { ?v foundation:inScale ?scale . } GROUP BY ?scale""" .
+
+cqs:CQ-HERA-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Trace AssessmentCriterion individual referenced via hasAssessmentCriterion hasValue for each subclass." ;
+    cqs:exercisesPattern "criterion-class binding" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?cls ?crit WHERE { ?cls rdfs:subClassOf [ owl:onProperty hera:hasAssessmentCriterion ; owl:hasValue ?crit ] . }""" .
+
+cqs:CQ-HERA-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Can a pathogen have two distinct PathogenPrioritisation levels at the same temporal validity?" ;
+    cqs:exercisesPattern "functional priority per validity — SHACL" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass ph:Pathogen ;
+  sh:property [ sh:path hera:hasPriority ; sh:maxCount 1 ] ] .""" .
+
+cqs:CQ-HERA-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Is hasPriorityLevel ever entailed without both hasPriority and hasLevel?" ;
+    cqs:exercisesPattern "property-chain soundness" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?p hera:hasPriorityLevel ?l .
+  FILTER NOT EXISTS { ?p hera:hasPriority ?ass . ?ass foundation:hasLevel ?l . } }""" .
+
+cqs:CQ-HERA-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/hera> ;
+    cqs:hasNLText "Can a HERA value belong to a scale that is not a PathogenRiskAssessmentLevelScale?" ;
+    cqs:exercisesPattern "scale-typing discipline" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?v foundation:inScale ?s .
+  FILTER STRSTARTS(STR(?v), "http://data.europa.eu/h8v/ecmo/hera/")
+  FILTER NOT EXISTS { ?s a hera:PathogenRiskAssessmentLevelScale . } }""" .
+
+# =============================================================================
+# §17 Cross-module integrative CQs
+# =============================================================================
+
+cqs:CQ-X-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Full Risk configuration for a community + most recent RiskAssessmentReport." ;
+    cqs:exercisesPattern "F1×F2×F4×F5×FOUND" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?community ?r ?h ?e ?v ?c ?report WHERE {
+  ?r risk:hasHazardDeterminant ?h ; risk:hasExposureDeterminant ?e ;
+     risk:hasVulnerabilityDeterminant ?v ; risk:hasCapacityDeterminant ?c .
+  ?e expvuln:exposesElement ?community .
+  OPTIONAL { ?report foundation:isReportFor ?event . ?event disaster:realizesRisk ?r . }
+}""" .
+
+cqs:CQ-X-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "End-to-end driver impact: hazards altered, exposures increased, vulnerabilities amplified, capacities eroded." ;
+    cqs:exercisesPattern "F9×F2×F4×F5" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?d ?h ?e ?v ?c WHERE {
+  ?d a drivers:RiskDriver ; drivers:drivesRisk ?r .
+  ?r risk:hasHazardDeterminant ?h .
+  OPTIONAL { ?d drivers:increasesExposure ?e . }
+  OPTIONAL { ?d drivers:increasesVulnerability ?v . }
+  OPTIONAL { ?d drivers:reducesCapacity ?c . }
+}""" .
+
+cqs:CQ-X-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Disaster: chain Signal -> EventValidation -> HazardousEvent -> Impact (VeryHigh) -> Disaster classification." ;
+    cqs:exercisesPattern "FOUND×F2×F3×F10" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?signal ?val ?event ?impact ?onset ?scale WHERE {
+  ?signal a foundation:Signal ; foundation:pertainsToEvent ?event .
+  ?val foundation:validatesSignal ?signal ; foundation:confirmsEvent ?event .
+  ?event a disaster:Disaster ; hazard:hasImpact ?impact .
+  ?impact impact:hasImpactIntensity impact:VeryHighImpactIntensity .
+  OPTIONAL { ?event disaster:hasOnsetType ?onset . }
+  OPTIONAL { ?event disaster:hasScaleType ?scale . }
+}""" .
+
+cqs:CQ-X-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Capacity strengthened by CapacityDevelopment that is part of a RiskManagementPlan implementing a RiskReductionStrategy." ;
+    cqs:exercisesPattern "F5×F6" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?c ?dev ?plan ?strat WHERE {
+  ?dev capacity:developsCapacityOf ?c .
+  ?plan a governance:RiskManagementPlan ; governance:implementsPlan ?dev .
+  ?strat governance:appliesStrategy ?plan .
+}""" .
+
+cqs:CQ-X-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Interventions in F7 linked to F8 instruments." ;
+    cqs:exercisesPattern "F7×F8" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?i ?ews ?es ?rt WHERE {
+  ?i a response:Intervention .
+  OPTIONAL { ?i response:linksToEWS ?ews . }
+  OPTIONAL { ?i instruments:providesEssentialService ?es . }
+  OPTIONAL { ?i instruments:transfersFinancialRisk ?rt . }
+}""" .
+
+cqs:CQ-X-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "MultiHazardEarlyWarningSystem -> Warning -> forecastsEvent -> HazardousEvent -> triggers -> HazardousEvent." ;
+    cqs:exercisesPattern "F8×F2 cascade" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?ews ?w ?e1 ?e2 WHERE {
+  ?ews instruments:hasWarning ?w . ?w instruments:forecastsEvent ?e1 .
+  ?e1 hazard:triggers ?e2 .
+}""" .
+
+cqs:CQ-X-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Pathogen: HERA prioritisation, BiologicalHazard, manifesting events, public-health governance." ;
+    cqs:exercisesPattern "HERA×PH×F2×F6" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?p ?prio ?bh ?event ?gov WHERE {
+  ?p a ph:Pathogen ; hera:hasPriorityLevel ?prio .
+  ?bh a hazard:BiologicalHazard . ?event hazard:isManifestationOf ?bh ;
+       hazard:hasCausativeAgent ?p .
+  OPTIONAL { ?gov a governance:RiskGovernance ; governance:analysesHazard ?bh . }
+}""" .
+
+cqs:CQ-X-P08 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "ExposedElements co-located in high-driver regions and susceptible to a hazard of same category." ;
+    cqs:exercisesPattern "F4×F9×F2" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?elem ?driver ?h WHERE {
+  ?elem a expvuln:ExposedElement ; foundation:hasLocation ?p .
+  ?driver a drivers:RiskDriver ; foundation:hasLocation ?p .
+  ?vuln expvuln:increasesSusceptibilityTo ?h .
+}""" .
+
+cqs:CQ-X-P09 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "For each governance regime, count disasters in its jurisdiction that exceeded Capacity." ;
+    cqs:exercisesPattern "F3×F5×F6 aggregation" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?gov ?j (COUNT(?d) AS ?nExceed) WHERE {
+  ?gov a governance:RiskGovernance ; governance:inJurisdiction ?j .
+  ?d a disaster:Disaster ; foundation:hasLocation ?j ; disaster:exceedsCapacityOf ?cap .
+} GROUP BY ?gov ?j""" .
+
+cqs:CQ-X-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Can a Disaster be entailed without any Risk it realizesRisk?" ;
+    cqs:exercisesPattern "F3×F1 conservativity" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?d a disaster:Disaster . FILTER NOT EXISTS { ?d disaster:realizesRisk ?r . } }""" .
+
+cqs:CQ-X-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Is Hazard (Description) ever inferred to be HazardousEvent (Situation)?" ;
+    cqs:exercisesPattern "D&S boundary leak detector" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK { ?h a hazard:Hazard, hazard:HazardousEvent . }""" .
+
+cqs:CQ-X-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Can a RiskDriver operate without affecting Exposure, Vulnerability, or Capacity?" ;
+    cqs:exercisesPattern "mechanism completeness — SHACL" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass drivers:RiskDriver ;
+  sh:or ( [ sh:path drivers:increasesExposure ; sh:minCount 1 ]
+          [ sh:path drivers:increasesVulnerability ; sh:minCount 1 ]
+          [ sh:path drivers:reducesCapacity ; sh:minCount 1 ] ) ] .""" .
+
+cqs:CQ-X-N04 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Is the same Risk inadvertently both AcceptableRisk and IntensiveRisk?" ;
+    cqs:exercisesPattern "axis orthogonality coherence" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "empty" ;
+    cpa:hasUnitTest """SELECT ?r WHERE { ?r a risk:AcceptableRisk, risk:IntensiveRisk . }""" .
+
+cqs:CQ-X-N05 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Can HERA PathogenPrioritisation be High while corresponding BiologicalHazard SeverityAssessment is Low for same temporal validity?" ;
+    cqs:exercisesPattern "multi-source assessment mismatch" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "empty" ;
+    cpa:hasUnitTest """SELECT ?p ?event WHERE {
+  ?p hera:hasPriorityLevel ?prio . FILTER(?prio = hera:High_Pathogenicity)
+  ?event hazard:hasCausativeAgent ?p ; hazard:hasSeverityAssessment ?sev .
+  ?sev foundation:hasLevel ?lv . FILTER(STRSTARTS(STR(?lv), "Low"))
+}""" .
+
+cqs:CQ-X-N06 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
+    cqs:hasNLText "Should the absence of MonitoringAndForecastingComponent prevent typing as MultiHazardEarlyWarningSystem?" ;
+    cqs:exercisesPattern "F8 structural rule — SHACL" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """[ a sh:NodeShape ; sh:targetClass instruments:MultiHazardEarlyWarningSystem ;
+  sh:property [ sh:path instruments:hasEWSComponent ;
+                sh:qualifiedValueShape [ sh:class instruments:MonitoringAndForecastingComponent ] ;
+                sh:qualifiedMinCount 1 ] ;
+  sh:property [ sh:path instruments:hasEWSComponent ;
+                sh:qualifiedValueShape [ sh:class instruments:WarningDisseminationComponent ] ;
+                sh:qualifiedMinCount 1 ] ;
+  sh:property [ sh:path instruments:hasEWSComponent ;
+                sh:qualifiedValueShape [ sh:class instruments:RiskKnowledgeComponent ] ;
+                sh:qualifiedMinCount 1 ] ;
+  sh:property [ sh:path instruments:hasEWSComponent ;
+                sh:qualifiedValueShape [ sh:class instruments:ResponsePreparednessComponent ] ;
+                sh:qualifiedMinCount 1 ] ] .""" .
+
+# end of file
+
+# =============================================================================
+# Extended expectation annotations (v0.1) — see ecmo-cq-judge-spec.md
+# Demonstrates the five new properties on a representative subset of CQs.
+# =============================================================================
+
+cqs:expectsBindingType    a owl:DatatypeProperty .
+cqs:expectsCardinality    a owl:DatatypeProperty .
+cqs:expectsAllRowsSatisfy a owl:DatatypeProperty .
+cqs:requiresEntailment    a owl:DatatypeProperty .
+cqs:bansDisjointClassPairs a owl:DatatypeProperty .
+
+# §4 — Risk: four determinants. Every binding must be in the right anchor class.
+cqs:CQ-RISK-P01
+    cqs:expectsBindingType
+        "?r = http://data.europa.eu/h8v/ecmo/core/risk/Risk" ,
+        "?h = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" ,
+        "?e = http://data.europa.eu/h8v/ecmo/core/expvuln/Exposure" ,
+        "?v = http://data.europa.eu/h8v/ecmo/core/expvuln/Vulnerability" ,
+        "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity" ;
+    cqs:expectsCardinality "at_least_one" ;
+    cqs:bansDisjointClassPairs "true" .
+
+# §5 — Hazard manifestation. The hazard must be of type hazard:Hazard.
+cqs:CQ-HAZ-P01
+    cqs:expectsBindingType
+        "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent" ,
+        "?hazard = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" ;
+    cqs:expectsAllRowsSatisfy
+        "{ ?event hazard:isManifestationOf ?hazard . }" ;
+    cqs:bansDisjointClassPairs "true" .
+
+# §6 — Disaster: equivalentClass entailment, must be inferred not just asserted.
+cqs:CQ-DIS-P01
+    cqs:expectsBindingType
+        "?d = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster" ;
+    cqs:expectsAllRowsSatisfy
+        "{ ?d hazard:hasImpact ?i . ?i impact:hasImpactIntensity impact:VeryHighImpactIntensity . }" ;
+    cqs:bansDisjointClassPairs "true" .
+
+# §7 — ExpVuln: type-conformance on the four-axis decomposition.
+cqs:CQ-EXV-P04
+    cqs:expectsBindingType
+        "?v = http://data.europa.eu/h8v/ecmo/core/expvuln/Vulnerability" ,
+        "?dim = http://data.europa.eu/h8v/ecmo/core/expvuln/VulnerabilityDimension" ,
+        "?h = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" ;
+    cqs:expectsCardinality "at_least_one" .
+
+# §10 — Response Q-: Preparedness vs Response disjointness. Q- expects ASK false.
+cqs:CQ-RES-N01
+    cqs:expectsCardinality "exactly_zero" .
+
+# §11 — Instruments: EWS structural completeness check via SHACL.
+# (no extended expectations needed; the SHACL shape is its own check.)
+
+# §14 — PH: type-conformance + cardinality on the disease/pathogen wiring.
+cqs:CQ-PH-P01
+    cqs:expectsBindingType
+        "?p = http://data.europa.eu/h8v/ecmo/public-health/Pathogen" ,
+        "?d = http://data.europa.eu/h8v/ecmo/public-health/DiseaseOrSyndrome" ;
+    cqs:expectsAllRowsSatisfy
+        "{ ?d ph:hasCausativeAgent ?p . }" ;
+    cqs:bansDisjointClassPairs "true" .
+
+# §16 — HERA: there should be exactly one priority level per pathogen.
+cqs:CQ-HERA-P01
+    cqs:expectsCardinality "at_least_one" ;
+    cqs:expectsBindingType
+        "?p = http://data.europa.eu/h8v/ecmo/public-health/Pathogen" ,
+        "?level = http://data.europa.eu/h8v/ecmo/core/foundation/QualitativeAssessmentLevelValue" .
+
+# Cross — full risk configuration for a community: type-conform every binding.
+cqs:CQ-X-P01
+    cqs:expectsBindingType
+        "?r = http://data.europa.eu/h8v/ecmo/core/risk/Risk" ,
+        "?h = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" ,
+        "?e = http://data.europa.eu/h8v/ecmo/core/expvuln/Exposure" ,
+        "?v = http://data.europa.eu/h8v/ecmo/core/expvuln/Vulnerability" ,
+        "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity" ;
+    cqs:bansDisjointClassPairs "true" .
+
+# Cross-Q- — leak detector for Hazard inferred as HazardousEvent.
+cqs:CQ-X-N02
+    cqs:expectsCardinality "exactly_zero" .
+
+# COREF P03 — latest non-superseded classification: must be exactly one.
+cqs:CQ-COREF-P03
+    cqs:expectsBindingType
+        "?hazard = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" ;
+    cqs:expectsCardinality "exactly_one" .
+
+
+# Demonstrate the entailment check: under OWL-RL, the Disaster equivalentClass axiom
+# should classify EbolaOutbreakEvent as a Disaster even if it was not asserted as one.
+cqs:CQ-DIS-P01 cqs:requiresEntailment "true" .
+
+# ============================================================================
+# Bulk annotations for the remaining 148 CQs (generated by gen_cq_annotations.py).
+# ============================================================================
+
+cqs:CQ-BIO-P01
+    cqs:expectsBindingType
+            "?o = http://data.europa.eu/h8v/ecmo/bio/Organism",
+            "?rank = http://data.europa.eu/h8v/ecmo/bio/TaxonomicRank" .
+cqs:CQ-BIO-P02
+    cqs:expectsBindingType
+            "?a = http://data.europa.eu/h8v/ecmo/bio/Animal",
+            "?role = http://data.europa.eu/h8v/ecmo/bio/OrganismRole" .
+cqs:CQ-BIO-P03
+    cqs:expectsBindingType
+            "?o = http://data.europa.eu/h8v/ecmo/public-health/Pathogen" .
+cqs:CQ-BIO-P04
+    cqs:expectsBindingType
+            "?o = http://data.europa.eu/h8v/ecmo/bio/Organism",
+            "?ancestor = http://data.europa.eu/h8v/ecmo/bio/BiologicalEntity" .
+cqs:CQ-BIO-P05
+    cqs:expectsBindingType
+            "?o = http://data.europa.eu/h8v/ecmo/bio/Organism" .
+cqs:CQ-BIO-P06
+    cqs:expectsBindingType
+            "?o = http://data.europa.eu/h8v/ecmo/bio/Animal" .
+cqs:CQ-CAP-P01
+    cqs:expectsBindingType
+            "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity" .
+cqs:CQ-CAP-P02
+    cqs:expectsBindingType
+            "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity",
+            "?fn = http://data.europa.eu/h8v/ecmo/core/capacity/EssentialFunction" .
+cqs:CQ-CAP-P03
+    cqs:expectsBindingType
+            "?ca = http://data.europa.eu/h8v/ecmo/core/capacity/CapacityAssessment" .
+cqs:CQ-CAP-P04
+    cqs:expectsBindingType
+            "?dev = http://data.europa.eu/h8v/ecmo/core/capacity/CapacityDevelopment",
+            "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity" .
+cqs:CQ-CAP-P05
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster",
+            "?cap = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity",
+            "?assess = http://data.europa.eu/h8v/ecmo/core/capacity/CapacityExceedanceAssessment" .
+cqs:CQ-CAP-P06
+    cqs:expectsBindingType
+            "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity",
+            "?v = http://data.europa.eu/h8v/ecmo/core/expvuln/Vulnerability" .
+cqs:CQ-CAP-P07
+    cqs:expectsBindingType
+            "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity" .
+cqs:CQ-COREF-P01
+    cqs:expectsBindingType
+            "?s = http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation" .
+cqs:CQ-COREF-P02
+    cqs:expectsBindingType
+            "?hazard = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" .
+cqs:CQ-COREF-P04
+    cqs:expectsBindingType
+            "?earlier = http://data.europa.eu/h8v/ecmo/coref/HazardClassificationSituation",
+            "?later = http://data.europa.eu/h8v/ecmo/coref/HazardClassificationSituation" .
+cqs:CQ-COREF-P05
+    cqs:expectsBindingType
+            "?agency = http://www.w3.org/ns/prov#Organization" .
+cqs:CQ-COREF-P06
+    cqs:expectsBindingType
+            "?hub = http://data.europa.eu/h8v/ecmo/coref/HubAssessment",
+            "?policy = http://data.europa.eu/h8v/ecmo/coref/MergePolicy" .
+cqs:CQ-COREF-P07
+    cqs:expectsBindingType
+            "?other = http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation" .
+cqs:CQ-COREF-P08
+    cqs:expectsBindingType
+            "?earlier = http://data.europa.eu/h8v/ecmo/coref/HazardClassificationSituation",
+            "?later = http://data.europa.eu/h8v/ecmo/coref/HazardClassificationSituation" .
+cqs:CQ-COREF-P09
+    cqs:expectsBindingType
+            "?conflict = http://data.europa.eu/h8v/ecmo/coref/ConflictReport" .
+cqs:CQ-DIS-P02
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster" .
+cqs:CQ-DIS-P03
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster",
+            "?pop = http://data.europa.eu/h8v/ecmo/core/disaster/AffectedPopulation",
+            "?affectedness = http://data.europa.eu/h8v/ecmo/core/disaster/AffectednessType" .
+cqs:CQ-DIS-P04
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster",
+            "?cap = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity",
+            "?assess = http://data.europa.eu/h8v/ecmo/core/capacity/CapacityExceedanceAssessment" .
+cqs:CQ-DIS-P05
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster" .
+cqs:CQ-DIS-P06
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/disaster/SlowOnsetDisaster",
+            "?community = http://data.europa.eu/h8v/ecmo/core/disaster/Community" .
+cqs:CQ-DIS-P07
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster",
+            "?risk = http://data.europa.eu/h8v/ecmo/core/risk/Risk",
+            "?vuln = http://data.europa.eu/h8v/ecmo/core/expvuln/Vulnerability" .
+cqs:CQ-DRV-P01
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/drivers/RiskDriver",
+            "?r = http://data.europa.eu/h8v/ecmo/core/risk/Risk" .
+cqs:CQ-DRV-P02
+    cqs:expectsBindingType
+            "?a = http://data.europa.eu/h8v/ecmo/core/drivers/RiskDriver",
+            "?b = http://data.europa.eu/h8v/ecmo/core/drivers/RiskDriver" .
+cqs:CQ-DRV-P03
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/drivers/RiskDriver",
+            "?v = http://data.europa.eu/h8v/ecmo/core/expvuln/Vulnerability" .
+cqs:CQ-DRV-P04
+    cqs:expectsBindingType
+            "?h = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" .
+cqs:CQ-DRV-P05
+    cqs:expectsBindingType
+            "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity",
+            "?j = http://data.europa.eu/h8v/ecmo/core/governance/Jurisdiction" .
+cqs:CQ-DRV-P06
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/drivers/RiskDriver" .
+cqs:CQ-EXV-P01
+    cqs:expectsBindingType
+            "?exp = http://data.europa.eu/h8v/ecmo/core/expvuln/Exposure",
+            "?elem = http://data.europa.eu/h8v/ecmo/core/expvuln/ExposedElement",
+            "?hazard = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" .
+cqs:CQ-EXV-P02
+    cqs:expectsBindingType
+            "?type = http://data.europa.eu/h8v/ecmo/core/expvuln/ExposedElementType",
+            "?domain = http://data.europa.eu/h8v/ecmo/core/expvuln/AssetDomain" .
+cqs:CQ-EXV-P03
+    cqs:expectsBindingType
+            "?exp = http://data.europa.eu/h8v/ecmo/core/expvuln/Exposure",
+            "?group = http://data.europa.eu/h8v/ecmo/core/expvuln/PopulationGroupType" .
+cqs:CQ-EXV-P05
+    cqs:expectsBindingType
+            "?ci = http://data.europa.eu/h8v/ecmo/core/expvuln/CriticalInfrastructureOrService",
+            "?sector = http://data.europa.eu/h8v/ecmo/core/expvuln/InfrastructureSector" .
+cqs:CQ-EXV-P06
+    cqs:expectsBindingType
+            "?elem = http://data.europa.eu/h8v/ecmo/core/expvuln/ExposedElement",
+            "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent" .
+cqs:CQ-EXV-P07
+    cqs:expectsBindingType
+            "?v = http://data.europa.eu/h8v/ecmo/core/expvuln/Vulnerability",
+            "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity" .
+cqs:CQ-FOUND-P01
+    cqs:expectsBindingType
+            "?cluster = http://data.europa.eu/h8v/ecmo/core/foundation/FrameCluster" ;
+    cqs:expectsCardinality "at_least_one" .
+cqs:CQ-FOUND-P02
+    cqs:expectsBindingType
+            "?topConcept = http://www.w3.org/2004/02/skos/core#Concept",
+            "?cluster = http://data.europa.eu/h8v/ecmo/core/foundation/FrameCluster" .
+cqs:CQ-FOUND-P03
+    cqs:expectsBindingType
+            "?signal = http://data.europa.eu/h8v/ecmo/core/foundation/Signal",
+            "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent",
+            "?val = http://data.europa.eu/h8v/ecmo/core/foundation/EventValidation" ;
+    cqs:bansDisjointClassPairs "true" .
+cqs:CQ-FOUND-P04
+    cqs:expectsBindingType
+            "?qa = http://data.europa.eu/h8v/ecmo/core/foundation/QualitativeAssessment",
+            "?level = http://data.europa.eu/h8v/ecmo/core/foundation/QualitativeAssessmentLevelValue",
+            "?scale = http://data.europa.eu/h8v/ecmo/core/foundation/QualitativeAssessmentLevelScale" .
+cqs:CQ-FOUND-P05
+    cqs:expectsBindingType
+            "?scale = http://data.europa.eu/h8v/ecmo/core/foundation/QualitativeAssessmentLevelScale",
+            "?value = http://data.europa.eu/h8v/ecmo/core/foundation/QualitativeAssessmentLevelValue" ;
+    cqs:expectsCardinality "at_least_one" .
+cqs:CQ-FOUND-P06
+    cqs:expectsBindingType
+            "?report = http://data.europa.eu/h8v/ecmo/core/foundation/RiskAssessmentReport",
+            "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent",
+            "?measure = http://data.europa.eu/h8v/ecmo/core/response/MeasureType" .
+cqs:CQ-FOUND-P07
+    cqs:expectsBindingType
+            "?root = http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Event",
+            "?root = http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation",
+            "?nested = http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Event",
+            "?nested = http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation" .
+cqs:CQ-GOV-P01
+    cqs:expectsBindingType
+            "?rm = http://data.europa.eu/h8v/ecmo/core/governance/RiskManagement" .
+cqs:CQ-GOV-P02
+    cqs:expectsBindingType
+            "?p = http://data.europa.eu/h8v/ecmo/core/governance/RiskManagementPlan",
+            "?pf = http://data.europa.eu/h8v/ecmo/core/governance/Policy",
+            "?lf = http://data.europa.eu/h8v/ecmo/core/governance/LegalFramework",
+            "?if = http://data.europa.eu/h8v/ecmo/core/governance/Institution" .
+cqs:CQ-GOV-P03
+    cqs:expectsBindingType
+            "?j = http://data.europa.eu/h8v/ecmo/core/governance/Jurisdiction" .
+cqs:CQ-GOV-P04
+    cqs:expectsBindingType
+            "?ra = http://data.europa.eu/h8v/ecmo/core/governance/RiskAssessment",
+            "?h = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" .
+cqs:CQ-GOV-P06
+    cqs:expectsBindingType
+            "?g = http://data.europa.eu/h8v/ecmo/core/governance/RiskGovernance" .
+cqs:CQ-GOV-P07
+    cqs:expectsBindingType
+            "?phase = http://data.europa.eu/h8v/ecmo/core/response/RiskReductionPhase",
+            "?parent = http://data.europa.eu/h8v/ecmo/core/response/RiskReductionPhase" .
+cqs:CQ-GOV-P08
+    cqs:expectsBindingType
+            "?gov = http://data.europa.eu/h8v/ecmo/core/governance/RiskGovernance",
+            "?strat = http://data.europa.eu/h8v/ecmo/core/governance/RiskReductionStrategy",
+            "?plan = http://data.europa.eu/h8v/ecmo/core/governance/RiskManagementPlan",
+            "?inter = http://data.europa.eu/h8v/ecmo/core/response/Intervention" .
+cqs:CQ-HAZ-P02
+    cqs:expectsBindingType
+            "?subtype = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" .
+cqs:CQ-HAZ-P03
+    cqs:expectsBindingType
+            "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent",
+            "?int = http://data.europa.eu/h8v/ecmo/core/hazard/IntensityObservation",
+            "?mag = http://data.europa.eu/h8v/ecmo/core/hazard/MagnitudeObservation",
+            "?sev = http://data.europa.eu/h8v/ecmo/core/hazard/SeverityAssessment" .
+cqs:CQ-HAZ-P04
+    cqs:expectsBindingType
+            "?source = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent",
+            "?target = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent" .
+cqs:CQ-HAZ-P05
+    cqs:expectsBindingType
+            "?ctx = http://data.europa.eu/h8v/ecmo/core/hazard/MultiHazardContext",
+            "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent" .
+cqs:CQ-HAZ-P06
+    cqs:expectsBindingType
+            "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent" .
+cqs:CQ-HAZ-P07
+    cqs:expectsBindingType
+            "?h = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard",
+            "?e1 = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent",
+            "?e2 = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent",
+            "?impact = http://data.europa.eu/h8v/ecmo/core/impact/Impact" ;
+    cqs:bansDisjointClassPairs "true" .
+cqs:CQ-HERA-P02
+    cqs:expectsBindingType
+            "?p = http://data.europa.eu/h8v/ecmo/public-health/Pathogen",
+            "?lvl = http://data.europa.eu/h8v/ecmo/core/foundation/QualitativeAssessmentLevelValue" .
+cqs:CQ-HERA-P03
+    cqs:expectsBindingType
+            "?p = http://data.europa.eu/h8v/ecmo/public-health/Pathogen" .
+cqs:CQ-HERA-P04
+    cqs:expectsBindingType
+            "?p = http://data.europa.eu/h8v/ecmo/public-health/Pathogen" .
+cqs:CQ-HERA-P05
+    cqs:expectsBindingType
+            "?p = http://data.europa.eu/h8v/ecmo/public-health/Pathogen" .
+cqs:CQ-HERA-P06
+    cqs:expectsBindingType
+            "?scale = http://data.europa.eu/h8v/ecmo/core/foundation/QualitativeAssessmentLevelScale" .
+cqs:CQ-HERA-P07
+    cqs:expectsBindingType
+            "?crit = http://data.europa.eu/h8v/ecmo/hera/AssessmentCriterion" .
+cqs:CQ-IMP-P01
+    cqs:expectsBindingType
+            "?e = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent",
+            "?impact = http://data.europa.eu/h8v/ecmo/core/impact/Impact",
+            "?type = http://data.europa.eu/h8v/ecmo/core/impact/ImpactType" .
+cqs:CQ-IMP-P02
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster" .
+cqs:CQ-IMP-P04
+    cqs:expectsBindingType
+            "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent" .
+cqs:CQ-IMP-P05
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster",
+            "?hi = http://data.europa.eu/h8v/ecmo/core/impact/HumanImpact" .
+cqs:CQ-IMP-P06
+    cqs:expectsBindingType
+            "?ei = http://data.europa.eu/h8v/ecmo/core/impact/EnvironmentalImpact" .
+cqs:CQ-IMP-P07
+    cqs:expectsBindingType
+            "?dmg = http://data.europa.eu/h8v/ecmo/core/impact/HazardousEventDamage",
+            "?db = http://data.europa.eu/h8v/ecmo/core/instruments/DisasterLossDatabase" .
+cqs:CQ-INS-P01
+    cqs:expectsBindingType
+            "?ews = http://data.europa.eu/h8v/ecmo/core/instruments/MultiHazardEarlyWarningSystem",
+            "?comp = http://data.europa.eu/h8v/ecmo/core/instruments/EWSComponent",
+            "?hazard = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" .
+cqs:CQ-INS-P02
+    cqs:expectsBindingType
+            "?ews = http://data.europa.eu/h8v/ecmo/core/instruments/EarlyWarningSystem",
+            "?w = http://data.europa.eu/h8v/ecmo/core/instruments/Warning" .
+cqs:CQ-INS-P03
+    cqs:expectsBindingType
+            "?bc = http://data.europa.eu/h8v/ecmo/core/instruments/BuildingCode",
+            "?s = http://data.europa.eu/h8v/ecmo/core/instruments/Structure" .
+cqs:CQ-INS-P04
+    cqs:expectsBindingType
+            "?rt = http://data.europa.eu/h8v/ecmo/core/instruments/RiskTransfer",
+            "?mech = http://data.europa.eu/h8v/ecmo/core/instruments/RiskTransferMechanism" .
+cqs:CQ-INS-P05
+    cqs:expectsBindingType
+            "?db = http://data.europa.eu/h8v/ecmo/core/instruments/DisasterLossDatabase" .
+cqs:CQ-INS-P06
+    cqs:expectsBindingType
+            "?es = http://data.europa.eu/h8v/ecmo/core/instruments/EssentialService" .
+cqs:CQ-INS-P07
+    cqs:expectsBindingType
+            "?m = http://data.europa.eu/h8v/ecmo/core/instruments/StructuralMeasure",
+            "?h = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" .
+cqs:CQ-INS-P08
+    cqs:expectsBindingType
+            "?ews = http://data.europa.eu/h8v/ecmo/core/instruments/EarlyWarningSystem",
+            "?comp = http://data.europa.eu/h8v/ecmo/core/instruments/EWSComponent",
+            "?fn = http://data.europa.eu/h8v/ecmo/core/instruments/EWSFunctionType" .
+cqs:CQ-PH-P02
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/public-health/DiseaseOrSyndrome" .
+cqs:CQ-PH-P03
+    cqs:expectsBindingType
+            "?p = http://data.europa.eu/h8v/ecmo/public-health/Pathogen",
+            "?t = http://data.europa.eu/h8v/ecmo/public-health/Toxin" .
+cqs:CQ-PH-P04
+    cqs:expectsBindingType
+            "?p = http://data.europa.eu/h8v/ecmo/public-health/Pathogen" .
+cqs:CQ-PH-P05
+    cqs:expectsBindingType
+            "?vec = http://data.europa.eu/h8v/ecmo/public-health/DiseaseVector",
+            "?disease = http://data.europa.eu/h8v/ecmo/public-health/DiseaseOrSyndrome" .
+cqs:CQ-PH-P07
+    cqs:expectsBindingType
+            "?hc = http://data.europa.eu/h8v/ecmo/public-health/HealthCondition",
+            "?cat = http://data.europa.eu/h8v/ecmo/public-health/HealthConditionCategory" .
+cqs:CQ-RES-P01
+    cqs:expectsBindingType
+            "?early = http://data.europa.eu/h8v/ecmo/core/response/RiskReductionPhase",
+            "?late = http://data.europa.eu/h8v/ecmo/core/response/RiskReductionPhase" .
+cqs:CQ-RES-P02
+    cqs:expectsBindingType
+            "?i = http://data.europa.eu/h8v/ecmo/core/response/Intervention" .
+cqs:CQ-RES-P03
+    cqs:expectsBindingType
+            "?i = http://data.europa.eu/h8v/ecmo/core/response/Intervention",
+            "?mt = http://data.europa.eu/h8v/ecmo/core/response/MeasureType",
+            "?ct = http://data.europa.eu/h8v/ecmo/core/response/CapacityType" .
+cqs:CQ-RES-P04
+    cqs:expectsBindingType
+            "?ev = http://data.europa.eu/h8v/ecmo/core/response/Evacuation",
+            "?plan = http://data.europa.eu/h8v/ecmo/core/response/EvacuationPlan" .
+cqs:CQ-RES-P05
+    cqs:expectsBindingType
+            "?phase = http://data.europa.eu/h8v/ecmo/core/response/Response",
+            "?es = http://data.europa.eu/h8v/ecmo/core/response/EmergencyService" .
+cqs:CQ-RES-P06
+    cqs:expectsBindingType
+            "?i = http://data.europa.eu/h8v/ecmo/core/response/Recovery" .
+cqs:CQ-RES-P07
+    cqs:expectsBindingType
+            "?cp = http://data.europa.eu/h8v/ecmo/core/response/ContingencyPlanning",
+            "?i = http://data.europa.eu/h8v/ecmo/core/response/Intervention" .
+cqs:CQ-RES-P08
+    cqs:expectsBindingType
+            "?prep = http://data.europa.eu/h8v/ecmo/core/response/Preparedness",
+            "?ews = http://data.europa.eu/h8v/ecmo/core/instruments/EarlyWarningSystem" .
+cqs:CQ-RISK-P02
+    cqs:expectsBindingType
+            "?r = http://data.europa.eu/h8v/ecmo/core/risk/Risk",
+            "?profile = http://data.europa.eu/h8v/ecmo/core/risk/RiskIntensityProfile" .
+cqs:CQ-RISK-P03
+    cqs:expectsBindingType
+            "?residual = http://data.europa.eu/h8v/ecmo/core/risk/ResidualRisk",
+            "?measure = http://data.europa.eu/h8v/ecmo/core/instruments/Measure" .
+cqs:CQ-RISK-P04
+    cqs:expectsBindingType
+            "?r = http://data.europa.eu/h8v/ecmo/core/risk/Risk",
+            "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent" .
+cqs:CQ-RISK-P05
+    cqs:expectsBindingType
+            "?r = http://data.europa.eu/h8v/ecmo/core/risk/Risk" .
+cqs:CQ-RISK-P06
+    cqs:expectsBindingType
+            "?r = http://data.europa.eu/h8v/ecmo/core/risk/Risk",
+            "?report = http://data.europa.eu/h8v/ecmo/core/foundation/RiskAssessmentReport" .
+cqs:CQ-RISK-P07
+    cqs:expectsBindingType
+            "?r = http://data.europa.eu/h8v/ecmo/core/risk/AcceptableRisk" .
+cqs:CQ-X-P02
+    cqs:expectsBindingType
+            "?d = http://data.europa.eu/h8v/ecmo/core/drivers/RiskDriver",
+            "?h = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard",
+            "?e = http://data.europa.eu/h8v/ecmo/core/expvuln/Exposure",
+            "?v = http://data.europa.eu/h8v/ecmo/core/expvuln/Vulnerability",
+            "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity" ;
+    cqs:bansDisjointClassPairs "true" .
+cqs:CQ-X-P03
+    cqs:expectsBindingType
+            "?signal = http://data.europa.eu/h8v/ecmo/core/foundation/Signal",
+            "?val = http://data.europa.eu/h8v/ecmo/core/foundation/EventValidation",
+            "?event = http://data.europa.eu/h8v/ecmo/core/disaster/Disaster",
+            "?impact = http://data.europa.eu/h8v/ecmo/core/impact/Impact" ;
+    cqs:expectsAllRowsSatisfy
+            """{ ?impact <http://data.europa.eu/h8v/ecmo/core/impact/hasImpactIntensity> <http://data.europa.eu/h8v/ecmo/core/impact/VeryHighImpactIntensity> . }""" ;
+    cqs:bansDisjointClassPairs "true" .
+cqs:CQ-X-P04
+    cqs:expectsBindingType
+            "?c = http://data.europa.eu/h8v/ecmo/core/capacity/Capacity",
+            "?dev = http://data.europa.eu/h8v/ecmo/core/capacity/CapacityDevelopment",
+            "?plan = http://data.europa.eu/h8v/ecmo/core/governance/RiskManagementPlan",
+            "?strat = http://data.europa.eu/h8v/ecmo/core/governance/RiskReductionStrategy" .
+cqs:CQ-X-P05
+    cqs:expectsBindingType
+            "?i = http://data.europa.eu/h8v/ecmo/core/response/Intervention" .
+cqs:CQ-X-P06
+    cqs:expectsBindingType
+            "?ews = http://data.europa.eu/h8v/ecmo/core/instruments/MultiHazardEarlyWarningSystem",
+            "?w = http://data.europa.eu/h8v/ecmo/core/instruments/Warning",
+            "?e1 = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent",
+            "?e2 = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent" .
+cqs:CQ-X-P07
+    cqs:expectsBindingType
+            "?p = http://data.europa.eu/h8v/ecmo/public-health/Pathogen",
+            "?bh = http://data.europa.eu/h8v/ecmo/core/hazard/BiologicalHazard",
+            "?event = http://data.europa.eu/h8v/ecmo/core/hazard/HazardousEvent" ;
+    cqs:bansDisjointClassPairs "true" .
+cqs:CQ-X-P08
+    cqs:expectsBindingType
+            "?elem = http://data.europa.eu/h8v/ecmo/core/expvuln/ExposedElement",
+            "?driver = http://data.europa.eu/h8v/ecmo/core/drivers/RiskDriver",
+            "?h = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" .
+cqs:CQ-X-P09
+    cqs:expectsBindingType
+            "?gov = http://data.europa.eu/h8v/ecmo/core/governance/RiskGovernance",
+            "?j = http://data.europa.eu/h8v/ecmo/core/governance/Jurisdiction" .

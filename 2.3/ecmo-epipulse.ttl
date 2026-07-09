@@ -1,0 +1,367 @@
+@prefix bio:         <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix d0:         <http://www.ontologydesignpatterns.org/ont/d0.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix ecmoep:      <http://data.europa.eu/h8v/ecmo/epipulse/> .
+@prefix epipulse:    <https://epipulse.ecdc.europa.eu/ns#> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix frames:      <http://data.europa.eu/h8v/ecmo/frames/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix snomed:      <http://snomed.info/id/> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# Fixture-only prefix (ABox example at end of file).
+@prefix ex: <http://data.europa.eu/h8v/ecmo/examples/epipulse/> .
+
+# =============================================================================
+# ECMO EpiPulse Module — v0.2 (2026-07-06)
+#
+# BREAKING refactor from v0.1: two-layer split of the source `epipulse:Event`.
+#
+#   v0.1 conflated:
+#     epipulse:Event (record + phenomenon-being-tracked, both in one class)
+#   v0.2 splits into:
+#     epipulse:Signal  — the tracking RECORD (per-network surveillance item)
+#     epipulse:Event   — the WORLD-PHENOMENON the record denotes
+#     epipulse:signalDenotes ⊑ dul:isAbout   — connects the two
+#
+#   The three ItemTypeName values become world-side kinds under epipulse:Event:
+#     epipulse:ThreatEvent               ⊑ hazard:Hazard              (anticipated)
+#     epipulse:ActualEvent               ⊑ hazard:HazardousEvent      (materialized)
+#     epipulse:LongTermMonitoringThread  ⊑ epipulse:SurveillanceProcess
+#                                        ⊑ dul:Process                (ongoing thread)
+#
+#   And the same three values become record-side markers under epipulse:Signal
+#   (kept under `ecmoep:` for ECMO-side elevations; retitled from v0.1 for
+#   parallelism with the world-side kinds):
+#     ecmoep:ThreatItem              ⊑ epipulse:Signal
+#     ecmoep:EventItem               ⊑ epipulse:Signal
+#     ecmoep:LongTermMonitoringItem  ⊑ epipulse:Signal
+#
+# Why this change. The v2.3 scope-note (b) posed Signal-alignment and
+# HazardousEvent-alignment as readings for a single class. AG pointed
+# out (2026-07-06) that they are COMPLEMENTARY: the record IS a Signal, and it
+# DENOTES a world-event whose kind depends on ItemType. Both readings live
+# simultaneously as separate nodes glued by dul:isAbout. As a side benefit,
+# ItemStatus (Open/Closed) becomes unambiguously a Signal-side workflow flag,
+# and the world-event's temporal extent becomes a separate axis on the Event
+# side. §(b) of ecmo-v2.4-scope-notes.md is closed out by this refactor.
+#
+# Foundational-typing note. epipulse:Event is deliberately foundation-agnostic
+# (a plain owl:Class, no DUL commitment) because its three children sit under
+# different DUL branches (Description, Event, Process). Instances belong to
+# exactly one child — cross-typing is entailed disjoint by DUL's D&S / Object /
+# Event partition.
+#
+# Breaking changes for consumers:
+#   - Any triple `x a epipulse:Event` from v0.1 (record semantics) MUST be
+#     retyped `x a epipulse:Signal`. The v0.1 fixtures in this file are
+#     migrated below.
+#   - `epipulse:hasAgent`, `epipulse:hasDisease`, `epipulse:managedBy`,
+#     `epipulse:hasLocation`, `epipulse:itemCode`, `epipulse:itemStatus` all
+#     retain their subject-side reading (record). Their rdfs:domain is updated
+#     from `epipulse:Event` (v0.1) to `epipulse:Signal` (v0.2). Existing
+#     assertions using these properties keep the same semantics.
+#   - `epipulse:causesDisorder` (Organism → Disorder) is unaffected by the
+#     Signal/Event split.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/epipulse> a owl:Ontology ;
+    dcterms:issued "2026-06-08"^^xsd:date ;
+    dcterms:modified "2026-07-06"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:source <https://epipulse.ecdc.europa.eu/> ;
+    rdfs:comment "ECMO alignment module for the ECDC EpiPulse public-health surveillance ontology. v0.2 two-layer refactor: Signal (record) vs. Event (world-phenomenon), glued by signalDenotes ⊑ dul:isAbout. See file header for the v0.1 → v0.2 migration notes."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
+                <http://data.europa.eu/h8v/ecmo/coref> ;
+    owl:versionInfo "0.2" ;
+    skos:prefLabel "ECMO ↔ EpiPulse alignment module"@en .
+
+# =============================================================================
+# RECORD SIDE — epipulse:Signal and its ItemType-driven subkinds
+# =============================================================================
+
+epipulse:Signal a owl:Class ;
+    rdfs:label "EpiPulse tracking record (per-network Signal)"@en ;
+    rdfs:subClassOf foundation:Signal ;
+    skos:definition "A per-network surveillance tracking record for a possible or ongoing public-health phenomenon. Instances carry ItemCode, ItemStatus (Open/Closed), Networks (managing bodies), Locations, AgentNames, DiseaseNames. Denotes a world-phenomenon (epipulse:Event) via epipulse:signalDenotes."@en ;
+    skos:editorialNote "Renamed in v0.2 from the source `epipulse:Event` (whose semantics conflated record and denoted phenomenon). Record-side ItemStatus (Open/Closed) sits here as a curation flag; the temporal extent of the DENOTED world-event lives on the epipulse:Event side."@en .
+
+# Record-side ItemType axis (record markers — the ItemTypeName field ontologized).
+ecmoep:ThreatItem a owl:Class ;
+    rdfs:subClassOf epipulse:Signal ;
+    rdfs:label "EpiPulse Threat-item record"@en ;
+    skos:definition "An EpiPulse tracking record whose ItemTypeName is 'Threat'. Denotes an epipulse:ThreatEvent."@en .
+
+ecmoep:EventItem a owl:Class ;
+    rdfs:subClassOf epipulse:Signal ;
+    rdfs:label "EpiPulse Event-item record"@en ;
+    skos:definition "An EpiPulse tracking record whose ItemTypeName is 'Event'. Denotes an epipulse:ActualEvent."@en .
+
+ecmoep:LongTermMonitoringItem a owl:Class ;
+    rdfs:subClassOf epipulse:Signal ;
+    rdfs:label "EpiPulse Long-Term Monitoring-item record"@en ;
+    skos:definition "An EpiPulse tracking record whose ItemTypeName is 'Long-Term Monitoring'. Denotes an epipulse:LongTermMonitoringThread."@en .
+
+# =============================================================================
+# WORLD SIDE — epipulse:Event (umbrella) and the three ItemType-driven kinds
+# =============================================================================
+
+epipulse:Event a owl:Class ;
+    rdfs:label "World-phenomenon tracked by an EpiPulse Signal"@en ;
+    rdfs:subClassOf d0:Eventuality ;
+    skos:definition "The world-level phenomenon (or potential phenomenon) that an EpiPulse Signal denotes. Foundation-agnostic umbrella — subkinds commit to Hazard (Description), HazardousEvent (Event), or SurveillanceProcess (Process). Introduced in v0.2 by REPURPOSING the IRI previously used for the record. Consumers of v0.1 assertions `x a epipulse:Event` must retype to `x a epipulse:Signal`."@en ;
+    skos:editorialNote "The name 'Event' here mirrors the source EpiPulse terminology and is deliberately loose: it groups anticipated, actualized, and long-term-monitored phenomena. Not a subclass of dul:Event because the ThreatEvent branch is Description-side."@en .
+
+epipulse:ThreatEvent a owl:Class ;
+    rdfs:label "Anticipated public-health event (Threat)"@en ;
+    rdfs:subClassOf epipulse:Event , hazard:Hazard ;
+    skos:definition "A potential / anticipated public-health event under active tracking. Description-side (via hazard:Hazard) — a possibility, not an occurrence."@en .
+
+epipulse:ActualEvent a owl:Class ;
+    rdfs:label "Materialized public-health event"@en ;
+    rdfs:subClassOf epipulse:Event , hazard:HazardousEvent ;
+    skos:definition "A confirmed or in-progress public-health event under active tracking. Event/Situation-side (via hazard:HazardousEvent) — an actual occurrence with temporal extent."@en .
+
+epipulse:SurveillanceProcess a owl:Class ;
+    rdfs:label "Public-health surveillance process"@en ;
+    rdfs:subClassOf dul:Process ;
+    skos:definition "An ongoing surveillance activity — not tied to a single outbreak, but to a sustained monitoring thread (e.g., antimicrobial-resistance monitoring, syndromic surveillance)."@en ;
+    skos:editorialNote "Introduced in v0.2 as the world-side anchor for the LongTermMonitoring ItemType. v2.4 open item: align to a governance-module counterpart (candidate: governance:SurveillanceActivity or similar) if that class is introduced downstream."@en .
+
+epipulse:LongTermMonitoringThread a owl:Class ;
+    rdfs:label "Long-term monitoring thread"@en ;
+    rdfs:subClassOf epipulse:Event , epipulse:SurveillanceProcess ;
+    skos:definition "The world-side counterpart of a LongTermMonitoringItem: an ongoing surveillance thread being tracked by EpiPulse."@en .
+
+# =============================================================================
+# DENOTATION — Signal → Event, and the isAbout axioms
+# =============================================================================
+
+epipulse:signalDenotes a owl:ObjectProperty ;
+    rdfs:label "Signal denotes world-event"@en ;
+    rdfs:domain epipulse:Signal ;
+    rdfs:range  epipulse:Event ;
+    rdfs:subPropertyOf dul:isAbout ;
+    skos:definition "Connects the tracking record (epipulse:Signal) to the world-phenomenon it denotes (epipulse:Event). Reads as: the Signal IS ABOUT the world-Event."@en ;
+    skos:editorialNote "Sub-property of dul:isAbout. This is the core v0.2 axiom that dissolves scope-note (b)'s Signal-vs-HazardousEvent rivalry: both readings coexist, on separate nodes, glued by isAbout."@en .
+
+# =============================================================================
+# EpiPulse source-schema PROPERTY ALIGNMENTS (v0.2 — domains migrated to Event)
+# =============================================================================
+
+epipulse:hasAgent a owl:ObjectProperty ;
+    rdfs:label "Event has agent (pathogen the record surveils)"@en ;
+    rdfs:domain epipulse:Event ;
+    rdfs:range epipulse:Organism ;
+    rdfs:subPropertyOf dul:hasParticipant ;
+    skos:editorialNote "A pathogen participates in the denoted world-event), walk through: Signal signalDenotes ActualEvent, ActualEvent (via ph:hasCausativeAgent inferred by epipulse:causesDisorder's inverse) → Pathogen. Domain widened from v0.1's epipulse:Event to v0.2's epipulse:Signal (same semantic effect — the record)."@en .
+
+epipulse:hasDisease a owl:ObjectProperty ;
+    rdfs:label "Event has disease (disorder the record surveils)"@en ;
+    rdfs:domain epipulse:Event ;
+    rdfs:range epipulse:Disorder ;
+    rdfs:subPropertyOf dul:isAbout .
+
+# Record attributed to managing network.
+epipulse:managedBy a owl:ObjectProperty ;
+    rdfs:label "Signal managed by network"@en ;
+    rdfs:domain epipulse:Event ;
+    rdfs:range epipulse:Network ;
+    rdfs:subPropertyOf prov:wasAttributedTo .
+
+# Record carries a location field.
+epipulse:hasLocation a owl:ObjectProperty ;
+    rdfs:label "Event has location"@en ;
+    rdfs:domain epipulse:Event ;
+    rdfs:range dul:Place ;
+    rdfs:subPropertyOf foundation:hasLocation ;
+    skos:editorialNote "Attached to the record; if the denoted world-event has an intrinsic location, assert it separately via foundation:hasLocation on the epipulse:Event instance. v2.4: consider a property-chain axiom to propagate Signal→Event locations automatically."@en .
+
+# Datatype properties preserved from the source schema (domain migrated).
+epipulse:itemCode a owl:DatatypeProperty ;
+    rdfs:label "Signal item code (e.g., 2026-FWD-00051)"@en ;
+    rdfs:domain epipulse:Signal ;
+    rdfs:range xsd:string .
+
+epipulse:itemStatus a owl:DatatypeProperty ;
+    rdfs:label "Signal curation status (Open / Closed)"@en ;
+    rdfs:domain epipulse:Signal ;
+    rdfs:range xsd:string ;
+    skos:editorialNote "Curation status of the RECORD (workflow flag). Distinct from the world-event's temporal extent — assert that on the epipulse:Event instance via foundation:hasTemporalValidity if needed."@en .
+
+# Cross-branch causation (unaffected by Signal/Event split).
+epipulse:causesDisorder a owl:ObjectProperty ;
+    rdfs:label "Organism causes disorder"@en ;
+    rdfs:domain epipulse:Organism ;
+    rdfs:range epipulse:Disorder ;
+    owl:inverseOf ph:hasCausativeAgent ;
+    skos:editorialNote "Direct inverse of ph:hasCausativeAgent. Reasoners infer the reverse triple, promoting any causing Organism to ph:Pathogen (Description-side classifier) via range-inference on hasCausativeAgent."@en .
+
+# =============================================================================
+# NEIGHBORHOOD VOCABULARY (from epipulse-summary.md §Example 1, neighbourhood.jsonld)
+# =============================================================================
+#
+# The EpiPulse neighbourhood.jsonld source carries a small vocabulary that
+# supports queries like "find Events managed by the FWD network where the
+# causative organism shares a neighbourAgent relationship with Salmonella."
+# Elevated here as first-class ECMO alignment triples.
+
+# Inheritable disorder — paired with causesDisorder, but for genetic /
+# hereditary disorder linkage rather than clinical causation.
+epipulse:inheritedDisorder a owl:ObjectProperty ;
+    rdfs:label "Organism carries inherited disorder"@en ;
+    rdfs:domain epipulse:Organism ;
+    rdfs:range epipulse:Disorder ;
+    rdfs:subPropertyOf dul:isAbout ;
+    skos:definition "Links an organism to a disorder it carries as an inherited / genetic trait, distinct from clinical causation (epipulse:causesDisorder). Present in the source neighbourhood vocabulary; kept for round-trip fidelity with the source schema."@en .
+
+# Semantic neighbourhood — organism to organism, clustered by matchLayer.
+epipulse:neighbourAgents a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:label "Neighbour biological agent"@en ;
+    rdfs:domain epipulse:Organism ;
+    rdfs:range epipulse:Organism ;
+    rdfs:subPropertyOf dul:sameSettingAs ;
+    skos:definition "Relates two biological agents that share a semantic-similarity neighbourhood in SNOMED CT (taxonomic proximity, shared clinical presentation, or shared transmission pattern). Symmetric. Clustered by epipulse:matchLayer."@en ;
+    skos:editorialNote "Aligned to dul:sameSettingAs because organisms clustered as neighbours share the epidemiological setting (host tropism, transmission route, clinical presentation) that grounds the similarity. The specific similarity layer is asserted per neighbourAgents triple via a reified NeighbourhoodAssertion (see below) or, in the source, via a matchLayer annotation."@en .
+
+# Match-layer annotation — categorises the neighbourhood claim.
+epipulse:matchLayer a owl:DatatypeProperty ;
+    rdfs:label "Match layer (semantic-similarity clustering axis)"@en ;
+    rdfs:range xsd:string ;
+    skos:definition "The semantic-similarity axis along which a neighbourAgents relation holds. Typical values from the source: 'taxonomic', 'clinical', 'transmission'. Attached to a reified NeighbourhoodAssertion when granular annotation of matchLayer per pair is needed."@en .
+
+# Reified pair — for when we want to annotate a specific neighbourAgents claim
+# with a matchLayer + provenance.
+epipulse:NeighbourhoodAssertion a owl:Class ;
+    rdfs:label "Reified neighbour-agents assertion"@en ;
+    rdfs:subClassOf dul:Description ;
+    skos:definition "Reified n-ary assertion pairing two epipulse:Organism instances with an epipulse:matchLayer and provenance metadata. Instantiated when the flat symmetric epipulse:neighbourAgents triple is insufficient (e.g., when the same pair is claimed under multiple matchLayers)."@en .
+
+epipulse:neighbourPair_a a owl:ObjectProperty ;
+    rdfs:domain epipulse:NeighbourhoodAssertion ;
+    rdfs:range epipulse:Organism ;
+    rdfs:label "Neighbourhood pair — first agent"@en .
+
+epipulse:neighbourPair_b a owl:ObjectProperty ;
+    rdfs:domain epipulse:NeighbourhoodAssertion ;
+    rdfs:range epipulse:Organism ;
+    rdfs:label "Neighbourhood pair — second agent"@en .
+
+# =============================================================================
+# OTHER SOURCE-SCHEMA CLASSES (unchanged from v0.1)
+# =============================================================================
+
+epipulse:Organism a owl:Class ;
+    rdfs:label "Biological Agent / Pathogen (EpiPulse)"@en ;
+    rdfs:subClassOf snomed:410607006 ;
+    rdfs:subClassOf bio:Organism ;
+    skos:definition "A biological organism relevant to public-health surveillance."@en .
+
+epipulse:Disorder a owl:Class ;
+    rdfs:label "Clinical Disease / Disorder (EpiPulse)"@en ;
+    rdfs:subClassOf snomed:64572001 ;
+    rdfs:subClassOf ph:DiseaseOrSyndrome ;
+    skos:definition "A clinical disease or disorder as classified in SNOMED CT."@en ;
+    skos:editorialNote "Disease-frame vs disease-episode ambiguity remains open. Preliminary reading: instances are episodes; disease-types are classifiers via fschema:subsumedUnder. See v2.4 scope note §(c)."@en .
+
+epipulse:Network a owl:Class ;
+    rdfs:label "EpiPulse managing / launching network"@en ;
+    rdfs:subClassOf governance:Institution ;
+    rdfs:subClassOf prov:Organization ;
+    skos:definition "A named ECDC surveillance network responsible for launching, tracking, and closing public-health surveillance items (FWD, STI, ARHAI, ...)."@en .
+
+# =============================================================================
+# FRAME-MODEL ANNOTATIONS (v0.2 — retargeted to Signal + world-side kinds)
+# =============================================================================
+
+epipulse:Signal      fschema:playsRoleIn frames:COREF , frames:PH ;
+                     fschema:hasUnaryType frames:COREF.SurveillanceSignal , frames:PH.Signal .
+epipulse:ThreatEvent fschema:playsRoleIn frames:F2 ;
+                     fschema:hasUnaryType frames:F2.Anchor .
+epipulse:ActualEvent fschema:playsRoleIn frames:F3 ;
+                     fschema:hasUnaryType frames:F3.Anchor .
+epipulse:LongTermMonitoringThread fschema:playsRoleIn frames:F6 ;
+                     fschema:hasUnaryType frames:F6.SurveillanceProcess .
+epipulse:Organism    fschema:playsRoleIn frames:BIO ;
+                     fschema:hasUnaryType frames:BIO.Anchor .
+epipulse:Disorder    fschema:playsRoleIn frames:PH ;
+                     fschema:hasUnaryType frames:PH.HealthCondition_Situation .
+epipulse:Network     fschema:playsRoleIn frames:F6 ;
+                     fschema:hasUnaryType frames:F6.Institution .
+
+# =============================================================================
+# FIXTURE EXAMPLES (migrated to v0.2 two-layer structure)
+# Illustrative, NOT authoritative; no ABox claim is being made about real data.
+# =============================================================================
+
+# Example 1 — Biology (from neighbourhood.jsonld). Unaffected by v0.2 refactor.
+snomed:103510000 a epipulse:Organism ;
+    skos:prefLabel "Bartonella henselae (organism)"@en ;
+    epipulse:causesDisorder snomed:410472006 .
+
+snomed:410472006 a epipulse:Disorder ;
+    skos:prefLabel "Bartonella henselae neuroretinitis (disorder)"@en .
+
+# Example 2 — Event mapping (from EpiPulse_Metadata Items.csv), migrated to v0.2.
+# The record is a Signal (typed as EventItem, since its ItemTypeName = "Event").
+# The record signalDenotes an ActualEvent (world-side counterpart).
+ex:FWD a epipulse:Network ;
+    skos:prefLabel "Food- and Waterborne Diseases and Zoonoses Network"@en ;
+    skos:notation "FWD" .
+
+ex:signal_2026-FWD-00051 a epipulse:Signal , ecmoep:EventItem ;
+    epipulse:itemCode "2026-FWD-00051" ;
+    epipulse:itemStatus "Open" ;
+    epipulse:managedBy ex:FWD ;
+    epipulse:signalDenotes ex:worldEvent_2026-FWD-00051 ;
+    coref:concernsOccurrence ex:UKSTECOutbreak ;
+    rdfs:comment "Illustrative record (v0.2 shape): a Shiga toxin-producing Escherichia coli tracking Signal, UK, managed by FWD, denoting a world-side ActualEvent and pointing at a COREF occurrence anchor."@en .
+
+# v0.1 legacy IRI kept for consumer grace period.
+# ex:event_2026-FWD-00051 owl:sameAs ex:signal_2026-FWD-00051 .
+
+ex:worldEvent_2026-FWD-00051 a epipulse:ActualEvent ;
+    skos:prefLabel "Illustrative UK STEC outbreak (world-event denoted by signal 2026-FWD-00051)"@en ;
+    epipulse:hasAgent snomed:112283007 ;
+    epipulse:hasLocation ex:UnitedKingdom_Place ;
+    foundation:hasLocation ex:UnitedKingdom_Place .
+
+ex:UnitedKingdom_Place a dul:Place ;
+    skos:prefLabel "United Kingdom (illustrative)"@en .
+
+snomed:112283007 a epipulse:Organism ;
+    skos:prefLabel "Escherichia coli (organism)"@en ;
+    epipulse:neighbourAgents snomed:27268008 .
+
+# Example 3 — Neighbourhood vocabulary in action (from Example 1 of the
+# competency-question in epipulse-summary.md: "Events where the causative
+# organism shares a neighbourAgent relationship with Salmonella").
+snomed:27268008 a epipulse:Organism ;
+    skos:prefLabel "Salmonella (organism)"@en .
+
+# Reified pair with matchLayer annotation (transmission-route similarity —
+# both are food-borne enteric pathogens).
+ex:neigh_STEC_Salmonella a epipulse:NeighbourhoodAssertion ;
+    epipulse:neighbourPair_a snomed:112283007 ;
+    epipulse:neighbourPair_b snomed:27268008 ;
+    epipulse:matchLayer "transmission" ;
+    skos:prefLabel "STEC ↔ Salmonella neighbourhood (transmission-layer)"@en .
+
+# COREF bridging: the Signal ties to a COREF Occurrence anchor via
+# concernsOccurrence (unchanged from v0.1). The COREF anchor and the world-side
+# epipulse:ActualEvent coexist: the Occurrence is the multi-source consensus
+# anchor for coreference, the ActualEvent is the epipulse-side world-phenomenon
+# projection of the same underlying event. Both remain first-class.
+ex:UKSTECOutbreak a coref:Occurrence ;
+    skos:prefLabel "Illustrative UK STEC outbreak occurrence anchor"@en .

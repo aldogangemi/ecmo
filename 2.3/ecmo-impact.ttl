@@ -1,0 +1,317 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix impact: <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:impact a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Economic losses (direct/indirect), human impacts, environmental impacts."@en ;
+    owl:imports ecmocore:disaster,
+        ecmocore:foundation,
+        ecmocore:instruments ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Impact & Loss Module (F10)"@en .
+
+impact:EconomicImpactType a impact:ImpactType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Economic"@en .
+
+impact:HazardousEventDamage a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F10,
+        foundation:F3 ;
+    rdfs:comment "Total or partial destruction of physical assets, disruption of basic services and damages to sources of livelihood in the affected area, occurring during and immediately after a hazardous event."@en,
+        "Total or partial destruction of physical assets, disruption of basic services and damages to sources of livelihood in the affected area, occurring during and immediately after the disaster."@en ;
+    rdfs:subClassOf impact:EnvironmentalImpact,
+        dul:Situation ;
+    skos:prefLabel "Katastrophenschaden"@de,
+        "Schaden durch Gefahrenereignis"@de,
+        "Disaster Damage"@en,
+        "Hazardous Event Damage"@en,
+        "Daño por desastre"@es,
+        "Daño por evento peligroso"@es,
+        "Dommages d'événement dangereux"@fr,
+        "Dommages de catastrophe"@fr,
+        "Danno da disastro"@it,
+        "Danno da evento pericoloso"@it,
+        "Dano de desastre"@pt,
+        "Dano de evento perigoso"@pt .
+
+impact:HighImpactIntensity a impact:ImpactIntensityLevel,
+        owl:NamedIndividual ;
+    skos:prefLabel "High"@en .
+
+impact:HumanImpact a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F10 ;
+    rdfs:comment "Death, injuries, disease and other negative effects on human physical, mental and social well-being."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue impact:HumanImpactType ;
+            owl:onProperty impact:hasImpactType ],
+        impact:Impact ;
+    skos:prefLabel "Menschliche Auswirkung"@de,
+        "Human Impact"@en,
+        "Impacto humano"@es,
+        "Impact humain"@fr,
+        "Impatto umano"@it,
+        "Impacto humano"@pt .
+
+impact:InfrastructureImpactType a impact:ImpactType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Infrastructure"@en .
+
+impact:LowImpactIntensity a impact:ImpactIntensityLevel,
+        owl:NamedIndividual ;
+    skos:prefLabel "Low"@en .
+
+impact:MediumImpactIntensity a impact:ImpactIntensityLevel,
+        owl:NamedIndividual ;
+    skos:prefLabel "Medium"@en .
+
+impact:VeryHighImpactIntensity a impact:ImpactIntensityLevel,
+        owl:NamedIndividual ;
+    skos:prefLabel "Very High"@en .
+
+impact:hasCurrency a owl:DatatypeProperty ;
+    rdfs:comment "Specifies the ISO currency code of a monetary value associated with an EconomicLoss."@en ;
+    rdfs:domain impact:EconomicLoss ;
+    rdfs:range xsd:string ;
+    skos:editorialNote "economic losses are more relevant for recovery, in preparedness and response they are more a proxy for impact."@en,
+        "less relevant for crisis management"@en ;
+    skos:prefLabel "has currency"@en,
+        "ha valuta"@it .
+
+impact:hasEconomicScope a owl:DatatypeProperty ;
+    rdfs:comment "Economic scope: microeconomic, mesoeconomic, or macroeconomic."@en ;
+    rdfs:domain impact:IndirectEconomicLoss ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has economic scope"@en,
+        "ha ambito economico"@it .
+
+impact:hasEstimatedImpactType a owl:ObjectProperty ;
+    rdfs:comment "Indicates the estimated impact type — an impact based on projections or models."@en ;
+    rdfs:domain dul:Situation ;
+    rdfs:range impact:ImpactType ;
+    rdfs:subPropertyOf impact:hasImpactType ;
+    skos:prefLabel "has estimated impact type"@en,
+        "ha tipo di impatto stimato"@it .
+
+impact:hasMonetaryValue a owl:DatatypeProperty ;
+    rdfs:comment "Specifies the estimated monetary value of an EconomicLoss."@en ;
+    rdfs:domain impact:EconomicLoss ;
+    rdfs:range xsd:decimal ;
+    skos:editorialNote "economic losses are more relevant for recovery, in preparedness and response they are more a proxy for impact."@en,
+        "to be discussed with subject matter experts"@en ;
+    skos:prefLabel "has monetary value"@en,
+        "ha valore monetario"@it .
+
+impact:hasReportedImpactType a owl:ObjectProperty ;
+    rdfs:comment "Indicates the reported impact type — an impact that has been observed and documented."@en ;
+    rdfs:domain dul:Situation ;
+    rdfs:range impact:ImpactType ;
+    rdfs:subPropertyOf impact:hasImpactType ;
+    skos:prefLabel "has reported impact type"@en,
+        "ha tipo di impatto riportato"@it .
+
+impact:DirectEconomicLoss a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F10 ;
+    rdfs:comment "The monetary value of total or partial destruction of physical assets existing in the affected area. Direct economic loss is nearly equivalent to physical damage."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue impact:DirectScope ;
+            owl:onProperty impact:hasEconomicScopeType ],
+        impact:EconomicLoss,
+        dul:Situation ;
+    owl:disjointWith impact:IndirectEconomicLoss ;
+    skos:prefLabel "Direkter wirtschaftlicher Verlust"@de,
+        "Direct Economic Loss"@en,
+        "Pérdida económica directa"@es,
+        "Perte économique directe"@fr,
+        "Perdita economica diretta"@it,
+        "Perda económica direta"@pt .
+
+impact:DirectScope a owl:NamedIndividual ;
+    rdfs:comment "Direct economic loss: monetary value of physical asset destruction."@en ;
+    skos:prefLabel "Direct"@en .
+
+impact:EnvironmentalImpact a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F10 ;
+    rdfs:comment "Damage to ecosystems and natural resources resulting from a disaster."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue impact:EnvironmentalImpactType ;
+            owl:onProperty impact:hasImpactType ],
+        impact:Impact ;
+    skos:prefLabel "Umweltauswirkung"@de,
+        "Environmental Impact"@en,
+        "Impacto ambiental"@es,
+        "Impact environnemental"@fr,
+        "Impatto ambientale"@it,
+        "Impacto ambiental"@pt .
+
+impact:EnvironmentalImpactType a impact:ImpactType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Environmental"@en .
+
+impact:HumanImpactType a impact:ImpactType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Human"@en .
+
+impact:IndirectScope a owl:NamedIndividual ;
+    rdfs:comment "Indirect economic loss: decline in economic value added as consequence of direct losses."@en ;
+    skos:prefLabel "Indirect"@en .
+
+impact:hasImpactIntensity a owl:ObjectProperty ;
+    rdfs:comment "Relates an Impact to its intensity level (e.g. low, medium, high, very high). Used in the OWL definition of Disaster: a HazardousEvent whose impacts have very high intensity."@en ;
+    rdfs:domain impact:Impact ;
+    rdfs:range impact:ImpactIntensityLevel ;
+    owl:inverseOf impact:isIntensityOf ;
+    skos:prefLabel "hat Auswirkungsintensität"@de,
+        "has impact intensity"@en,
+        "tiene intensidad de impacto"@es,
+        "a une intensité d'impact"@fr,
+        "ha intensità di impatto"@it,
+        "tem intensidade de impacto"@pt .
+
+impact:isIntensityOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the impact with this intensity level."@en ;
+    owl:inverseOf impact:hasImpactIntensity ;
+    skos:prefLabel "is intensity of"@en .
+
+impact:isRecordedIn a owl:ObjectProperty ;
+    rdfs:comment "Relates an EconomicLoss to the DisasterLossDatabase that captures its monetary value and context."@en ;
+    rdfs:domain impact:EconomicLoss ;
+    rdfs:range instruments:DisasterLossDatabase ;
+    owl:inverseOf impact:recordsLoss ;
+    skos:prefLabel "is recorded in"@en,
+        "è registrato in"@it .
+
+impact:recordsLoss a owl:ObjectProperty ;
+    rdfs:comment "Indicates an economic loss recorded in this database."@en ;
+    owl:inverseOf impact:isRecordedIn ;
+    skos:prefLabel "records loss"@en .
+
+impact:resultsFrom a owl:ObjectProperty ;
+    rdfs:comment "Relates an EconomicLoss to the Disaster that produced it as a consequence of damage and disruption."@en ;
+    rdfs:domain impact:EconomicLoss ;
+    rdfs:range hazard:HazardousEvent ;
+    skos:prefLabel "results from"@en,
+        "resulta de"@es,
+        "résulte de"@fr,
+        "risulta da"@it .
+
+impact:hasEconomicScopeType a owl:ObjectProperty ;
+    rdfs:comment "Distinguishes direct from indirect economic losses."@en ;
+    rdfs:domain impact:EconomicLoss ;
+    rdfs:range owl:Thing ;
+    skos:prefLabel "has economic scope type"@en .
+
+impact:IndirectEconomicLoss a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F10 ;
+    rdfs:comment "A decline in economic value added as a consequence of direct economic loss and/or human and environmental impacts. Includes microeconomic, mesoeconomic and macroeconomic impacts."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue impact:IndirectScope ;
+            owl:onProperty impact:hasEconomicScopeType ],
+        impact:EconomicLoss,
+        dul:Situation ;
+    skos:prefLabel "Indirekter wirtschaftlicher Verlust"@de,
+        "Indirect Economic Loss"@en,
+        "Pérdida económica indirecta"@es,
+        "Perte économique indirecte"@fr,
+        "Perdita economica indiretta"@it,
+        "Perda económica indireta"@pt .
+
+impact:Impact a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F10,
+        foundation:F3 ;
+    rdfs:comment "The total effect, including negative effects (e.g., economic losses) and positive effects (e.g., economic gains), of a hazardous event or a disaster. The term includes economic, human and environmental impacts."@en,
+        "The total effect, including negative effects (e.g., economic losses) and positive effects (e.g., economic gains), of a hazardous event. The term includes economic, human and environmental impacts. Equivalent to ecmocore:Impact."@en,
+        "The total effect, including negative effects (e.g., economic losses) and positive effects (e.g., economic gains), of a hazardous event. The term includes economic, human and environmental impacts. Replaces the former Impact, which was limited to disaster-level events."@en ;
+    rdfs:subClassOf dul:Event,
+        dul:Situation ;
+    owl:equivalentClass impact:Impact ;
+    skos:editorialNote "ecmocore:Impact is both a dul:Event (it occurs as a consequence of a disaster) and a dul:Situation (it is a relational configuration of damage and loss that satisfies a damage-description). In current DUL, Situation carries no disjointness, so dual typing with Event is valid."@en ;
+    skos:prefLabel "Auswirkung"@de,
+        "Auswirkung eines Gefahrenereignisses"@de,
+        "Katastrophenauswirkung"@de,
+        "Disaster Impact"@en,
+        "Hazardous Event Impact"@en,
+        "Impact"@en,
+        "Impacto"@es,
+        "Impacto de evento peligroso"@es,
+        "Impacto del desastre"@es,
+        "Impact"@fr,
+        "Impact d'événement dangereux"@fr,
+        "Impact de la catastrophe"@fr,
+        "Impatto"@it,
+        "Impatto del disastro"@it,
+        "Impatto di evento pericoloso"@it,
+        "Impacto"@pt,
+        "Impacto de evento perigoso"@pt,
+        "Impacto do desastre"@pt .
+
+impact:hasImpactType a owl:ObjectProperty ;
+    rdfs:comment "Indicates the type of impact associated with a given situation."@en ;
+    rdfs:domain dul:Situation ;
+    rdfs:range impact:ImpactType ;
+    skos:prefLabel "has impact type"@en,
+        "ha tipo di impatto"@it .
+
+impact:ImpactIntensityLevel a owl:Class ;
+    rdfs:comment "A qualitative level classifying the intensity of an impact. Individual values include Low, Medium, High, VeryHigh."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Auswirkungsintensitätsstufe"@de,
+        "Impact Intensity Level"@en,
+        "Nivel de intensidad de impacto"@es,
+        "Niveau d'intensité d'impact"@fr,
+        "Livello di intensità di impatto"@it,
+        "Nível de intensidade de impacto"@pt .
+
+impact:EconomicLoss a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F10 ;
+    foundation:sendaiAnnotation "Examples of physical assets that are the basis for calculating direct economic loss include homes, schools, hospitals, commercial and governmental buildings, transport, energy, telecommunications infrastructures and other infrastructure; business assets and industrial plants; and production such as crops, livestock and production infrastructure."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/economic-loss> ;
+    foundation:termNumber 17 ;
+    rdfs:comment "Total economic impact that consists of direct economic loss and indirect economic loss."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty impact:resultsFrom ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        dul:Situation ;
+    skos:definition "Total economic impact that consists of direct economic loss and indirect economic loss."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower impact:DirectEconomicLoss,
+        impact:IndirectEconomicLoss ;
+    skos:prefLabel "Wirtschaftlicher Verlust"@de,
+        "Economic Loss"@en,
+        "Pérdida económica"@es,
+        "Perte économique"@fr,
+        "Perdita economica"@it,
+        "Perda económica"@pt .
+
+impact:ImpactType a owl:Class ;
+    foundation:frameCluster foundation:F10 ;
+    rdfs:comment "Types of impacts that can result from hazardous events, used to classify and categorize different kinds of consequences (e.g. human, environmental, economic, infrastructure)."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Auswirkungstyp"@de,
+        "Impact Type"@en,
+        "Tipo de impacto"@es,
+        "Type d'impact"@fr,
+        "Tipo di impatto"@it,
+        "Tipo de impacto"@pt .
+

@@ -1,0 +1,155 @@
+@prefix capacity:    <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix cqs:         <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix hera:        <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix mp:          <http://data.europa.eu/h8v/ecmo/main-pattern/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO-CORE Main Pattern — Content Pattern
+# Annotated with cpannotationschema.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/main-pattern> a owl:Ontology ;
+    dcterms:creator "ECMO design team" ;
+    dcterms:issued  "2026-05-06"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment    "Unifying core pattern for the ECMO 2.2 ontology network. Synthesises the 12 anchor concepts (Hazard, HazardousEvent, Exposure, Vulnerability, Capacity, Risk, RiskAssessment, Impact, Response, Instrument, Pathogen, InfectiousDisease) into one coherent micro-pattern. Substantiates indirect connections via existing intermediaries (BiologicalHazard, AffectedPopulation, ExposedElement, HumanImpact, EarlyWarningSystem, MeasureType) plus two newly introduced relations (mp:manifestsCondition, mp:hasMeasureType)."@en ;
+    cpa:hasIntent       "Provide a single integrative view that explains how the ECMO modules cohere around the Risk relational hub and the Hazard / HazardousEvent (D&S) coupling. Used as the landing diagram in index.html and as the architectural map for downstream knowledge-graph consumers."@en ;
+    cpa:scenarios       "Scenario A — A user sees a HazardousEvent reported in a Signal validated by an EventValidation; the pattern lets them retrieve the realised Risk, its four determinants, the affected population, the impacts, and the measures the response references. Scenario B — A public-health analyst seeking to align a Pathogen prioritised by HERA with the BiologicalHazard event class and the InfectiousDisease that may manifest in HumanImpact."@en ;
+    cpa:coversRequirements "CQ-RISK-P01 — four determinants of Risk; CQ-HAZ-P01 — HazardousEvent isManifestationOf Hazard; CQ-EXV-P01/P04 — Exposure / Vulnerability wiring; CQ-CAP-P06 — Capacity↔Vulnerability complementarity; CQ-DIS-P05 — disaster's human/environmental/economic consequences; CQ-RES-P02/P03 — Response measure-type and capacity dependencies; CQ-INS-P01 — EarlyWarningSystem forecastsEvent; CQ-PH-P01/P03 — Pathogen ↔ InfectiousDisease ↔ BiologicalHazard; CQ-X-P01/P03/P07 — end-to-end traversals."@en ;
+    cpa:hasConsequences "Provides one place to enforce the D&S boundary. Surfaces two coverage gaps that the per-module ontology did not encode: (i) HumanImpact has no direct link to the HealthCondition it instantiates; (ii) Instrument has no inverse of involvesMeasureType. Both are added by this pattern as narrow extensions (mp:manifestsCondition, mp:hasMeasureType) and should be migrated into the affected modules in v2.3."@en ;
+    cpa:hasComponent    ecmocore:foundation, ecmocore:hazard, ecmocore:risk, ecmocore:disaster,
+                        ecmocore:expvuln, ecmocore:capacity, ecmocore:governance, ecmocore:response,
+                        ecmocore:instruments, ecmocore:impact,
+                        <http://data.europa.eu/h8v/ecmo/public-health>,
+                        <http://data.europa.eu/h8v/ecmo/bio>,
+                        <http://data.europa.eu/h8v/ecmo/hera> ;
+    cpa:relatedCPs      <http://www.ontologydesignpatterns.org/cp/owl/descriptionandsituation.owl> ,
+                        <http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl> ,
+                        <http://www.ontologydesignpatterns.org/cp/owl/participation.owl> ;
+    cpa:extractedFrom   <http://data.europa.eu/h8v/ecmo/core> ;
+    owl:imports         <http://data.europa.eu/h8v/ecmo/core> ;
+    owl:versionInfo     "0.1" ;
+    skos:prefLabel      "ECMO-CORE Main Pattern"@en .
+
+# -----------------------------------------------------------------------------
+# Anchor classes — re-exported for convenience; no axiomatic redefinition
+# -----------------------------------------------------------------------------
+
+mp:Hazard            owl:equivalentClass hazard:Hazard            ; skos:prefLabel "Hazard (anchor)"@en .
+mp:HazardousEvent    owl:equivalentClass hazard:HazardousEvent    ; skos:prefLabel "HazardousEvent / HazardousSituation (anchor)"@en .
+mp:Risk              owl:equivalentClass risk:Risk                ; skos:prefLabel "Risk (anchor)"@en .
+mp:Exposure          owl:equivalentClass expvuln:Exposure         ; skos:prefLabel "Exposure (anchor)"@en .
+mp:Vulnerability     owl:equivalentClass expvuln:Vulnerability    ; skos:prefLabel "Vulnerability (anchor)"@en .
+mp:Capacity          owl:equivalentClass capacity:Capacity        ; skos:prefLabel "Capacity (anchor)"@en .
+mp:Impact            owl:equivalentClass impact:Impact            ; skos:prefLabel "Impact (anchor)"@en .
+mp:HumanImpact       owl:equivalentClass impact:HumanImpact       ; skos:prefLabel "HumanImpact (anchor)"@en .
+mp:Response          owl:equivalentClass response:Intervention    ; skos:prefLabel "Response/Intervention (anchor)"@en .
+mp:Instrument        owl:equivalentClass instruments:Measure      ; skos:prefLabel "Instrument (=Measure) (anchor)"@en .
+mp:RiskAssessment    owl:equivalentClass governance:RiskAssessment ; skos:prefLabel "RiskAssessment (anchor)"@en .
+mp:Pathogen          owl:equivalentClass ph:Pathogen              ; skos:prefLabel "Pathogen (anchor)"@en .
+mp:InfectiousDisease owl:equivalentClass ph:InfectiousDisease     ; skos:prefLabel "InfectiousDisease (anchor)"@en .
+
+# Substantiating intermediaries
+mp:BiologicalHazard      owl:equivalentClass hazard:BiologicalHazard ; skos:prefLabel "BiologicalHazard (intermediary)"@en .
+mp:AffectedPopulation    owl:equivalentClass disaster:AffectedPopulation ; skos:prefLabel "AffectedPopulation (intermediary)"@en .
+mp:ExposedElement        owl:equivalentClass expvuln:ExposedElement ; skos:prefLabel "ExposedElement (intermediary)"@en .
+mp:EarlyWarningSystem    owl:equivalentClass instruments:EarlyWarningSystem ; skos:prefLabel "EarlyWarningSystem (intermediary)"@en .
+mp:MeasureType           owl:equivalentClass response:MeasureType ; skos:prefLabel "MeasureType (intermediary)"@en .
+mp:HealthCondition       owl:equivalentClass ph:HealthCondition ; skos:prefLabel "HealthCondition (bridge)"@en .
+
+# -----------------------------------------------------------------------------
+# Two relations introduced by this pattern (proposed for v2.3 integration)
+# -----------------------------------------------------------------------------
+
+mp:manifestsCondition a owl:ObjectProperty ;
+    rdfs:domain impact:HumanImpact ;
+    rdfs:range  ph:HealthCondition ;
+    rdfs:subPropertyOf dul:isClassifiedBy ;
+    rdfs:comment "Relates a HumanImpact to the health condition (e.g. an infectious disease) that the impact instantiates in the affected population. Introduced by the Main Pattern to substantiate the indirect path from biological events to InfectiousDisease as a consequence."@en ;
+    skos:editorialNote "Proposed for integration into ecmo-impact (or ecmo-public-health) in v2.3. Decision needed: subPropertyOf dul:isClassifiedBy (current default) vs dul:hasComponent."@en ;
+    skos:prefLabel "manifests condition"@en .
+
+mp:isConditionManifestedBy a owl:ObjectProperty ;
+    owl:inverseOf mp:manifestsCondition ;
+    skos:prefLabel "is condition manifested by"@en .
+
+mp:hasMeasureType a owl:ObjectProperty ;
+    rdfs:domain instruments:Measure ;
+    rdfs:range  response:MeasureType ;
+    rdfs:comment "Classifies a specific Instrument (Measure) by the MeasureType it implements. Inverse of the response-side response:involvesMeasureType. Introduced by the Main Pattern so that Instrument and Response can be matched on a shared MeasureType without coupling F7 and F8 directly."@en ;
+    skos:editorialNote "Proposed for integration into ecmo-instruments in v2.3."@en ;
+    skos:prefLabel "has measure type"@en .
+
+mp:isMeasureTypeOf a owl:ObjectProperty ;
+    owl:inverseOf mp:hasMeasureType ;
+    skos:prefLabel "is measure type of"@en .
+
+# -----------------------------------------------------------------------------
+# Pattern-level unit tests (subset of the CQ catalogue most relevant here)
+# Full catalogue: ecmo-cqs.ttl
+# -----------------------------------------------------------------------------
+
+<http://data.europa.eu/h8v/ecmo/main-pattern> cpa:hasUnitTest """
+# CQ-X-P01 — full risk configuration for a community + most recent assessment
+SELECT ?community ?r ?h ?e ?v ?c ?report WHERE {
+  ?r risk:hasHazardDeterminant ?h ; risk:hasExposureDeterminant ?e ;
+     risk:hasVulnerabilityDeterminant ?v ; risk:hasCapacityDeterminant ?c .
+  ?e expvuln:exposesElement ?community .
+  OPTIONAL { ?report foundation:isReportFor ?event . ?event disaster:realizesRisk ?r . }
+}""", """
+# CQ-X-P03 — Signal -> Validation -> HazardousEvent -> Disaster classification
+SELECT ?signal ?event ?impact ?onset ?scale WHERE {
+  ?signal a foundation:Signal ; foundation:pertainsToEvent ?event .
+  ?val foundation:validatesSignal ?signal ; foundation:confirmsEvent ?event .
+  ?event a disaster:Disaster ; hazard:hasImpact ?impact .
+  ?impact impact:hasImpactIntensity impact:VeryHighImpactIntensity .
+  OPTIONAL { ?event disaster:hasOnsetType ?onset . }
+  OPTIONAL { ?event disaster:hasScaleType ?scale . }
+}""", """
+# CQ-X-P07 — Pathogen × HERA × BiologicalHazard × Public-health governance
+SELECT ?p ?prio ?bh ?event ?gov WHERE {
+  ?p a ph:Pathogen ; hera:hasPriorityLevel ?prio .
+  ?bh a hazard:BiologicalHazard . ?event hazard:isManifestationOf ?bh ;
+       hazard:hasCausativeAgent ?p .
+  OPTIONAL { ?gov a governance:RiskGovernance ; governance:analysesHazard ?bh . }
+}""", """
+# Pattern-specific — InfectiousDisease as a HumanImpact via mp:manifestsCondition
+SELECT ?event ?hi ?disease ?pathogen WHERE {
+  ?event hazard:hasImpact ?hi . ?hi a impact:HumanImpact ; mp:manifestsCondition ?disease .
+  ?disease a ph:InfectiousDisease ; ph:hasCausativeAgent ?pathogen .
+}""", """
+# Pattern-specific — Match Response.involvesMeasureType with Instrument.hasMeasureType
+SELECT ?response ?measureType ?instrument WHERE {
+  ?response response:involvesMeasureType ?measureType .
+  ?instrument mp:hasMeasureType ?measureType .
+}""" .
+
+# -----------------------------------------------------------------------------
+# Cross-references to the CQ catalogue
+# -----------------------------------------------------------------------------
+
+<http://data.europa.eu/h8v/ecmo/main-pattern> cpa:relatedCPs
+    cqs:CQ-RISK-P01, cqs:CQ-HAZ-P01, cqs:CQ-HAZ-P04, cqs:CQ-EXV-P01, cqs:CQ-EXV-P04,
+    cqs:CQ-CAP-P06, cqs:CQ-DIS-P01, cqs:CQ-DIS-P05, cqs:CQ-RES-P02, cqs:CQ-RES-P03,
+    cqs:CQ-INS-P01, cqs:CQ-INS-P02, cqs:CQ-PH-P01, cqs:CQ-PH-P03, cqs:CQ-HERA-P01,
+    cqs:CQ-X-P01, cqs:CQ-X-P03, cqs:CQ-X-P07,
+    # Coherence guards
+    cqs:CQ-X-N01, cqs:CQ-X-N02 .

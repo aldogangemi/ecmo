@@ -1,0 +1,269 @@
+@prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln: <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix risk: <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix spec: <http://www.ontologydesignpatterns.org/cp/owl/specialization.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:risk a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Risk and its subtypes (Acceptable, Extensive, Intensive, Residual) as the relational configuration linking hazard, exposure, vulnerability and capacity."@en ;
+    owl:imports ecmocore:capacity,
+        ecmocore:disaster,
+        ecmocore:expvuln,
+        ecmocore:foundation,
+        ecmocore:hazard ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Risk Module (F1)"@en .
+
+risk:hasFrequencyProfile a owl:DatatypeProperty ;
+    rdfs:comment "Specifies the frequency characteristics (e.g. return period, annual probability) of a Risk or Hazard."@en ;
+    rdfs:domain risk:Risk ;
+    rdfs:range xsd:string ;
+    skos:editorialNote "review domain"@en,
+        "to be discussed with subject matter experts"@en ;
+    skos:prefLabel "has frequency profile"@en,
+        "ha profilo di frequenza"@it .
+
+risk:materializesAs a owl:ObjectProperty ;
+    rdfs:comment "Dual role: (1) subPropertyOf dul:isSatisfiedBy — the Risk (as Description) is satisfied by a Disaster (as Situation/Event); (2) subPropertyOf dul:isQualityOf — the Risk (as Quality) inheres in the Disaster as its risk character."@en ;
+    rdfs:domain risk:Risk ;
+    rdfs:range hazard:HazardousEvent ;
+    rdfs:subPropertyOf dul:isSatisfiedBy ;
+    skos:prefLabel "materializes as"@en,
+        "si materializza come"@it .
+
+risk:AcceptableRisk a risk:Risk,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F1 ;
+    spec:specializes risk:Risk ;
+    rdfs:comment "The extent to which a disaster risk is deemed acceptable or tolerable depends on existing social, economic, political, cultural, technical and environmental conditions."@en ;
+    rdfs:subClassOf dul:Situation ;
+    skos:prefLabel "Akzeptables Risiko"@de,
+        "Acceptable Risk"@en,
+        "Riesgo aceptable"@es,
+        "Risque acceptable"@fr,
+        "Rischio accettabile"@it,
+        "Risco aceitável"@pt .
+
+risk:ExtensiveProfile a risk:RiskIntensityProfile,
+        owl:NamedIndividual ;
+    skos:prefLabel "Extensive (low-severity, high-frequency)"@en .
+
+risk:ExtensiveRisk a risk:Risk,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F1 ;
+    foundation:sendaiAnnotation "Extensive disaster risk is usually high where communities are exposed to, and vulnerable to, recurring localized floods, landslides, storms or drought. Extensive disaster risk is often exacerbated by poverty, urbanization and environmental degradation."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/extensive-disaster-risk> ;
+    foundation:termNumber 20 ;
+    spec:specializes risk:Risk ;
+    rdfs:comment "The risk of low-severity, high-frequency hazardous events and disasters, mainly but not exclusively associated with highly localized hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue risk:ExtensiveProfile ;
+            owl:onProperty risk:hasRiskIntensityProfile ],
+        risk:Risk ;
+    skos:prefLabel "Extensives Katastrophenrisiko"@de,
+        "Extensive Disaster Risk"@en,
+        "Riesgo extensivo de desastre"@es,
+        "Risque extensif de catastrophe"@fr,
+        "Rischio estensivo di disastro"@it,
+        "Risco extensivo de desastre"@pt .
+
+risk:IntensiveProfile a risk:RiskIntensityProfile,
+        owl:NamedIndividual ;
+    skos:prefLabel "Intensive (high-severity, low-frequency)"@en .
+
+risk:IntensiveRisk a risk:Risk,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F1 ;
+    foundation:sendaiAnnotation "Intensive disaster risk is mainly a characteristic of large cities or densely populated areas that are not only exposed to intense hazards such as strong earthquakes, active volcanoes, heavy floods, tsunamis or major storms but also have high levels of vulnerability to these hazards."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/intensive-disaster-risk> ;
+    foundation:termNumber 23 ;
+    spec:specializes risk:Risk ;
+    rdfs:comment "The risk of high-severity, mid- to low-frequency disasters, mainly associated with major hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue risk:IntensiveProfile ;
+            owl:onProperty risk:hasRiskIntensityProfile ],
+        risk:Risk ;
+    skos:prefLabel "Intensives Katastrophenrisiko"@de,
+        "Intensive Disaster Risk"@en,
+        "Riesgo intensivo de desastre"@es,
+        "Risque intensif de catastrophe"@fr,
+        "Rischio intensivo di disastro"@it,
+        "Risco intensivo de desastre"@pt .
+
+risk:assessesRisk a owl:ObjectProperty ;
+    rdfs:comment "Relates a risk assessment or planning process to the Risk it analyses."@en ;
+    rdfs:range risk:Risk ;
+    owl:inverseOf risk:isAssessedBy ;
+    skos:prefLabel "assesses risk"@en,
+        "valuta il rischio"@it .
+
+risk:isAssessedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the process that assesses this risk."@en ;
+    owl:inverseOf risk:assessesRisk ;
+    skos:prefLabel "is assessed by"@en .
+
+risk:isCapacityDeterminantOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the risk moderated by this capacity."@en ;
+    owl:inverseOf risk:hasCapacityDeterminant ;
+    skos:prefLabel "is capacity determinant of"@en .
+
+risk:isExposureDeterminantOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the risk constituted by this exposure."@en ;
+    owl:inverseOf risk:hasExposureDeterminant ;
+    skos:prefLabel "is exposure determinant of"@en .
+
+risk:isHazardDeterminantOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the risk constituted by this hazard."@en ;
+    owl:inverseOf risk:hasHazardDeterminant ;
+    skos:prefLabel "is hazard determinant of"@en .
+
+risk:isVulnerabilityDeterminantOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the risk constituted by this vulnerability."@en ;
+    owl:inverseOf risk:hasVulnerabilityDeterminant ;
+    skos:prefLabel "is vulnerability determinant of"@en .
+
+risk:leavesResidualRisk a owl:ObjectProperty ;
+    rdfs:comment "Indicates the residual risk remaining after this measure."@en ;
+    owl:inverseOf risk:remainsAfter ;
+    skos:prefLabel "leaves residual risk"@en .
+
+risk:ResidualRisk a risk:Risk,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F1 ;
+    foundation:sendaiAnnotation "The presence of residual risk implies a continuing need to develop and support effective capacities for emergency services, preparedness, response and recovery, together with socioeconomic policies such as safety nets and risk transfer mechanisms, as part of a holistic approach."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/residual-risk> ;
+    foundation:termNumber 31 ;
+    spec:specializes risk:Risk ;
+    rdfs:comment "The disaster risk that remains in unmanaged form, even when effective disaster risk reduction measures are in place, and for which emergency response and recovery capacities must be maintained."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty risk:remainsAfter ;
+            owl:someValuesFrom instruments:Measure ],
+        dul:Situation ;
+    skos:prefLabel "Restrisiko"@de,
+        "Residual Risk"@en,
+        "Riesgo residual"@es,
+        "Risque résiduel"@fr,
+        "Rischio residuo"@it,
+        "Risco residual"@pt .
+
+risk:hasCapacityDeterminant a owl:ObjectProperty ;
+    rdfs:comment "Relates a Risk situation to the Capacity stock that moderates it — the ability of communities and institutions to manage disaster risk."@en ;
+    rdfs:domain risk:Risk ;
+    rdfs:range capacity:Capacity ;
+    owl:inverseOf risk:isCapacityDeterminantOf ;
+    skos:prefLabel "has capacity determinant"@en,
+        "ha determinante di capacità"@it .
+
+risk:hasExposureDeterminant a owl:ObjectProperty ;
+    rdfs:comment "Relates a Risk situation to the Exposure condition that is one of its four constitutive determinants."@en ;
+    rdfs:domain risk:Risk ;
+    rdfs:range expvuln:Exposure ;
+    owl:inverseOf risk:isExposureDeterminantOf ;
+    skos:prefLabel "has exposure determinant"@en,
+        "ha determinante di esposizione"@it .
+
+risk:hasHazardDeterminant a owl:ObjectProperty ;
+    rdfs:comment "Links disaster risk to its hazard component: risk = f(hazard, exposure, vulnerability, capacity)."@en ;
+    rdfs:domain risk:Risk ;
+    rdfs:range hazard:Hazard ;
+    owl:inverseOf risk:isHazardDeterminantOf ;
+    skos:prefLabel "has hazard determinant"@en,
+        "tiene determinante de amenaza"@es,
+        "a pour déterminant d'aléa"@fr,
+        "ha determinante di pericolo"@it .
+
+risk:hasRiskIntensityProfile a owl:ObjectProperty ;
+    rdfs:comment "Classifies a risk by its severity-frequency profile (extensive or intensive)."@en ;
+    rdfs:domain risk:Risk ;
+    rdfs:range risk:RiskIntensityProfile ;
+    skos:prefLabel "has risk intensity profile"@en .
+
+risk:hasVulnerabilityDeterminant a owl:ObjectProperty ;
+    rdfs:comment "Relates a Risk situation to the Vulnerability condition that is one of its four constitutive determinants."@en ;
+    rdfs:domain risk:Risk ;
+    rdfs:range expvuln:Vulnerability ;
+    owl:inverseOf risk:isVulnerabilityDeterminantOf ;
+    skos:prefLabel "has vulnerability determinant"@en,
+        "ha determinante di vulnerabilità"@it .
+
+risk:remainsAfter a owl:ObjectProperty ;
+    rdfs:comment "Relates ResidualRisk to the Measure or risk reduction intervention after whose application some risk persists."@en ;
+    rdfs:domain risk:ResidualRisk ;
+    rdfs:range instruments:Measure ;
+    owl:inverseOf risk:leavesResidualRisk ;
+    skos:prefLabel "remains after"@en,
+        "resta dopo"@it .
+
+risk:RiskIntensityProfile a owl:Class ;
+    rdfs:comment "Classification of risk by severity-frequency profile."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Risk Intensity Profile"@en .
+
+risk:Risk a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F1 ;
+    foundation:sendaiAnnotation "The definition of disaster risk reflects the concept of hazardous events and disasters as the outcome of continuously present conditions of risk. Disaster risk comprises different types of potential losses which are often difficult to quantify. Nevertheless, with knowledge of the prevailing hazards and the patterns of population and socioeconomic development, disaster risks can be assessed and mapped, in broad terms at least. It is important to consider the social and economic contexts in which disaster risks occur and that people do not necessarily share the same perceptions of risk and their underlying risk factors."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/disaster-risk> ;
+    foundation:termNumber 10 ;
+    rdfs:comment "Alias for Risk. The potential loss of life, injury, or destroyed or damaged assets which could occur to a system, society or a community in a specific period of time, determined probabilistically as a function of hazard, exposure, vulnerability and capacity."@en,
+        "The potential loss of life, injury, or destroyed or damaged assets which could occur to a system, society or a community in a specific period of time, determined probabilistically as a function of hazard, exposure, vulnerability and capacity."@en,
+        "The potential loss of life, injury, or destroyed or damaged assets which could occur to a system, society or a community in a specific period of time, determined probabilistically as a function of hazard, exposure, vulnerability and capacity. Equivalent to ecmocore:Risk."@en,
+        "ecmocore:Risk is typed as dul:Description (frame reading) + dul:ContextualDisposition (dispositional reading). It is NOT a dul:Situation — Situations satisfy Risk via disaster:realizesRisk / risk:materializesAs, per the D&S pattern. dul:Description ⊓ dul:Situation = ∅ in DUL. The punned subtypes ExtensiveRisk, IntensiveRisk, ResidualRisk mirror the Hazard domain-type punning."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty risk:hasCapacityDeterminant ;
+            owl:someValuesFrom capacity:Capacity ],
+        [ a owl:Restriction ;
+            owl:onProperty risk:hasExposureDeterminant ;
+            owl:someValuesFrom expvuln:Exposure ],
+        [ a owl:Restriction ;
+            owl:onProperty risk:hasHazardDeterminant ;
+            owl:someValuesFrom hazard:Hazard ],
+        [ a owl:Restriction ;
+            owl:onProperty risk:hasVulnerabilityDeterminant ;
+            owl:someValuesFrom expvuln:Vulnerability ],
+        hazard:Hazard,
+        dul:ContextualDisposition,
+        dul:Description ;
+    skos:definition "The potential loss of life, injury, or destroyed or damaged assets which could occur to a system, society or a community in a specific period of time, determined probabilistically as a function of hazard, exposure, vulnerability and capacity."@en ;
+    skos:editorialNote "ecmocore: Risk is DEPRECATED in v2.0: Use risk:Risk instead. Risk is retained as owl:equivalentClass for backward compatibility."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower risk:AcceptableRisk,
+        risk:ExtensiveRisk,
+        risk:IntensiveRisk,
+        risk:ResidualRisk ;
+    skos:prefLabel "Gefahrenereignisrisiko"@de,
+        "Katastrophenrisiko"@de,
+        "Risiko"@de,
+        "Disaster Risk"@en,
+        "Hazardous Event Risk"@en,
+        "Risk"@en,
+        "Riesgo"@es,
+        "Riesgo de desastre"@es,
+        "Riesgo de evento peligroso"@es,
+        "Risque"@fr,
+        "Risque d'événement dangereux"@fr,
+        "Risque de catastrophe"@fr,
+        "Rischio"@it,
+        "Rischio di disastro"@it,
+        "Rischio di evento pericoloso"@it,
+        "Risco"@pt,
+        "Risco de desastre"@pt,
+        "Risco de evento perigoso"@pt ;
+    skos:topConceptOf foundation:SendaiFrameworkTerminology .
+

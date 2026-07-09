@@ -1,0 +1,656 @@
+@prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix disaster: <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix governance: <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response: <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk: <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:response a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "DRR cycle phases (Prevention, Mitigation, Preparedness, Response, Recovery) and sub-activities."@en ;
+    owl:imports ecmocore:capacity,
+        ecmocore:disaster,
+        ecmocore:foundation,
+        ecmocore:governance,
+        ecmocore:hazard,
+        ecmocore:instruments,
+        ecmocore:risk ;
+    owl:versionInfo "2.0" ;
+    skos:prefLabel "ECMO-CORE Response & Recovery Module (F7)"@en .
+
+response:involvesCapacityType a owl:ObjectProperty ;
+    rdfs:comment "Relates a situation to the type of capacity required to address it."@en ;
+    rdfs:domain dul:Situation ;
+    rdfs:range response:CapacityType ;
+    rdfs:subPropertyOf dul:isSettingFor ;
+    skos:prefLabel "involves capacity type"@en,
+        "coinvolge tipo di capacità"@it .
+
+response:isGeneralizationOfMeasureType a owl:ObjectProperty ;
+    rdfs:comment "Relates a more general intervention type to a more specific intervention type."@en ;
+    rdfs:domain response:MeasureType ;
+    rdfs:range response:MeasureType ;
+    owl:inverseOf response:isSpecializationOfMeasureType ;
+    skos:prefLabel "is generalization of measure type"@en .
+
+response:precedesPhase a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:comment "Temporal ordering of DRR cycle phases."@en ;
+    rdfs:domain response:RiskReductionPhase ;
+    rdfs:range response:RiskReductionPhase ;
+    skos:prefLabel "precedes phase"@en,
+        "precede la fase"@it .
+
+response:requiresCapacity a owl:ObjectProperty ;
+    rdfs:comment "Relates an intervention or measure type to the capacity or resource type required for its implementation. v2.3 (CP-RES-02, PROP-DOMAIN-1): domain widened by removing the response:MeasureType restriction (now open)."@en ;
+    rdfs:range response:CapacityType ;
+    skos:prefLabel "requires capacity"@en,
+        "richiede capacità"@it .
+
+response:ContingencyPlanning a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sendaiAnnotation "Contingency planning results in organized and coordinated courses of action with clearly identified institutional roles and resources, information processes and operational arrangements for specific actors at times of need. Contingency planning is an important part of overall preparedness."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/contingency-planning> ;
+    foundation:termNumber 5 ;
+    rdfs:comment "A management process that analyses disaster risks and establishes arrangements in advance to enable timely, effective and appropriate responses."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty risk:assessesRisk ;
+            owl:someValuesFrom risk:Risk ],
+        response:Preparedness ;
+    skos:definition "A management process that analyses disaster risks and establishes arrangements in advance to enable timely, effective and appropriate responses."@en ;
+    skos:prefLabel "Notfallplanung"@de,
+        "Contingency Planning"@en,
+        "Planificación para contingencias"@es,
+        "Planification d'urgence"@fr,
+        "Pianificazione di emergenza"@it,
+        "Planeamento de contingência"@pt .
+
+response:Evacuation a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sendaiAnnotation "Evacuation plans refer to the arrangements established in advance to enable the moving of people and assets temporarily to safer places before, during or after the occurrence of a hazardous event."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/evacuation> ;
+    foundation:termNumber 18 ;
+    rdfs:comment "Moving people and assets temporarily to safer places before, during or after the occurrence of a hazardous event in order to protect them."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty hazard:protectsAgainst ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        dul:Action ;
+    skos:definition "Moving people and assets temporarily to safer places before, during or after the occurrence of a hazardous event in order to protect them."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Evakuierung"@de,
+        "Evacuation"@en,
+        "Evacuación"@es,
+        "Évacuation"@fr,
+        "Evacuazione"@it,
+        "Evacuação"@pt .
+
+response:EvacuationPlan a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:comment "Arrangements established in advance to enable the moving of people and assets temporarily to safer places."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:includesShelterInPlaceOption ;
+            owl:someValuesFrom response:ShelterInPlace ],
+        response:PreparednessPlan,
+        dul:Plan ;
+    skos:prefLabel "Evakuierungsplan"@de,
+        "Evacuation Plan"@en,
+        "Plan de evacuación"@es,
+        "Plan d'évacuation"@fr,
+        "Piano di evacuazione"@it,
+        "Plano de evacuação"@pt .
+
+response:PreparednessPlan a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:comment "A plan that establishes arrangements in advance to enable timely, effective and appropriate responses to specific potential hazardous events or emerging disaster situations."@en ;
+    rdfs:subClassOf dul:Plan ;
+    skos:prefLabel "Vorsorgeplan"@de,
+        "Preparedness Plan"@en,
+        "Plan de preparación"@es,
+        "Plan de préparation"@fr,
+        "Piano di preparazione"@it,
+        "Plano de preparação"@pt .
+
+response:Prevention a response:RiskReductionPhase,
+        dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sendaiAnnotation "Prevention (i.e., disaster prevention) expresses the concept and intention to completely avoid potential adverse impacts of hazardous events. While certain disaster risks cannot be eliminated, prevention aims at reducing vulnerability and exposure in such contexts where, as a result, the risk of disaster is removed. Examples include dams or embankments that eliminate flood risks, land-use regulations that do not permit any settlement in high-risk zones, seismic engineering designs that ensure the survival and function of a critical building in any likely earthquake and immunization against vaccine-preventable diseases."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/prevention> ;
+    foundation:termNumber 27 ;
+    response:precedesPhase response:Mitigation ;
+    rdfs:comment "Activities and measures to avoid existing and new disaster risks."@en,
+        "Named individual representing the Prevention phase of the disaster risk reduction cycle."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:avoidsRiskOf ;
+            owl:someValuesFrom risk:Risk ],
+        dul:Action,
+        dul:Situation ;
+    skos:definition "Activities and measures to avoid existing and new disaster risks."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Prävention"@de,
+        "Prevention"@en,
+        "Prevention phase"@en,
+        "Prevención"@es,
+        "Prévention"@fr,
+        "Prevenzione"@it,
+        "Prevenção"@pt .
+
+response:Readiness a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:comment "The ability to quickly and appropriately respond when required. Related to preparedness."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:enablesTimely ;
+            owl:someValuesFrom response:Response ],
+        response:Preparedness ;
+    skos:broader response:Preparedness ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Bereitschaft"@de,
+        "Readiness"@en,
+        "Disposición"@es,
+        "État de préparation"@fr,
+        "Prontezza"@it,
+        "Prontidão"@pt .
+
+response:enablesTimely a owl:ObjectProperty ;
+    rdfs:comment "Links readiness to the response it enables in a timely manner."@en ;
+    rdfs:domain response:Readiness ;
+    rdfs:range response:Response ;
+    skos:prefLabel "enables timely"@en,
+        "consente tempestivamente"@it .
+
+response:hasCapacityBuiltBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the preparedness building capacity for this response."@en ;
+    owl:inverseOf response:buildsCapacityFor ;
+    skos:prefLabel "has capacity built by"@en .
+
+response:hasImpactLessenedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the mitigation lessening impact of this event."@en ;
+    owl:inverseOf response:lessensImpactOf ;
+    skos:prefLabel "has impact lessened by"@en .
+
+response:hasNeedsMetBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the response meeting needs of this population."@en ;
+    owl:inverseOf response:meetsNeedsOf ;
+    skos:prefLabel "has needs met by"@en .
+
+response:inDRMPhase a owl:ObjectProperty ;
+    rdfs:comment "Relates an Intervention to the DRR cycle phase (Prevention, Preparedness, Response, Recovery) within which it is undertaken."@en ;
+    rdfs:domain response:Intervention ;
+    rdfs:range response:HazardousEventRiskReductionPhase ;
+    skos:prefLabel "in DRM phase"@en,
+        "in fase di gestione del rischio"@it .
+
+response:includesShelterInPlaceOption a owl:ObjectProperty ;
+    rdfs:comment "Relates an EvacuationPlan to a ShelterInPlace option it provides as an alternative to physical evacuation."@en ;
+    rdfs:domain response:EvacuationPlan ;
+    rdfs:range response:ShelterInPlace ;
+    skos:prefLabel "includes shelter in place option"@en,
+        "include opzione di riparo sul posto"@it .
+
+response:integratesDRR a owl:ObjectProperty ;
+    rdfs:comment "Relates a BuildBackBetter programme to the RiskReduction principles it incorporates into post-disaster reconstruction."@en ;
+    rdfs:domain response:BuildBackBetter ;
+    rdfs:range governance:RiskReduction ;
+    skos:prefLabel "integrates DRR"@en,
+        "integra la riduzione del rischio"@it .
+
+response:involvesCapacity a owl:ObjectProperty ;
+    rdfs:comment "Relates an Intervention to the Capacity it mobilises or depends upon for its execution."@en ;
+    rdfs:domain response:Intervention ;
+    rdfs:range capacity:Capacity ;
+    skos:prefLabel "involves capacity"@en,
+        "coinvolge capacità"@it .
+
+response:involvesMeasureType a owl:ObjectProperty ;
+    rdfs:comment "Relates an Intervention to the type of Measure (structural or non-structural) it deploys. v2.3 (CP-RES-04, PROP-DOMAIN-1): range typo fixed from instruments:Measure to response:MeasureType."@en ;
+    rdfs:domain response:Intervention ;
+    rdfs:range response:MeasureType ;
+    skos:prefLabel "involves measure type"@en,
+        "coinvolge tipo di misura"@it .
+
+response:isAnticipatedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the preparedness activity anticipating this event."@en ;
+    owl:inverseOf response:anticipates ;
+    skos:prefLabel "is anticipated by"@en .
+
+response:isAvoidedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the prevention activity avoiding this risk."@en ;
+    owl:inverseOf response:avoidsRiskOf ;
+    skos:prefLabel "is avoided by"@en .
+
+response:isInvolvedInResponse a owl:ObjectProperty ;
+    rdfs:comment "Indicates the response involving this emergency service."@en ;
+    owl:inverseOf response:involvesEmergencyService ;
+    skos:prefLabel "is involved in response"@en .
+
+response:isSpecializationOfMeasureType a owl:ObjectProperty ;
+    rdfs:comment "Relates a more specific intervention type to a more general intervention type."@en ;
+    rdfs:domain response:MeasureType ;
+    rdfs:range response:MeasureType ;
+    skos:prefLabel "is specialization of measure type"@en .
+
+response:isTaskOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a DRM phase (Mitigation, Prevention, Preparedness, Response, Recovery) to the RiskManagementPlan that prescribes it as a task. This property implements the Descriptions & Situations (D&S) pattern: the Plan (dul:Description) defines normative task types, and a specific phase instance (dul:Situation) satisfies that normative definition when enacted in the context of a particular hazardous event."@en ;
+    rdfs:domain response:RiskReductionPhase ;
+    rdfs:range governance:RiskManagementPlan ;
+    skos:prefLabel "is task of"@en,
+        "es tarea de"@es,
+        "est tâche de"@fr,
+        "è compito di"@it .
+
+response:linksToEWS a owl:ObjectProperty ;
+    rdfs:comment "Relates Preparedness activities to the EarlyWarningSystem whose warnings they are designed to act upon."@en ;
+    rdfs:domain response:Preparedness ;
+    rdfs:range instruments:EarlyWarningSystem ;
+    skos:prefLabel "links to early warning system"@en,
+        "è collegato al sistema di allerta"@it .
+
+response:rebuildsInfrastructureAfter a owl:ObjectProperty ;
+    rdfs:comment "Relates a Reconstruction action to the Disaster after which it restores physical infrastructure, applying BuildBackBetter principles."@en ;
+    rdfs:domain response:Reconstruction ;
+    rdfs:range hazard:HazardousEvent ;
+    skos:prefLabel "rebuilds infrastructure after"@en,
+        "ricostruisce infrastrutture dopo"@it .
+
+response:reliesOnPreparedness a owl:ObjectProperty ;
+    rdfs:comment "Relates a Response action to the Preparedness activities that enabled it — pre-positioned resources, trained personnel, plans in place."@en ;
+    rdfs:domain response:Response ;
+    rdfs:range response:Preparedness ;
+    skos:prefLabel "relies on preparedness"@en,
+        "si basa sulla preparazione"@it .
+
+response:restoresAssetsAfter a owl:ObjectProperty ;
+    rdfs:comment "Relates a Recovery action to the Disaster after which it rehabilitates or replaces damaged or destroyed assets."@en ;
+    rdfs:domain response:Recovery ;
+    rdfs:range hazard:HazardousEvent ;
+    skos:prefLabel "restores assets after"@en,
+        "ripristina i beni dopo"@it .
+
+response:restoresBasicServicesAfter a owl:ObjectProperty ;
+    rdfs:comment "Relates a Rehabilitation action to the Disaster after which it restores essential public services such as water, power and health care."@en ;
+    rdfs:domain response:Rehabilitation ;
+    rdfs:range hazard:HazardousEvent ;
+    skos:prefLabel "restores basic services after"@en,
+        "ripristina servizi di base dopo"@it .
+
+dul:Task a owl:Class .
+
+response:CapacityType a owl:Class ;
+    rdfs:comment "A classification of capacities available within a community or organisation to manage disaster risks. Bridges the Capacity concept to specific resource or institutional types."@en ;
+    rdfs:subClassOf dul:SocialObject ;
+    skos:prefLabel "Kapazitätstyp"@de,
+        "Capacity Type"@en,
+        "Tipo de capacidad"@es,
+        "Type de capacité"@fr,
+        "Tipo di capacità"@it,
+        "Tipo de capacidade"@pt .
+
+response:EmergencyService a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:comment "A critical set of specialized agencies that have specific responsibilities in serving and protecting people and property in emergency and disaster situations."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue capacity:ServiceCapacityDomain ;
+            owl:onProperty capacity:hasCapacityDomain ],
+        capacity:Capacity ;
+    skos:prefLabel "Notdienst"@de,
+        "Emergency Service"@en,
+        "Servicio de emergencia"@es,
+        "Service d'urgence"@fr,
+        "Servizio di emergenza"@it,
+        "Serviço de emergência"@pt .
+
+response:HazardousEventRiskReductionPhase a owl:Class ;
+    rdfs:comment "A phase in the risk management cycle (prevention, mitigation, preparedness, response, recovery). Equivalent to DisasterRiskReductionPhase."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty foundation:contributesTo ;
+            owl:someValuesFrom governance:HazardousEventRiskReduction ],
+        dul:Action,
+        dul:Situation ;
+    skos:prefLabel "Phase der Risikominderung bei Gefahrenereignissen"@de,
+        "Hazardous Event Risk Reduction Phase"@en,
+        "Fase de reducción de riesgos de eventos peligrosos"@es,
+        "Phase de réduction des risques d'événements dangereux"@fr,
+        "Fase di riduzione del rischio di eventi pericolosi"@it,
+        "Fase de redução de riscos de eventos perigosos"@pt .
+
+response:Mitigation a response:RiskReductionPhase,
+        dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sendaiAnnotation "The adverse impacts of hazards, in particular natural hazards, often cannot be prevented fully, but their scale or severity can be substantially lessened by various strategies and actions. Mitigation measures include engineering techniques and hazard-resistant construction as well as improved environmental and social policies and public awareness. It should be noted that, in climate change policy, mitigation is defined differently, and is the term used for the reduction of greenhouse gas emissions that are the source of climate change."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/mitigation> ;
+    foundation:termNumber 24 ;
+    response:precedesPhase response:Preparedness ;
+    rdfs:comment "Named individual representing the Mitigation phase of the disaster risk reduction cycle, used as a temporal ordering anchor via the precedesPhase property."@en,
+        "The lessening or minimizing of the adverse impacts of a hazardous event."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:lessensImpactOf ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        dul:Action ;
+    skos:definition "The lessening or minimizing of the adverse impacts of a hazardous event."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Minderung"@de,
+        "Mitigation"@en,
+        "Mitigation phase"@en,
+        "Mitigación"@es,
+        "Atténuation"@fr,
+        "Mitigazione"@it,
+        "Mitigação"@pt .
+
+response:Reconstruction a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/reconstruction> ;
+    foundation:termNumber 28 ;
+    rdfs:comment "The medium- and long-term rebuilding and sustainable restoration of resilient critical infrastructures, services, housing, facilities and livelihoods required for the full functioning of a community or a society affected by a disaster, aligning with the principles of sustainable development and build back better, to avoid or reduce future disaster risk."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:alignsWithPrinciple ;
+            owl:someValuesFrom response:BuildBackBetter ],
+        [ a owl:Restriction ;
+            owl:onProperty response:rebuildsInfrastructureAfter ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        response:Recovery ;
+    skos:definition "The medium- and long-term rebuilding and sustainable restoration of resilient critical infrastructures, services, housing, facilities and livelihoods required for the full functioning of a community or a society affected by a disaster, aligning with the principles of sustainable development and build back better, to avoid or reduce future disaster risk."@en ;
+    skos:prefLabel "Wiederaufbau"@de,
+        "Reconstruction"@en,
+        "Reconstrucción"@es,
+        "Reconstruction"@fr,
+        "Ricostruzione"@it,
+        "Reconstrução"@pt .
+
+response:Rehabilitation a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/rehabilitation> ;
+    foundation:termNumber 30 ;
+    rdfs:comment "The restoration of basic services and facilities for the functioning of a community or a society affected by a disaster."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:restoresBasicServicesAfter ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        response:Recovery ;
+    skos:definition "The restoration of basic services and facilities for the functioning of a community or a society affected by a disaster."@en ;
+    skos:prefLabel "Rehabilitation"@de,
+        "Rehabilitation"@en,
+        "Rehabilitación"@es,
+        "Réhabilitation"@fr,
+        "Riabilitazione"@it,
+        "Reabilitação"@pt .
+
+response:ShelterInPlace a dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:comment "An alternative protective action to evacuation, where people remain in their current location and take shelter during a hazardous event."@en ;
+    rdfs:subClassOf dul:Action ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Schutz vor Ort"@de,
+        "Shelter in Place"@en,
+        "Refugio en el lugar"@es,
+        "Mise à l'abri sur place"@fr,
+        "Riparo sul posto"@it,
+        "Abrigo no local"@pt ;
+    skos:related response:Evacuation .
+
+response:alignsWithPrinciple a owl:ObjectProperty ;
+    rdfs:comment "Relates a recovery or reconstruction Action to a normative Description (such as BuildBackBetter) whose principles it is designed to follow."@en ;
+    rdfs:domain response:Recovery ;
+    rdfs:range response:BuildBackBetter ;
+    skos:prefLabel "aligns with principle"@en,
+        "è conforme al principio"@it .
+
+response:anticipates a owl:ObjectProperty ;
+    rdfs:comment "Relates Preparedness activities to the Disaster scenario they are designed to foresee and respond to."@en ;
+    rdfs:domain response:Preparedness ;
+    rdfs:range hazard:HazardousEvent ;
+    owl:inverseOf response:isAnticipatedBy ;
+    skos:prefLabel "anticipates"@en,
+        "anticipa"@it .
+
+response:avoidsRiskOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a Prevention action to the Risk it aims to eliminate before it is created."@en ;
+    rdfs:domain response:Prevention ;
+    rdfs:range risk:Risk ;
+    owl:inverseOf response:isAvoidedBy ;
+    skos:prefLabel "avoids risk of"@en,
+        "evita il rischio di"@it .
+
+response:buildsCapacityFor a owl:ObjectProperty ;
+    rdfs:comment "Relates Preparedness activities to the Response capacity they develop in anticipation of a Disaster."@en ;
+    rdfs:domain response:Preparedness ;
+    rdfs:range response:Response ;
+    owl:inverseOf response:hasCapacityBuiltBy ;
+    skos:prefLabel "builds capacity for"@en,
+        "sviluppa capacità per"@it .
+
+response:involvesEmergencyService a owl:ObjectProperty ;
+    rdfs:comment "Relates a Response action to the EmergencyService (fire, ambulance, police, civil protection) deployed."@en ;
+    rdfs:domain response:Response ;
+    rdfs:range response:EmergencyService ;
+    owl:inverseOf response:isInvolvedInResponse ;
+    skos:prefLabel "involves emergency service"@en,
+        "coinvolge servizio di emergenza"@it .
+
+response:lessensImpactOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a Mitigation action to the Hazard or HazardousEvent whose impacts it reduces. v2.3 (CP-RES-03, PROP-DOMAIN-1): range widened to (Hazard ⊔ HazardousEvent) to cover use with Hazard-type instances."@en ;
+    rdfs:domain response:Mitigation ;
+    rdfs:range [ owl:unionOf ( hazard:Hazard hazard:HazardousEvent ) ] ;
+    owl:inverseOf response:hasImpactLessenedBy ;
+    skos:prefLabel "lessens impact of"@en,
+        "riduce l'impatto di"@it .
+
+response:meetsNeedsOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a Response phase or Intervention Action to the AffectedPopulation whose immediate humanitarian needs it addresses. v2.3 (CP-RES-02, PROP-DOMAIN-1): domain widened by removing the response:Response restriction; covers Intervention use."@en ;
+    rdfs:range disaster:AffectedPopulation ;
+    owl:inverseOf response:hasNeedsMetBy ;
+    skos:prefLabel "meets needs of"@en,
+        "soddisfa i bisogni di"@it .
+
+response:Intervention a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:comment "A deliberate, planned or ad hoc action undertaken by authorities, organisations or communities to alter the course of a hazardous event, reduce its impacts, or aid affected populations. An Intervention mobilises Capacity, deploys Measures (structural or non-structural), and operates within a specific phase of the disaster risk management cycle."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:involvesMeasureType ;
+            owl:someValuesFrom instruments:Measure ],
+        [ a owl:Restriction ;
+            owl:onProperty response:inDRMPhase ;
+            owl:someValuesFrom response:HazardousEventRiskReductionPhase ],
+        [ a owl:Restriction ;
+            owl:onProperty response:involvesCapacity ;
+            owl:someValuesFrom capacity:Capacity ],
+        dul:Action,
+        dul:Situation ;
+    skos:editorialNote "Introduced in v1.5 from the Luigi Schema proposal. Bridges HazardousEvent to Measure, Capacity, and DRMPhase."@en ;
+    skos:prefLabel "Intervention"@de,
+        "Intervention"@en,
+        "Intervención"@es,
+        "Intervention"@fr,
+        "Intervento"@it,
+        "Intervenção"@pt .
+
+response:BuildBackBetter a dul:Norm,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sendaiAnnotation "The term societal will not be interpreted as a political system of any country."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/build-back-better> ;
+    foundation:termNumber 2 ;
+    rdfs:comment "The use of the recovery, rehabilitation and reconstruction phases after a disaster to increase the resilience of nations and communities through integrating disaster risk reduction measures into the restoration of physical infrastructure and societal systems, and into the revitalization of livelihoods, economies and the environment."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:integratesDRR ;
+            owl:someValuesFrom governance:HazardousEventRiskReduction ],
+        [ a owl:Restriction ;
+            owl:onProperty capacity:strengthensResilience ;
+            owl:someValuesFrom capacity:Resilience ],
+        dul:Situation ;
+    skos:definition "The use of the recovery, rehabilitation and reconstruction phases after a disaster to increase the resilience of nations and communities through integrating disaster risk reduction measures into the restoration of physical infrastructure and societal systems, and into the revitalization of livelihoods, economies and the environment."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Besser wiederaufbauen"@de,
+        "Build Back Better"@en,
+        "Reconstruir mejor"@es,
+        "Reconstruire en mieux"@fr,
+        "Ricostruire meglio"@it,
+        "Reconstruir melhor"@pt .
+
+response:MeasureType a owl:Class ;
+    rdfs:comment "A specific kind of intervention, action or measure applied in any phase of the DRM / crisis management lifecycle. Classifies interventions by their nature (e.g. evacuation, medical countermeasure, structural reinforcement)."@en ;
+    rdfs:subClassOf dul:SocialObject ;
+    skos:prefLabel "Maßnahmentyp"@de,
+        "Measure Type"@en,
+        "Tipo de medida"@es,
+        "Type de mesure"@fr,
+        "Tipo di misura"@it,
+        "Tipo de medida"@pt .
+
+response:Recovery a response:RiskReductionPhase,
+        dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/recovery> ;
+    foundation:termNumber 29 ;
+    rdfs:comment "Named individual representing the Recovery phase of the disaster risk reduction cycle."@en,
+        "The restoring or improving of livelihoods and health, as well as economic, physical, social, cultural and environmental assets, systems and activities, of a disaster-affected community or society, aligning with the principles of sustainable development and build back better, to avoid or reduce future disaster risk."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:alignsWithPrinciple ;
+            owl:someValuesFrom response:BuildBackBetter ],
+        [ a owl:Restriction ;
+            owl:onProperty response:restoresAssetsAfter ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        dul:Situation ;
+    skos:definition "The restoring or improving of livelihoods and health, as well as economic, physical, social, cultural and environmental assets, systems and activities, of a disaster-affected community or society, aligning with the principles of sustainable development and build back better, to avoid or reduce future disaster risk."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower response:Reconstruction,
+        response:Rehabilitation ;
+    skos:prefLabel "Wiederherstellung"@de,
+        "Recovery"@en,
+        "Recovery phase"@en,
+        "Recuperación"@es,
+        "Relèvement"@fr,
+        "Recupero"@it,
+        "Recuperação"@pt .
+
+response:Response a response:RiskReductionPhase,
+        dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sendaiAnnotation "Disaster response is predominantly focused on immediate and short-term needs and is sometimes called disaster relief. Effective, efficient and timely response relies on disaster risk-informed preparedness measures, including the development of the response capacities of individuals, communities, organizations, countries and the international community."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/response> ;
+    foundation:termNumber 33 ;
+    response:precedesPhase response:Recovery ;
+    rdfs:comment "Actions taken directly before, during or immediately after a disaster in order to save lives, reduce health impacts, ensure public safety and meet the basic subsistence needs of the people affected."@en,
+        "Named individual representing the Response phase of the disaster risk reduction cycle."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:involvesEmergencyService ;
+            owl:someValuesFrom response:EmergencyService ],
+        [ a owl:Restriction ;
+            owl:onProperty response:meetsNeedsOf ;
+            owl:someValuesFrom disaster:AffectedPopulation ],
+        [ a owl:Restriction ;
+            owl:onProperty response:reliesOnPreparedness ;
+            owl:someValuesFrom response:Preparedness ],
+        [ a owl:Restriction ;
+            owl:onProperty governance:respondsTo ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        dul:Situation ;
+    skos:altLabel "Katastrophenhilfe"@de,
+        "Disaster Relief"@en,
+        "Socorro en caso de desastre"@es,
+        "Secours en cas de catastrophe"@fr,
+        "Soccorso in caso di disastro"@it,
+        "Socorro em caso de desastre"@pt ;
+    skos:definition "Actions taken directly before, during or immediately after a disaster in order to save lives, reduce health impacts, ensure public safety and meet the basic subsistence needs of the people affected."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Reaktion"@de,
+        "Response"@en,
+        "Response phase"@en,
+        "Respuesta"@es,
+        "Réponse"@fr,
+        "Risposta"@it,
+        "Resposta"@pt .
+
+response:RiskReductionPhase a owl:Class ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:comment "Abstract class representing any temporal phase within the disaster risk reduction cycle."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:isTaskOf ;
+            owl:someValuesFrom governance:HazardousEventRiskManagementPlan ],
+        dul:Task ;
+    skos:editorialNote "Descriptions & Situations (D&S) dual reading: DRM phases have two complementary interpretations. (1) As event-specific actions/situations: 'the Response to earthquake X' — a concrete Action or Situation enacted during a specific HazardousEvent. This reading is captured by the DUL typing of each subclass (dul:Action, dul:Situation). (2) As general recommendations/tasks: 'Response activities to be undertaken in any earthquake scenario' — normative task types prescribed by a RiskManagementPlan (dul:Plan). This reading is captured by the isTaskOf restriction. The Plan (Description-level) defines what should be done; the phase instance (Situation-level) satisfies that definition when enacted. This D&S duality avoids the need for separate task-type and task-instance classes."@en ;
+    skos:prefLabel "Katastrophenvorsorgephase"@de,
+        "DRR Phase"@en,
+        "Fase de reducción del riesgo"@es,
+        "Phase de réduction des risques"@fr,
+        "Fase di riduzione del rischio"@it,
+        "Fase de redução do risco"@pt .
+
+response:Preparedness a response:RiskReductionPhase,
+        dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F7 ;
+    foundation:sendaiAnnotation "Preparedness action is carried out within the context of disaster risk management and aims to build the capacities needed to efficiently manage all types of emergencies and achieve orderly transitions from response to sustained recovery. Preparedness is based on a sound analysis of disaster risks and good linkages with early warning systems, and includes such activities as contingency planning, the stockpiling of equipment and supplies, the development of arrangements for coordination, evacuation and public information, and associated training and field exercises."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/preparedness> ;
+    foundation:termNumber 26 ;
+    response:precedesPhase response:Response ;
+    rdfs:comment "Named individual representing the Preparedness phase of the disaster risk reduction cycle."@en,
+        "The knowledge and capacities developed by governments, response and recovery organizations, communities and individuals to effectively anticipate, respond to and recover from the impacts of likely, imminent or current disasters."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty response:anticipates ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:unionOf ( hazard:Hazard hazard:HazardousEvent ) ] ],
+        [ a owl:Restriction ;
+            owl:onProperty response:buildsCapacityFor ;
+            owl:someValuesFrom response:Response ],
+        [ a owl:Restriction ;
+            owl:onProperty response:linksToEWS ;
+            owl:someValuesFrom instruments:EarlyWarningSystem ],
+        dul:Situation ;
+    skos:definition "The knowledge and capacities developed by governments, response and recovery organizations, communities and individuals to effectively anticipate, respond to and recover from the impacts of likely, imminent or current hazards."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower response:ContingencyPlanning ;
+    skos:prefLabel "Vorsorge"@de,
+        "Preparedness"@en,
+        "Preparedness phase"@en,
+        "Preparación"@es,
+        "Préparation"@fr,
+        "Preparazione"@it,
+        "Preparação"@pt .
+

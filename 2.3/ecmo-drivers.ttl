@@ -1,0 +1,249 @@
+@prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix drivers: <http://data.europa.eu/h8v/ecmo/core/drivers/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln: <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix risk: <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:drivers a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Structural conditions amplifying risk: climate change, environmental degradation, poverty, demographic change, unplanned urbanization, weak governance."@en ;
+    owl:imports ecmocore:capacity,
+        ecmocore:expvuln,
+        ecmocore:foundation,
+        ecmocore:risk ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Underlying Risk Drivers Module (F9)"@en .
+
+drivers:DemographicChange a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F9 ;
+    rdfs:comment "An underlying disaster risk driver: changes in the size, structure, distribution or movement of populations — including urbanisation, ageing, migration and displacement — that affect levels of exposure and vulnerability to disaster risk."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty drivers:increasesExposure ;
+            owl:someValuesFrom expvuln:Exposure ],
+        drivers:RiskDriver ;
+    skos:prefLabel "Demografischer Wandel"@de,
+        "Demographic Change"@en,
+        "Cambio demográfico"@es,
+        "Changement démographique"@fr,
+        "Cambiamento demografico"@it,
+        "Mudança demográfica"@pt .
+
+drivers:WeakGovernance a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F9 ;
+    rdfs:comment "Non disaster risk-informed policies, lack of regulations and incentives for private disaster risk reduction investment."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty drivers:reducesCapacity ;
+            owl:someValuesFrom capacity:Capacity ],
+        drivers:RiskDriver ;
+    skos:prefLabel "Schwache Governance"@de,
+        "Weak Governance"@en,
+        "Gobernanza débil"@es,
+        "Gouvernance faible"@fr,
+        "Governance debole"@it,
+        "Governança fraca"@pt .
+
+drivers:isCompoundedBy a owl:ObjectProperty ;
+    rdfs:comment "Relates a HazardousEvent to another HazardousEvent that amplifies it or interacts with it to produce compound or cascading effects."@en ;
+    rdfs:domain drivers:RiskDriver ;
+    rdfs:range drivers:RiskDriver ;
+    skos:prefLabel "is compounded by"@en,
+        "è aggravato da"@it .
+
+drivers:ClimateChangeAndVariability a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F9 ;
+    rdfs:comment "An underlying disaster risk driver: observed and projected changes in average climate conditions and variability — including temperature, precipitation, wind and sea level — that alter the frequency, intensity and geographic distribution of hazardous events, increasing exposure and vulnerability of communities to disaster risk."@en ;
+    rdfs:subClassOf drivers:RiskDriver,
+        dul:Situation ;
+    skos:prefLabel "Klimawandel und -variabilität"@de,
+        "Climate Change and Variability"@en,
+        "Cambio y variabilidad climática"@es,
+        "Changement et variabilité climatiques"@fr,
+        "Cambiamento e variabilità climatica"@it,
+        "Mudança e variabilidade climática"@pt .
+
+drivers:EnvironmentalDegradation a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F9 ;
+    rdfs:comment "An underlying disaster risk driver: the deterioration of the natural environment through resource depletion, pollution, deforestation, soil erosion and loss of biodiversity, which reduces the protective functions of ecosystems and increases exposure and vulnerability to hazardous events."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty drivers:increasesExposure ;
+            owl:someValuesFrom expvuln:Exposure ],
+        [ a owl:Restriction ;
+            owl:onProperty drivers:increasesVulnerability ;
+            owl:someValuesFrom expvuln:Vulnerability ],
+        drivers:RiskDriver ;
+    skos:prefLabel "Umweltzerstörung"@de,
+        "Environmental Degradation"@en,
+        "Degradación ambiental"@es,
+        "Dégradation environnementale"@fr,
+        "Degrado ambientale"@it,
+        "Degradação ambiental"@pt .
+
+drivers:PovertyAndInequality a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F9 ;
+    rdfs:comment "An underlying disaster risk driver: conditions of poverty, marginalisation and structural inequality that reduce the capacity of individuals and communities to withstand, cope with and recover from hazardous events, thereby amplifying disaster risk."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty drivers:reducesCapacity ;
+            owl:someValuesFrom capacity:Capacity ],
+        [ a owl:Restriction ;
+            owl:onProperty drivers:increasesVulnerability ;
+            owl:someValuesFrom expvuln:Vulnerability ],
+        drivers:RiskDriver,
+        dul:Situation ;
+    skos:prefLabel "Armut und Ungleichheit"@de,
+        "Poverty and Inequality"@en,
+        "Pobreza y desigualdad"@es,
+        "Pauvreté et inégalité"@fr,
+        "Povertà e disuguaglianza"@it,
+        "Pobreza e desigualdade"@pt .
+
+drivers:UnplannedUrbanization a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F9 ;
+    rdfs:comment "An underlying disaster risk driver: rapid urban growth occurring without adequate planning, regulation and infrastructure provision, resulting in informal settlements in hazard-prone areas and heightened exposure and vulnerability of urban populations to disaster risk."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty drivers:increasesExposure ;
+            owl:someValuesFrom expvuln:Exposure ],
+        [ a owl:Restriction ;
+            owl:onProperty drivers:increasesVulnerability ;
+            owl:someValuesFrom expvuln:Vulnerability ],
+        drivers:RiskDriver ;
+    skos:prefLabel "Ungeplante Urbanisierung"@de,
+        "Unplanned Urbanization"@en,
+        "Urbanización no planificada"@es,
+        "Urbanisation non planifiée"@fr,
+        "Urbanizzazione non pianificata"@it,
+        "Urbanização não planeada"@pt .
+
+drivers:hasCapacityReducedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the driver reducing this capacity."@en ;
+    owl:inverseOf drivers:reducesCapacity ;
+    skos:prefLabel "has capacity reduced by"@en .
+
+drivers:hasExposureIncreasedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the driver increasing this exposure."@en ;
+    owl:inverseOf drivers:increasesExposure ;
+    skos:prefLabel "has exposure increased by"@en .
+
+drivers:hasVulnerabilityIncreasedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the driver increasing this vulnerability."@en ;
+    owl:inverseOf drivers:increasesVulnerability ;
+    skos:prefLabel "has vulnerability increased by"@en .
+
+drivers:isDrivenBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the risk driver generating this risk."@en ;
+    owl:inverseOf drivers:drivesRisk ;
+    skos:prefLabel "is driven by"@en .
+
+drivers:operatesThrough a owl:ObjectProperty ;
+    rdfs:comment "Links a risk driver to the mechanism through which it operates (exposure, vulnerability, or capacity)."@en ;
+    rdfs:domain drivers:RiskDriver ;
+    skos:prefLabel "operates through"@en,
+        "opera attraverso"@it .
+
+drivers:drivesRisk a owl:ObjectProperty ;
+    rdfs:comment "Relates an RiskDriver to the Risk it generates or amplifies by increasing hazard frequency, exposure or vulnerability."@en ;
+    rdfs:domain drivers:RiskDriver ;
+    rdfs:range risk:Risk ;
+    owl:inverseOf drivers:isDrivenBy ;
+    skos:prefLabel "drives risk"@en,
+        "impulsa el riesgo"@es,
+        "entraîne le risque"@fr,
+        "determina il rischio"@it .
+
+drivers:reducesCapacity a owl:ObjectProperty ;
+    rdfs:comment "Relates an RiskDriver to the Capacity it erodes by depleting resources or weakening institutions."@en ;
+    rdfs:domain drivers:RiskDriver ;
+    rdfs:range capacity:Capacity ;
+    owl:inverseOf drivers:hasCapacityReducedBy ;
+    skos:prefLabel "reduces capacity"@en,
+        "riduce la capacità"@it .
+
+drivers:increasesExposure a owl:ObjectProperty ;
+    rdfs:comment "Relates an RiskDriver to the Exposure condition it worsens by placing more people or assets in hazard-prone areas."@en ;
+    rdfs:domain drivers:RiskDriver ;
+    rdfs:range expvuln:Exposure ;
+    owl:inverseOf drivers:hasExposureIncreasedBy ;
+    skos:prefLabel "increases exposure"@en,
+        "aumenta l'esposizione"@it .
+
+drivers:increasesVulnerability a owl:ObjectProperty ;
+    rdfs:comment "Relates an RiskDriver to the Vulnerability condition it worsens by reducing community resilience or adaptive capacity."@en ;
+    rdfs:domain drivers:RiskDriver ;
+    rdfs:range expvuln:Vulnerability ;
+    owl:inverseOf drivers:hasVulnerabilityIncreasedBy ;
+    skos:prefLabel "increases vulnerability"@en,
+        "aumenta la vulnerabilità"@it .
+
+drivers:RiskDriver a dul:Quality,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F9 ;
+    foundation:sendaiAnnotation "Underlying disaster risk drivers — also referred to as underlying disaster risk factors — include poverty and inequality, climate change and variability, unplanned and rapid urbanization and the lack of disaster risk considerations in land management and environmental and natural resource management, as well as compounding factors such as demographic change, non disaster risk-informed policies, the lack of regulations and incentives for private disaster risk reduction investment, complex supply chains, the limited availability of technology, unsustainable uses of natural resources, declining ecosystems, pandemics and epidemics."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/underlying-disaster-risk-drivers> ;
+    foundation:termNumber 37 ;
+    rdfs:comment "Alias for RiskDriver. Processes or conditions that influence the level of risk by increasing levels of exposure and vulnerability or reducing capacity."@en,
+        "Processes or conditions, often development-related, that influence the level of disaster risk by increasing levels of exposure and vulnerability or reducing capacity."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty drivers:operatesThrough ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:unionOf ( capacity:Capacity expvuln:Exposure expvuln:Vulnerability ) ] ],
+        [ a owl:Restriction ;
+            owl:onProperty drivers:drivesRisk ;
+            owl:someValuesFrom risk:Risk ],
+        dul:Situation ;
+    owl:deprecated true ;
+    owl:equivalentClass drivers:RiskDriver ;
+    skos:definition "Processes or conditions, often development-related, that influence the level of disaster risk by increasing levels of exposure and vulnerability or reducing capacity."@en ;
+    skos:editorialNote "DEPRECATED in v2.0: Use ecmocore:RiskDriver instead."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower drivers:ClimateChangeAndVariability,
+        drivers:EnvironmentalDegradation,
+        drivers:PovertyAndInequality,
+        drivers:UnplannedUrbanization ;
+    skos:prefLabel "Risikotreiber"@de,
+        "Zugrundeliegender Katastrophenrisikotreiber"@de,
+        "Risk Driver"@en,
+        "Underlying Disaster Risk Driver"@en,
+        "Factor de riesgo"@es,
+        "Factor subyacente del riesgo de desastre"@es,
+        "Facteur de risque"@fr,
+        "Facteur sous-jacent du risque de catastrophe"@fr,
+        "Fattore determinante del rischio di disastro"@it,
+        "Fattore di rischio"@it,
+        "Fator de risco"@pt,
+        "Fator subjacente do risco de desastre"@pt .
+
+
+# =============================================================================
+# v2.3 CP-DRV-02 (approved 2026-06-08): drivers:Mechanism via OWL2 punning.
+# Class-level: subClassOf dul:Situation — instances are specific mechanism
+# occurrences that manifest in events.
+# Individual-level (punning): typed as owl:NamedIndividual + dul:Description —
+# the class IRI itself functions as a mechanism-frame (the type-classifier).
+# =============================================================================
+drivers:Mechanism a owl:Class, owl:NamedIndividual, dul:Description ;
+    rdfs:subClassOf dul:Situation ;
+    foundation:frameCluster foundation:F9 ;
+    rdfs:comment "A mechanism through which an underlying risk driver operates. Extraction pattern: at type-classifier mentions the individual reading (Description-side frame) applies; at occurrence mentions the class reading (instances are Situation-side occurrences in specific events)."@en ;
+    skos:prefLabel "Mechanism"@en .

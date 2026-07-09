@@ -1,0 +1,731 @@
+@prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix disaster: <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln: <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix impact: <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response: <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk: <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:instruments a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Structural/NonStructural measures, EWS components, financial instruments, building codes, and loss databases."@en ;
+    owl:imports ecmocore:capacity,
+        ecmocore:disaster,
+        ecmocore:expvuln,
+        ecmocore:foundation,
+        ecmocore:hazard,
+        ecmocore:risk ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Risk Reduction Instruments Module (F8)"@en .
+
+instruments:CatastropheBond a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "A financial instrument that transfers disaster risk to capital markets, paying investors a return unless a specified catastrophe event occurs."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue instruments:BondMechanism ;
+            owl:onProperty instruments:hasTransferMechanism ],
+        instruments:RiskTransfer,
+        dul:Situation ;
+    skos:broader instruments:RiskTransfer ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Katastrophenanleihe"@de,
+        "Catastrophe Bond"@en,
+        "Bono catastrófico"@es,
+        "Obligation catastrophe"@fr,
+        "Obbligazione catastrofale"@it,
+        "Obrigação catastrófica"@pt .
+
+instruments:ContingentCreditFacility a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "A pre-arranged credit line that becomes available upon the occurrence of a specified disaster event."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue instruments:CreditMechanism ;
+            owl:onProperty instruments:hasTransferMechanism ],
+        instruments:RiskTransfer,
+        dul:Situation ;
+    skos:broader instruments:RiskTransfer ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Bedingte Kreditfazilität"@de,
+        "Contingent Credit Facility"@en,
+        "Facilidad de crédito contingente"@es,
+        "Facilité de crédit contingent"@fr,
+        "Linea di credito contingente"@it,
+        "Facilidade de crédito contingente"@pt .
+
+instruments:Housing a owl:Class ;
+    dc:creator "aldogangemi" ;
+    dc:date "2026-02-26T18:58:13+00:00"^^xsd:dateTime ;
+    rdfs:comment "A built structure primarily used for residential purposes, subject to building codes and hazard-resistance standards."@en ;
+    rdfs:subClassOf instruments:Structure ;
+    skos:prefLabel "Wohnung"@de,
+        "Housing"@en,
+        "Vivienda"@es,
+        "Logement"@fr,
+        "Abitazione"@it,
+        "Habitação"@pt .
+
+instruments:MonitoringAndForecastingComponent a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "Detection, monitoring, analysis and forecasting of the hazards and possible consequences."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue instruments:MonitoringFunction ;
+            owl:onProperty instruments:hasComponentFunction ],
+        instruments:EWSComponent ;
+    skos:prefLabel "Monitoring and Forecasting Component"@en,
+        "Componente monitoreo y pronóstico"@es,
+        "Composante surveillance et prévision"@fr,
+        "Componente monitoraggio e previsione"@it .
+
+instruments:NationalContingencyFund a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "A government fund established to finance disaster response and recovery activities. v2.3 (CP-INS-01): removed subClassOf dul:Situation — a fund is not a Situation; the class inherits Description-side typing via instruments:ReserveFund which itself is Description-side."@en ;
+    rdfs:subClassOf instruments:ReserveFund ;
+    skos:prefLabel "Nationaler Notfallfonds"@de,
+        "National Contingency Fund"@en,
+        "Fondo nacional de contingencia"@es,
+        "Fonds national de contingence"@fr,
+        "Fondo nazionale di emergenza"@it,
+        "Fundo nacional de contingência"@pt .
+
+instruments:Reinsurance a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "Insurance purchased by an insurer to transfer portions of risk to other parties, spreading risk across the insurance market."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue instruments:ReinsuranceMechanism ;
+            owl:onProperty instruments:hasTransferMechanism ],
+        instruments:RiskTransfer,
+        dul:Situation ;
+    skos:broader instruments:RiskTransfer ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Rückversicherung"@de,
+        "Reinsurance"@en,
+        "Reaseguro"@es,
+        "Réassurance"@fr,
+        "Riassicurazione"@it,
+        "Resseguro"@pt .
+
+instruments:ResponsePreparednessComponent a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "Preparedness at all levels to respond to the warnings received."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue instruments:ResponsePreparednessFunction ;
+            owl:onProperty instruments:hasComponentFunction ],
+        instruments:EWSComponent ;
+    skos:prefLabel "Response Preparedness Component"@en,
+        "Componente preparación para la respuesta"@es,
+        "Composante préparation à la réponse"@fr,
+        "Componente preparazione alla risposta"@it .
+
+instruments:RiskKnowledgeComponent a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "Disaster risk knowledge based on the systematic collection of data and disaster risk assessments."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue instruments:RiskKnowledgeFunction ;
+            owl:onProperty instruments:hasComponentFunction ],
+        instruments:EWSComponent ;
+    skos:prefLabel "Risk Knowledge Component"@en,
+        "Componente conocimiento del riesgo"@es,
+        "Composante connaissance des risques"@fr,
+        "Componente conoscenza del rischio"@it .
+
+instruments:WarningDisseminationComponent a dul:InformationObject,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "Dissemination and communication, by an official source, of authoritative, timely, accurate and actionable warnings."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue instruments:DisseminationFunction ;
+            owl:onProperty instruments:hasComponentFunction ],
+        instruments:EWSComponent ;
+    skos:prefLabel "Warning Dissemination Component"@en,
+        "Componente difusión de alertas"@es,
+        "Composante diffusion des alertes"@fr,
+        "Componente diffusione allerta"@it .
+
+instruments:BondMechanism a instruments:RiskTransferMechanism,
+        owl:NamedIndividual ;
+    skos:prefLabel "Catastrophe Bond"@en .
+
+instruments:BuildingCode a dul:Norm,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    foundation:sendaiAnnotation "Building codes can include both technical and functional standards. They should incorporate the lessons of international experience and should be tailored to national and local circumstances. A systematic regime of enforcement is a critical supporting requirement for the effective implementation of building codes."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/building-code> ;
+    foundation:termNumber 3 ;
+    rdfs:comment "A set of ordinances or regulations and associated standards intended to regulate aspects of the design, construction, materials, alteration and occupancy of structures which are necessary to ensure human safety and welfare, including resistance to collapse and damage."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty instruments:regulatesConstruction ;
+            owl:someValuesFrom instruments:Structure ],
+        dul:Norm ;
+    skos:definition "A set of ordinances or regulations and associated standards intended to regulate aspects of the design, construction, materials, alteration and occupancy of structures which are necessary to ensure human safety and welfare, including resistance to collapse and damage."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Bauordnung"@de,
+        "Building Code"@en,
+        "Código de construcción"@es,
+        "Code de construction"@fr,
+        "Codice edilizio"@it,
+        "Código de construção"@pt .
+
+instruments:CreditMechanism a instruments:RiskTransferMechanism,
+        owl:NamedIndividual ;
+    skos:prefLabel "Contingent Credit"@en .
+
+instruments:CriticalInfrastructure a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/critical-infrastructure> ;
+    foundation:termNumber 6 ;
+    rdfs:comment "The physical structures, facilities, networks and other assets which provide services that are essential to the social and economic functioning of a community or society."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty instruments:providesEssentialService ;
+            owl:someValuesFrom instruments:EssentialService ],
+        capacity:Capacity ;
+    skos:definition "The physical structures, facilities, networks and other assets which provide services that are essential to the social and economic functioning of a community or society."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Kritische Infrastruktur"@de,
+        "Critical Infrastructure"@en,
+        "Infraestructura crítica"@es,
+        "Infrastructure critique"@fr,
+        "Infrastruttura critica"@it,
+        "Infraestrutura crítica"@pt .
+
+instruments:DisseminationFunction a instruments:EWSFunctionType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Warning Dissemination"@en .
+
+instruments:Insurance a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "A well-known form of risk transfer, where coverage of a risk is obtained from an insurer in exchange for ongoing premiums."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue instruments:InsuranceMechanism ;
+            owl:onProperty instruments:hasTransferMechanism ],
+        instruments:RiskTransfer,
+        dul:Situation ;
+    skos:prefLabel "Versicherung"@de,
+        "Insurance"@en,
+        "Seguro"@es,
+        "Assurance"@fr,
+        "Assicurazione"@it,
+        "Seguro"@pt .
+
+instruments:InsuranceMechanism a instruments:RiskTransferMechanism,
+        owl:NamedIndividual ;
+    skos:prefLabel "Insurance"@en .
+
+instruments:MonitoringFunction a instruments:EWSFunctionType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Monitoring and Forecasting"@en .
+
+instruments:MultiHazardEarlyWarningSystem a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "An early warning system that addresses several hazards and/or impacts of similar or different type in contexts where hazardous events may occur alone, simultaneously, cascadingly or cumulatively over time."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+            owl:onClass hazard:Hazard ;
+            owl:onProperty instruments:monitorsHazard ],
+        instruments:EarlyWarningSystem ;
+    skos:prefLabel "Mehrgefahren-Frühwarnsystem"@de,
+        "Multi-hazard Early Warning System"@en,
+        "Sistema de alerta temprana multi-amenaza"@es,
+        "Système d'alerte précoce multi-aléas"@fr,
+        "Sistema di allerta precoce multi-pericolo"@it,
+        "Sistema de alerta precoce multi-ameaça"@pt .
+
+instruments:ReinsuranceMechanism a instruments:RiskTransferMechanism,
+        owl:NamedIndividual ;
+    skos:prefLabel "Reinsurance"@en .
+
+instruments:ReserveFund a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "Accumulated financial reserves set aside to cover disaster losses, funded by past savings."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue instruments:ReserveMechanism ;
+            owl:onProperty instruments:hasTransferMechanism ],
+        instruments:RiskTransfer,
+        dul:Situation ;
+    skos:broader instruments:RiskTransfer ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Reservefonds"@de,
+        "Reserve Fund"@en,
+        "Fondo de reserva"@es,
+        "Fonds de réserve"@fr,
+        "Fondo di riserva"@it,
+        "Fundo de reserva"@pt .
+
+instruments:ReserveMechanism a instruments:RiskTransferMechanism,
+        owl:NamedIndividual ;
+    skos:prefLabel "Reserve Fund"@en .
+
+instruments:ResponsePreparednessFunction a instruments:EWSFunctionType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Response Preparedness"@en .
+
+instruments:RiskKnowledgeFunction a instruments:EWSFunctionType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Risk Knowledge"@en .
+
+instruments:Warning a dul:InformationObject,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "An authoritative, timely, accurate and actionable alert about an impending hazardous event."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty instruments:isWarningOf ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        dul:InformationObject ;
+    skos:prefLabel "Warnung"@de,
+        "Warning"@en,
+        "Alerta"@es,
+        "Alerte"@fr,
+        "Allerta"@it,
+        "Alerta"@pt .
+
+instruments:forecastsEvent a owl:ObjectProperty ;
+    rdfs:comment "Relates an EarlyWarningSystem to the HazardousEvent it predicts through monitoring and modelling."@en ;
+    rdfs:domain instruments:EarlyWarningSystem ;
+    rdfs:range hazard:HazardousEvent ;
+    owl:inverseOf instruments:isForecastBy ;
+    skos:editorialNote "consider generalization"@en,
+        "possible specialization of a more general property such as 'isReferenceFor' or 'isSourceFor'"@en ;
+    skos:prefLabel "forecasts event"@en,
+        "prevede l'evento"@it .
+
+instruments:fromParty a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskTransfer arrangement to the Agent that cedes or transfers the financial risk."@en ;
+    rdfs:domain instruments:RiskTransfer ;
+    rdfs:range dul:Agent ;
+    skos:prefLabel "from party"@en,
+        "dalla parte"@it .
+
+instruments:hasFinancialRiskTransferredBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the transfer mechanism for this risk."@en ;
+    owl:inverseOf instruments:transfersFinancialRisk ;
+    skos:prefLabel "has financial risk transferred by"@en .
+
+instruments:hasImpactReducedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the measure reducing impact of this hazard."@en ;
+    owl:inverseOf instruments:reducesImpactOf ;
+    skos:prefLabel "has impact reduced by"@en .
+
+instruments:hasWarning a owl:ObjectProperty ;
+    rdfs:comment "Indicates a warning issued for this event."@en ;
+    owl:inverseOf instruments:isWarningOf ;
+    skos:prefLabel "has warning"@en .
+
+instruments:increasesResistanceTo a owl:ObjectProperty ;
+    rdfs:comment "Relates a Retrofitting action to the Hazard type whose impacts on a Structure it makes less severe."@en ;
+    rdfs:domain instruments:Retrofitting ;
+    rdfs:range hazard:Hazard ;
+    skos:prefLabel "increases resistance to"@en,
+        "aumenta la resistenza a"@it .
+
+instruments:isComponentOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the EWS containing this component."@en ;
+    owl:inverseOf instruments:hasEWSComponent ;
+    skos:prefLabel "is component of"@en .
+
+instruments:isEnabledBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the EWS enabling this preparedness."@en ;
+    owl:inverseOf instruments:enablesPreparedness ;
+    skos:prefLabel "is enabled by"@en .
+
+instruments:isForecastBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the EWS forecasting this event."@en ;
+    owl:inverseOf instruments:forecastsEvent ;
+    skos:prefLabel "is forecast by"@en .
+
+instruments:isMonitoredBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the EWS monitoring this hazard."@en ;
+    owl:inverseOf instruments:monitorsHazard ;
+    skos:prefLabel "is monitored by"@en .
+
+instruments:isProtectedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the measure protecting this element."@en ;
+    owl:inverseOf instruments:protects ;
+    skos:prefLabel "is protected by"@en .
+
+instruments:isProvidedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the infrastructure providing this service."@en ;
+    owl:inverseOf instruments:providesEssentialService ;
+    skos:prefLabel "is provided by"@en .
+
+instruments:protects a owl:ObjectProperty ;
+    rdfs:comment "Relates a Measure or structural intervention to the entity (community, infrastructure, ExposedElement) it shields from hazard impacts."@en ;
+    rdfs:domain instruments:Measure ;
+    rdfs:range expvuln:ExposedElement ;
+    owl:inverseOf instruments:isProtectedBy ;
+    skos:prefLabel "protects"@en,
+        "protegge"@it .
+
+instruments:receivesWarningFrom a owl:ObjectProperty ;
+    rdfs:comment "Indicates the EWS disseminating warnings to this community."@en ;
+    owl:inverseOf instruments:disseminatesWarningTo ;
+    skos:prefLabel "receives warning from"@en .
+
+instruments:recordsDamageData a owl:ObjectProperty ;
+    rdfs:comment "Relates a DisasterLossDatabase to the DisasterDamage data it captures for post-event analysis and loss accounting."@en ;
+    rdfs:domain instruments:DisasterLossDatabase ;
+    rdfs:range impact:HazardousEventDamage ;
+    skos:prefLabel "records damage data"@en,
+        "registra dati sui danni"@it .
+
+instruments:recordsImpactData a owl:ObjectProperty ;
+    rdfs:comment "Relates a DisasterLossDatabase to the Impact data it captures across human, economic and environmental dimensions."@en ;
+    rdfs:domain instruments:DisasterLossDatabase ;
+    rdfs:range impact:Impact ;
+    skos:prefLabel "records impact data"@en,
+        "registra dati sull'impatto"@it .
+
+instruments:recordsLossFrom a owl:ObjectProperty ;
+    rdfs:comment "Relates a DisasterLossDatabase to the Disaster whose losses, damages and impacts it documents."@en ;
+    rdfs:domain instruments:DisasterLossDatabase ;
+    rdfs:range hazard:HazardousEvent ;
+    skos:prefLabel "records loss from"@en,
+        "registra perdite da"@it .
+
+instruments:regulatesConstruction a owl:ObjectProperty ;
+    rdfs:comment "Relates a BuildingCode to the Structure whose design, materials and siting it governs to reduce physical vulnerability."@en ;
+    rdfs:domain instruments:BuildingCode ;
+    rdfs:range instruments:Structure ;
+    skos:prefLabel "regulates construction"@en,
+        "regola la costruzione"@it .
+
+instruments:toParty a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskTransfer arrangement to the Agent that accepts and bears the transferred financial risk."@en ;
+    rdfs:domain instruments:RiskTransfer ;
+    rdfs:range dul:Agent ;
+    skos:prefLabel "to party"@en,
+        "alla parte"@it .
+
+instruments:upgradesStructure a owl:ObjectProperty ;
+    rdfs:comment "Relates a Retrofitting action to the Structure it strengthens or modifies to reduce its physical vulnerability to hazards."@en ;
+    rdfs:domain instruments:Retrofitting ;
+    rdfs:range instruments:Structure ;
+    skos:prefLabel "upgrades structure"@en,
+        "adegua la struttura"@it .
+
+instruments:EssentialService a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "A service essential to the social and economic functioning of a community."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue capacity:ServiceCapacityDomain ;
+            owl:onProperty capacity:hasCapacityDomain ],
+        capacity:Capacity,
+        dul:SocialObject ;
+    skos:prefLabel "Grundversorgung"@de,
+        "Essential Service"@en,
+        "Servicio esencial"@es,
+        "Service essentiel"@fr,
+        "Servizio essenziale"@it,
+        "Serviço essencial"@pt .
+
+instruments:NonStructuralMeasure a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F8 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/structural-and-non-structural-measures> ;
+    foundation:termNumber 36 ;
+    rdfs:comment "Measures not involving physical construction which use knowledge, practice or agreement to reduce disaster risks and impacts, in particular through policies and laws, public awareness raising, training and education."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty instruments:reducesImpactOf ;
+            owl:someValuesFrom hazard:Hazard ],
+        instruments:Measure ;
+    owl:disjointWith instruments:StructuralMeasure ;
+    skos:prefLabel "Nicht-strukturelle Maßnahme"@de,
+        "Non-structural Measure"@en,
+        "Medida no estructural"@es,
+        "Mesure non structurelle"@fr,
+        "Misura non strutturale"@it,
+        "Medida não estrutural"@pt .
+
+instruments:Retrofitting a dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    foundation:sendaiAnnotation "Retrofitting requires consideration of the design and function of the structure, the stresses that the structure may be subject to from particular hazards or hazard scenarios and the practicality and costs of different retrofitting options."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/retrofitting> ;
+    foundation:termNumber 34 ;
+    rdfs:comment "Reinforcement or upgrading of existing structures to become more resistant and resilient to the damaging effects of hazards."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty instruments:increasesResistanceTo ;
+            owl:someValuesFrom hazard:Hazard ],
+        [ a owl:Restriction ;
+            owl:onProperty instruments:upgradesStructure ;
+            owl:someValuesFrom instruments:Structure ],
+        instruments:StructuralMeasure ;
+    skos:definition "Reinforcement or upgrading of existing structures to become more resistant and resilient to the damaging effects of hazards."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Nachrüstung"@de,
+        "Retrofitting"@en,
+        "Readaptación"@es,
+        "Remise à niveau"@fr,
+        "Adeguamento strutturale"@it,
+        "Reforço estrutural"@pt .
+
+instruments:disseminatesWarningTo a owl:ObjectProperty ;
+    rdfs:comment "Relates an EarlyWarningSystem to the Agent it delivers warning messages to, enabling timely protective action. v2.3 (CP-GOV-04, PROP-DOMAIN-1): range widened from disaster:Community to dul:Agent to cover organizations, institutions, and other non-Community recipients."@en ;
+    rdfs:domain instruments:EarlyWarningSystem ;
+    rdfs:range dul:Agent ;
+    owl:inverseOf instruments:receivesWarningFrom ;
+    skos:prefLabel "disseminates warning to"@en,
+        "diffonde allerta a"@it .
+
+instruments:enablesPreparedness a owl:ObjectProperty ;
+    rdfs:comment "Relates an EarlyWarningSystem to the Preparedness activities it supports by providing advance notice of impending hazardous events."@en ;
+    rdfs:domain instruments:EarlyWarningSystem ;
+    rdfs:range response:Preparedness ;
+    owl:inverseOf instruments:isEnabledBy ;
+    skos:prefLabel "enables preparedness"@en,
+        "abilita la preparazione"@it .
+
+instruments:hasEWSComponent a owl:ObjectProperty ;
+    rdfs:comment "Relates an EarlyWarningSystem to one of its functional EWSComponent parts — risk knowledge, monitoring, warning dissemination or response preparedness."@en ;
+    rdfs:domain instruments:EarlyWarningSystem ;
+    rdfs:range instruments:EWSComponent ;
+    owl:inverseOf instruments:isComponentOf ;
+    skos:prefLabel "has EWS component"@en,
+        "ha componente del sistema di allerta"@it .
+
+instruments:isWarningOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a Warning to the imminent HazardousEvent it alerts about."@en ;
+    rdfs:domain instruments:Warning ;
+    rdfs:range hazard:HazardousEvent ;
+    owl:inverseOf instruments:hasWarning ;
+    skos:prefLabel "is warning of"@en,
+        "è allerta di"@it .
+
+instruments:providesEssentialService a owl:ObjectProperty ;
+    rdfs:comment "Relates CriticalInfrastructure to the EssentialService it delivers to communities under both normal and post-disaster conditions."@en ;
+    rdfs:domain instruments:CriticalInfrastructure ;
+    rdfs:range instruments:EssentialService ;
+    owl:inverseOf instruments:isProvidedBy ;
+    skos:prefLabel "provides essential service"@en,
+        "fornisce servizio essenziale"@it .
+
+instruments:transfersFinancialRisk a owl:ObjectProperty ;
+    rdfs:comment "Relates a RiskTransfer mechanism to the Risk whose financial consequences are shifted from one party to another."@en ;
+    rdfs:domain instruments:RiskTransfer ;
+    rdfs:range risk:Risk ;
+    owl:inverseOf instruments:hasFinancialRiskTransferredBy ;
+    skos:prefLabel "transfers financial risk"@en,
+        "trasferisce il rischio finanziario"@it .
+
+instruments:DisasterLossDatabase a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/disaster-loss-database> ;
+    foundation:termNumber 8 ;
+    rdfs:comment "A set of systematically collected records about disaster occurrence, damages, losses and impacts, compliant with the Sendai Framework for Disaster Risk Reduction 2015-2030 monitoring minimum requirements."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty instruments:recordsDamageData ;
+            owl:someValuesFrom impact:HazardousEventDamage ],
+        [ a owl:Restriction ;
+            owl:onProperty instruments:recordsImpactData ;
+            owl:someValuesFrom impact:Impact ],
+        [ a owl:Restriction ;
+            owl:onProperty instruments:recordsLossFrom ;
+            owl:someValuesFrom hazard:HazardousEvent ],
+        dul:InformationObject ;
+    skos:definition "A set of systematically collected records about disaster occurrence, damages, losses and impacts, compliant with the Sendai Framework for Disaster Risk Reduction 2015-2030 monitoring minimum requirements."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Katastrophenschadendatenbank"@de,
+        "Disaster Loss Database"@en,
+        "Base de datos de pérdidas"@es,
+        "Base de données sur les pertes"@fr,
+        "Database delle perdite da disastro"@it,
+        "Base de dados de perdas"@pt .
+
+instruments:StructuralMeasure a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F8 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/structural-and-non-structural-measures> ;
+    foundation:termNumber 36 ;
+    rdfs:comment "Any physical construction to reduce or avoid possible impacts of hazards, or the application of engineering techniques or technology to achieve hazard resistance and resilience in structures or systems."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty instruments:reducesImpactOf ;
+            owl:someValuesFrom hazard:Hazard ],
+        instruments:Measure ;
+    skos:prefLabel "Strukturelle Maßnahme"@de,
+        "Structural Measure"@en,
+        "Medida estructural"@es,
+        "Mesure structurelle"@fr,
+        "Misura strutturale"@it,
+        "Medida estrutural"@pt .
+
+instruments:monitorsHazard a owl:ObjectProperty ;
+    rdfs:comment "Relates an EarlyWarningSystem to the Hazard type it observes through sensors and modelling to detect precursors of events."@en ;
+    rdfs:domain instruments:EarlyWarningSystem ;
+    rdfs:range hazard:Hazard ;
+    owl:inverseOf instruments:isMonitoredBy ;
+    skos:prefLabel "monitors hazard"@en,
+        "monitora il pericolo"@it .
+
+instruments:reducesImpactOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a structural or non-structural Measure to the Hazard type whose impacts on people and assets it diminishes."@en ;
+    rdfs:domain instruments:Measure ;
+    rdfs:range hazard:Hazard ;
+    owl:inverseOf instruments:hasImpactReducedBy ;
+    skos:prefLabel "reduces impact of"@en,
+        "riduce l'impatto di"@it .
+
+instruments:Measure a dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "Any action, technique, instrument, or construction applied to reduce or manage disaster risk. v2.3: removed rdfs:subClassOf dul:Action — the class extension is broader than Actions (it includes financial instruments and physical constructions). Punned individual reading remains dul:Description."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower instruments:NonStructuralMeasure,
+        instruments:StructuralMeasure ;
+    skos:prefLabel "Maßnahme"@de,
+        "Measure"@en,
+        "Medida"@es,
+        "Mesure"@fr,
+        "Misura"@it,
+        "Medida"@pt .
+
+instruments:hasComponentFunction a owl:ObjectProperty ;
+    rdfs:comment "Classifies an EWS component by its functional role."@en ;
+    rdfs:domain instruments:EWSComponent ;
+    rdfs:range instruments:EWSFunctionType ;
+    skos:prefLabel "has component function"@en .
+
+instruments:EWSFunctionType a owl:Class ;
+    rdfs:comment "Classification of EWS component functions."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "EWS Function Type"@en .
+
+instruments:Structure a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "A physical built entity subject to building codes and retrofitting."@en ;
+    rdfs:subClassOf dul:Object ;
+    skos:prefLabel "Bauwerk"@de,
+        "Structure"@en,
+        "Estructura"@es,
+        "Structure"@fr,
+        "Struttura"@it,
+        "Estrutura"@pt .
+
+instruments:hasTransferMechanism a owl:ObjectProperty ;
+    rdfs:comment "Classifies a risk transfer instrument by its mechanism (insurance, bond, etc.)."@en ;
+    rdfs:domain instruments:RiskTransfer ;
+    rdfs:range instruments:RiskTransferMechanism ;
+    skos:prefLabel "has transfer mechanism"@en .
+
+instruments:EarlyWarningSystem a dul:Description,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    foundation:sendaiAnnotation "Effective end-to-end and people-centred early warning systems may include four interrelated key elements: (1) disaster risk knowledge based on the systematic collection of data and disaster risk assessments; (2) detection, monitoring, analysis and forecasting of the hazards and possible consequences; (3) dissemination and communication, by an official source, of authoritative, timely, accurate and actionable warnings and associated information on likelihood and impact; and (4) preparedness at all levels to respond to the warnings received."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/early-warning-system> ;
+    foundation:termNumber 16 ;
+    rdfs:comment "An integrated system of hazard monitoring, forecasting and prediction, disaster risk assessment, communication and preparedness activities, systems and processes that enables individuals, communities, governments, businesses and others to take timely action to reduce disaster risks in advance of hazardous events."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty instruments:enablesPreparedness ;
+            owl:someValuesFrom response:Preparedness ],
+        [ a owl:Restriction ;
+            owl:onProperty instruments:hasEWSComponent ;
+            owl:someValuesFrom instruments:EWSComponent ],
+        [ a owl:Restriction ;
+            owl:onProperty instruments:monitorsHazard ;
+            owl:someValuesFrom hazard:Hazard ],
+        [ a owl:Restriction ;
+            owl:onProperty instruments:disseminatesWarningTo ;
+            owl:someValuesFrom disaster:Community ],
+        capacity:Capacity ;
+    skos:definition "An integrated system of hazard monitoring, forecasting and prediction, disaster risk assessment, communication and preparedness activities systems and processes that enables individuals, communities, governments, businesses and others to take timely action to reduce disaster risks in advance of hazardous events."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower instruments:MultiHazardEarlyWarningSystem ;
+    skos:prefLabel "Frühwarnsystem"@de,
+        "Early Warning System"@en,
+        "Sistema de alerta temprana"@es,
+        "Système d'alerte précoce"@fr,
+        "Sistema di allerta precoce"@it,
+        "Sistema de alerta precoce"@pt .
+
+instruments:RiskTransferMechanism a owl:Class ;
+    rdfs:comment "Classification of risk transfer instrument mechanisms."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Risk Transfer Mechanism"@en .
+
+instruments:EWSComponent a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    rdfs:comment "A key element of an early warning system."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue capacity:WarningCapacityDomain ;
+            owl:onProperty capacity:hasCapacityDomain ],
+        capacity:Capacity ;
+    skos:prefLabel "EWS Component"@en,
+        "Componente del sistema di allerta"@it .
+
+instruments:RiskTransfer a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F8 ;
+    foundation:sendaiAnnotation "Insurance is a well-known form of risk transfer, where coverage of a risk is obtained from an insurer in exchange for ongoing premiums paid to the insurer. Risk transfer can occur informally within family and community networks where there are reciprocal expectations of mutual aid by means of gifts or credit, as well as formally."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/risk-transfer> ;
+    foundation:termNumber 35 ;
+    rdfs:comment "The process of formally or informally shifting the financial consequences of particular risks from one party to another, whereby a household, community, enterprise or State authority will obtain resources from the other party after a disaster occurs, in exchange for ongoing or compensatory social or financial benefits provided to that other party."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty instruments:fromParty ;
+            owl:someValuesFrom dul:Agent ],
+        [ a owl:Restriction ;
+            owl:onProperty instruments:toParty ;
+            owl:someValuesFrom dul:Agent ],
+        [ a owl:Restriction ;
+            owl:onProperty instruments:transfersFinancialRisk ;
+            owl:someValuesFrom risk:Risk ],
+        instruments:NonStructuralMeasure ;
+    skos:definition "The process of formally or informally shifting the financial consequences of particular risks from one party to another, whereby a household, community, enterprise or State authority will obtain resources from the other party after a disaster occurs, in exchange for ongoing or compensatory social or financial benefits provided to that other party."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower instruments:Insurance ;
+    skos:prefLabel "Risikotransfer"@de,
+        "Risk Transfer"@en,
+        "Transferencia de riesgo"@es,
+        "Transfert de risque"@fr,
+        "Trasferimento del rischio"@it,
+        "Transferência de risco"@pt .
+

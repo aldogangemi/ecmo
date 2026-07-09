@@ -1,0 +1,490 @@
+@prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix disaster: <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln: <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix impact: <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix risk: <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix spec: <http://www.ontologydesignpatterns.org/cp/owl/specialization.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:disaster a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Disaster and its classification subtypes, AffectedPopulation, Emergency, and the triggers/impact chain."@en ;
+    owl:imports ecmocore:expvuln,
+        ecmocore:foundation,
+        ecmocore:hazard,
+        ecmocore:impact ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Disaster Module (F3)"@en .
+
+disaster:Community a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F3 ;
+    rdfs:comment "A social group sharing a geographic area, identity, or interests. v2.3 (CP-DIS-01): retyped to dul:Collective (⊑ Collection ⊓ SocialAgent) for the sharper collective-agent reading; still compatible with everything that read it as Agent in v2.2."@en ;
+    rdfs:subClassOf dul:Collective ;
+    skos:prefLabel "Gemeinschaft"@de,
+        "Community"@en,
+        "Comunidad"@es,
+        "Communauté"@fr,
+        "Comunità"@it,
+        "Comunidade"@pt .
+
+disaster:Disaster a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F3 ;
+    foundation:sendaiAnnotation "The effect of the disaster can be immediate and localized, but is often widespread and could last for a long period of time. The effect may test or exceed the capacity of a community or society to cope using its own resources, and therefore may require assistance from external sources, which could include neighbouring jurisdictions, or those at the national or international levels."@en ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/disaster> ;
+    foundation:termNumber 7 ;
+    rdfs:comment "A serious disruption of the functioning of a community or a society at any scale due to hazardous events interacting with conditions of exposure, vulnerability and capacity, leading to one or more of the following: human, material, economic and environmental losses and impacts. Defined as a HazardousEvent whose impacts have very high intensity."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    owl:equivalentClass [ a owl:Class ;
+            owl:intersectionOf ( hazard:HazardousEvent [ a owl:Restriction ;
+                        owl:onProperty hazard:hasImpact ;
+                        owl:someValuesFrom [ a owl:Class ;
+                                owl:intersectionOf ( impact:Impact [ a owl:Restriction ;
+                                            owl:hasValue impact:VeryHighImpactIntensity ;
+                                            owl:onProperty impact:hasImpactIntensity ] ) ] ] ) ] ;
+    skos:definition "A serious disruption of the functioning of a community or a society at any scale due to hazardous events interacting with conditions of exposure, vulnerability and capacity, leading to one or more of the following: human, material, economic and environmental losses and impacts."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Katastrophe"@de,
+        "Disaster"@en,
+        "Desastre"@es,
+        "Catastrophe"@fr,
+        "Disastro"@it,
+        "Desastre"@pt ;
+    skos:related disaster:Emergency ;
+    skos:topConceptOf foundation:SendaiFrameworkTerminology .
+
+disaster:FrequentDisaster a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F3 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "A disaster whose probability of occurrence and return period is high. The impact of frequent disasters could be cumulative, or become chronic for a community or a society."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue disaster:HighFrequency ;
+            owl:onProperty disaster:hasFrequencyType ],
+        hazard:HazardousEvent ;
+    owl:disjointWith disaster:InfrequentDisaster ;
+    skos:broader hazard:HazardousEvent ;
+    skos:editorialNote "OWL2 punning pattern: as an individual (rdf:type Hazard, spec:specializes Hazard), FrequentDisaster is a description/quality characterising hazard types with high probability and short return period. As a class, instances are specific hazardous events or disaster situations classified by this description via isManifestationOf. The class-level reading provides the Situation type; the individual-level reading provides the classifying Description."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Häufige Katastrophe"@de,
+        "Frequent Disaster"@en,
+        "Desastre frecuente"@es,
+        "Catastrophe fréquente"@fr,
+        "Disastro frequente"@it,
+        "Desastre frequente"@pt .
+
+disaster:LargeScaleDisaster a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F3 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "A type of disaster affecting a society which requires national or international assistance."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue disaster:LargeScale ;
+            owl:onProperty disaster:hasScaleType ],
+        hazard:HazardousEvent ;
+    owl:disjointWith disaster:SmallScaleDisaster ;
+    skos:editorialNote "OWL2 punning pattern: individual reading (rdf:type Hazard) characterises hazard types whose expected severity requires national/international response. Class reading provides the Situation type for specific events that reached that scale. The apparent ambiguity — scale seemingly event-specific — is resolved: the individual is the classifying description (a dispositional quality of hazard types), while instances of the class are the classified situations."@en ;
+    skos:prefLabel "Großräumige Katastrophe"@de,
+        "Large-scale Disaster"@en,
+        "Desastre a gran escala"@es,
+        "Catastrophe à grande échelle"@fr,
+        "Disastro su larga scala"@it,
+        "Desastre de grande escala"@pt .
+
+disaster:SlowOnsetDisaster a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F3 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "A disaster that emerges gradually over time. Could be associated with drought, desertification, sea-level rise, epidemic disease."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue disaster:SlowOnset ;
+            owl:onProperty disaster:hasOnsetType ],
+        hazard:HazardousEvent ;
+    owl:disjointWith disaster:SuddenOnsetDisaster ;
+    skos:editorialNote "OWL2 punning pattern: individual reading (rdf:type Hazard) characterises hazard types with gradual temporal emergence (drought, desertification, sea-level rise). Class reading provides the Situation type for specific events. The apparent ambiguity — onset speed seemingly event-specific — is resolved: the individual describes the typical temporal profile of the hazard type, while instances of the class are the actual events classified accordingly."@en ;
+    skos:prefLabel "Schleichende Katastrophe"@de,
+        "Slow-onset Disaster"@en,
+        "Desastre de evolución lenta"@es,
+        "Catastrophe à évolution lente"@fr,
+        "Disastro a lenta insorgenza"@it,
+        "Desastre de evolução lenta"@pt .
+
+disaster:hasScale a owl:DatatypeProperty ;
+    rdfs:comment "Specifies the geographic or administrative scale (e.g. local, national, regional) of a Disaster or Risk."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range xsd:string ;
+    skos:editorialNote "requires enumeration of possible values"@en ;
+    skos:prefLabel "has scale"@en,
+        "ha scala"@it .
+
+disaster:isTriggeredBy a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the HazardousEvent that initiated it — the physical occurrence that set off the cascading impacts."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range hazard:HazardousEvent ;
+    owl:inverseOf hazard:triggers ;
+    skos:prefLabel "is triggered by"@en,
+        "es desencadenado por"@es,
+        "est déclenché par"@fr,
+        "è innescato da"@it .
+
+disaster:producesLoss a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the EconomicLoss it generates as a consequence of damage to productive assets and disruption of economic activities."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range impact:EconomicLoss ;
+    owl:inverseOf impact:resultsFrom ;
+    skos:prefLabel "produces loss"@en,
+        "produce perdita"@it .
+
+disaster:DirectAffectedness a disaster:AffectednessType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Direct"@en .
+
+disaster:DirectlyAffectedPopulation a owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F3 ;
+    rdfs:comment "Those who have suffered injury, illness or other health effects; who were evacuated, displaced, relocated or have suffered direct damage to their livelihoods and assets."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue disaster:DirectAffectedness ;
+            owl:onProperty disaster:hasAffectednessType ],
+        disaster:AffectedPopulation ;
+    skos:prefLabel "Unmittelbar betroffene Bevölkerung"@de,
+        "Directly Affected Population"@en,
+        "Población directamente afectada"@es,
+        "Population directement touchée"@fr,
+        "Popolazione direttamente colpita"@it,
+        "População diretamente afetada"@pt .
+
+disaster:Emergency a dul:Description,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F3 ;
+    rdfs:comment "Sometimes used interchangeably with disaster, but can also relate to hazardous events that do not result in the serious disruption of the functioning of a community or society."@en,
+        "ecmocore:Emergency is both a dul:Event (an acute episode) and a dul:Situation (an ongoing condition satisfying a crisis-description). Verified compatible with canonical DUL+d0 disjointness in the v0.2 audit."@en ;
+    rdfs:subClassOf dul:Event,
+        dul:Situation ;
+    skos:prefLabel "Notfall"@de,
+        "Emergency"@en,
+        "Emergencia"@es,
+        "Urgence"@fr,
+        "Emergenza"@it,
+        "Emergência"@pt .
+
+disaster:HighFrequency a disaster:FrequencyType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Frequent"@en .
+
+disaster:IndirectAffectedness a disaster:AffectednessType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Indirect"@en .
+
+disaster:IndirectlyAffectedPopulation a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F3 ;
+    rdfs:comment "People who have suffered consequences, other than or in addition to direct effects, over time, due to disruption or changes in economy, critical infrastructure, basic services, commerce or work."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue disaster:IndirectAffectedness ;
+            owl:onProperty disaster:hasAffectednessType ],
+        disaster:AffectedPopulation ;
+    skos:prefLabel "Mittelbar betroffene Bevölkerung"@de,
+        "Indirectly Affected Population"@en,
+        "Población indirectamente afectada"@es,
+        "Population indirectement touchée"@fr,
+        "Popolazione indirettamente colpita"@it,
+        "População indiretamente afetada"@pt .
+
+disaster:InfrequentDisaster a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F3 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "A disaster whose probability of occurrence and return period is low."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue disaster:LowFrequency ;
+            owl:onProperty disaster:hasFrequencyType ],
+        hazard:HazardousEvent ;
+    skos:broader hazard:HazardousEvent ;
+    skos:editorialNote "OWL2 punning pattern: individual reading (rdf:type Hazard) characterises low-probability, long return-period hazard types. Class reading provides the Situation type for specific rare events. See FrequentDisaster for the full disambiguation."@en ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:prefLabel "Seltene Katastrophe"@de,
+        "Infrequent Disaster"@en,
+        "Desastre infrecuente"@es,
+        "Catastrophe peu fréquente"@fr,
+        "Disastro infrequente"@it,
+        "Desastre infrequente"@pt .
+
+disaster:LargeScale a disaster:ScaleType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Large"@en .
+
+disaster:LowFrequency a disaster:FrequencyType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Infrequent"@en .
+
+disaster:SlowOnset a disaster:OnsetType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Slow"@en .
+
+disaster:SmallScale a disaster:ScaleType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Small"@en .
+
+disaster:SmallScaleDisaster a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F3 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "A type of disaster only affecting local communities which require assistance beyond the affected community."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue disaster:SmallScale ;
+            owl:onProperty disaster:hasScaleType ],
+        hazard:HazardousEvent ;
+    skos:editorialNote "OWL2 punning pattern: individual reading (rdf:type Hazard) characterises local-community-scope hazard types. Class reading provides the Situation type for specific events. See LargeScaleDisaster for the full disambiguation."@en ;
+    skos:prefLabel "Kleinräumige Katastrophe"@de,
+        "Small-scale Disaster"@en,
+        "Desastre a pequeña escala"@es,
+        "Catastrophe à petite échelle"@fr,
+        "Disastro su piccola scala"@it,
+        "Desastre de pequena escala"@pt .
+
+disaster:SuddenOnset a disaster:OnsetType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Sudden"@en .
+
+disaster:SuddenOnsetDisaster a hazard:Hazard,
+        owl:Class,
+        owl:NamedIndividual ;
+    foundation:frameCluster foundation:F3 ;
+    spec:specializes hazard:Hazard ;
+    rdfs:comment "A disaster triggered by a hazardous event that emerges quickly or unexpectedly. Could be associated with earthquake, volcanic eruption, flash flood, chemical explosion."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue disaster:SuddenOnset ;
+            owl:onProperty disaster:hasOnsetType ],
+        hazard:HazardousEvent ;
+    skos:editorialNote "OWL2 punning pattern: individual reading (rdf:type Hazard) characterises hazard types with rapid emergence (earthquake, flash flood, explosion). Class reading provides the Situation type for specific events. See SlowOnsetDisaster for the full disambiguation."@en ;
+    skos:prefLabel "Plötzlich eintretende Katastrophe"@de,
+        "Sudden-onset Disaster"@en,
+        "Desastre de aparición súbita"@es,
+        "Catastrophe à déclenchement soudain"@fr,
+        "Disastro a rapida insorgenza"@it,
+        "Desastre de início súbito"@pt .
+
+disaster:assessesExceedanceOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event assessed for capacity exceedance."@en ;
+    owl:inverseOf disaster:hasCapacityExceedanceAssessment ;
+    skos:prefLabel "assesses exceedance of"@en .
+
+disaster:causesDamage a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the DisasterDamage — loss or destruction of assets — that it produces."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range impact:HazardousEventDamage ;
+    rdfs:subPropertyOf hazard:hasImpact ;
+    owl:inverseOf disaster:isDamageCausedBy ;
+    skos:prefLabel "causes damage"@en,
+        "causa danni"@it .
+
+disaster:causesEconomicLoss a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the EconomicLoss — monetary value of destroyed or disrupted assets — that it generates."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range impact:EconomicLoss ;
+    rdfs:subPropertyOf hazard:hasImpact ;
+    owl:inverseOf disaster:isEconomicLossCausedBy ;
+    skos:prefLabel "causes economic loss"@en,
+        "causa perdita economica"@it .
+
+disaster:exceedsCapacityOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the Capacity it overwhelms — the point at which community resources are insufficient to cope without external assistance."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range capacity:Capacity ;
+    rdfs:seeAlso capacity:CapacityExceedanceAssessment ;
+    owl:inverseOf disaster:isExceededBy ;
+    skos:editorialNote "Shortcut property — for fully qualified assessments use hasCapacityExceedanceAssessment → CapacityExceedanceAssessment."@en,
+        "this is an assessment which needs further specification"@en ;
+    skos:prefLabel "exceeds capacity of"@en,
+        "supera la capacità di"@it .
+
+disaster:hasCapacityExceedanceAssessment a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to a reified assessment that it exceeded the coping Capacity of a community or system."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range capacity:CapacityExceedanceAssessment ;
+    owl:inverseOf disaster:assessesExceedanceOf ;
+    skos:prefLabel "has capacity exceedance assessment"@en,
+        "ha valutazione superamento capacità"@it .
+
+disaster:hasEnvironmentalImpact a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the EnvironmentalImpact — degradation of ecosystems, contamination, biodiversity loss — it produces."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range impact:EnvironmentalImpact ;
+    rdfs:subPropertyOf hazard:hasImpact ;
+    owl:inverseOf disaster:isEnvironmentalImpactOf ;
+    skos:prefLabel "has environmental impact"@en,
+        "ha impatto ambientale"@it .
+
+disaster:hasHumanImpact a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the HumanImpact — fatalities, injuries, displacement, health effects — it produces."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range impact:HumanImpact ;
+    rdfs:subPropertyOf hazard:hasImpact ;
+    owl:inverseOf disaster:isHumanImpactOf ;
+    skos:prefLabel "has human impact"@en,
+        "ha impatto umano"@it .
+
+disaster:hasTemporalExtent a owl:ObjectProperty ;
+    rdfs:comment "Relates a HazardousEvent or Disaster to the dul:TimeInterval over which it occurs or unfolds."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range dul:TimeInterval ;
+    owl:inverseOf disaster:isTemporalExtentOf ;
+    skos:prefLabel "has temporal extent"@en,
+        "ha estensione temporale"@it .
+
+disaster:hasVulnerabilityContext a owl:ObjectProperty ;
+    rdfs:comment "Relates a Disaster to the Vulnerability condition of the affected community that contributed to the magnitude of its impacts."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range expvuln:Vulnerability ;
+    owl:inverseOf disaster:isVulnerabilityContextOf ;
+    skos:prefLabel "has vulnerability context"@en,
+        "ha contesto di vulnerabilità"@it .
+
+disaster:isDamageCausedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event that caused this damage."@en ;
+    owl:inverseOf disaster:causesDamage ;
+    skos:prefLabel "is damage caused by"@en .
+
+disaster:isEconomicLossCausedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event that caused this economic loss."@en ;
+    owl:inverseOf disaster:causesEconomicLoss ;
+    skos:prefLabel "is economic loss caused by"@en .
+
+disaster:isEnvironmentalImpactOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event producing this environmental impact."@en ;
+    owl:inverseOf disaster:hasEnvironmentalImpact ;
+    skos:prefLabel "is environmental impact of"@en .
+
+disaster:isExceededBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event that exceeds this capacity."@en ;
+    owl:inverseOf disaster:exceedsCapacityOf ;
+    skos:prefLabel "is exceeded by"@en .
+
+disaster:isHumanImpactOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event producing this human impact."@en ;
+    owl:inverseOf disaster:hasHumanImpact ;
+    skos:prefLabel "is human impact of"@en .
+
+disaster:isPreparedForBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the activity that prepares for this event."@en ;
+    owl:inverseOf disaster:preparesFor ;
+    skos:prefLabel "is prepared for by"@en .
+
+disaster:isRealizedAs a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event that realizes this risk."@en ;
+    owl:inverseOf disaster:realizesRisk ;
+    skos:prefLabel "is realized as"@en .
+
+disaster:isTemporalExtentOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event with this temporal extent."@en ;
+    owl:inverseOf disaster:hasTemporalExtent ;
+    skos:prefLabel "is temporal extent of"@en .
+
+disaster:isVulnerabilityContextOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the event for which this is the vulnerability context."@en ;
+    owl:inverseOf disaster:hasVulnerabilityContext ;
+    skos:prefLabel "is vulnerability context of"@en .
+
+disaster:preparesFor a owl:ObjectProperty ;
+    rdfs:comment "Relates a DisasterManagement or Preparedness activity to the Disaster scenario it is organised to handle."@en ;
+    rdfs:range hazard:HazardousEvent ;
+    owl:inverseOf disaster:isPreparedForBy ;
+    skos:prefLabel "prepares for"@en,
+        "prepara per"@it .
+
+disaster:realizesRisk a owl:ObjectProperty ;
+    rdfs:comment "Dual role (inverse of materializesAs): (1) subPropertyOf dul:satisfies — the Disaster (as Situation) satisfies the Risk (as Description); (2) subPropertyOf dul:hasQuality — the Disaster has the Risk as an inhering quality."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range risk:Risk ;
+    rdfs:subPropertyOf dul:hasQuality,
+        dul:satisfies ;
+    owl:inverseOf disaster:isRealizedAs ;
+    skos:prefLabel "realizes risk"@en,
+        "realizza il rischio"@it .
+
+disaster:hasAffectednessType a owl:ObjectProperty ;
+    rdfs:comment "Classifies how a population is affected: directly or indirectly."@en ;
+    rdfs:domain disaster:AffectedPopulation ;
+    rdfs:range disaster:AffectednessType ;
+    skos:prefLabel "has affectedness type"@en .
+
+disaster:hasFrequencyType a owl:ObjectProperty ;
+    rdfs:comment "Classifies a disaster by its recurrence frequency."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range disaster:FrequencyType ;
+    skos:prefLabel "has frequency type"@en .
+
+disaster:hasOnsetType a owl:ObjectProperty ;
+    rdfs:comment "Classifies a hazardous event by its onset speed."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range disaster:OnsetType ;
+    skos:editorialNote "requires enumeration of possible values"@en ;
+    skos:prefLabel "has onset type"@en,
+        "ha tipo di insorgenza"@it .
+
+disaster:hasScaleType a owl:ObjectProperty ;
+    rdfs:comment "Classifies a disaster by its geographic/administrative scale."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range disaster:ScaleType ;
+    skos:prefLabel "has scale type"@en .
+
+disaster:AffectedPopulation a owl:Class,
+        owl:NamedIndividual,
+        skos:Concept ;
+    foundation:frameCluster foundation:F3 ;
+    foundation:sourceTermURL <https://www.undrr.org/terminology/affected> ;
+    foundation:termNumber 1 ;
+    rdfs:comment "People who are affected, either directly or indirectly, by a hazardous event. Directly affected are those who have suffered injury, illness or other health effects; who were evacuated, displaced, relocated or have suffered direct damage to their livelihoods, economic, physical, social, cultural and environmental assets. Indirectly affected are people who have suffered consequences, other than or in addition to direct effects, over time, due to disruption or changes in economy, critical infrastructure, basic services, commerce or work, or social, health and psychological consequences."@en ;
+    rdfs:subClassOf foundation:Population ;
+    skos:inScheme foundation:SendaiFrameworkTerminology ;
+    skos:narrower disaster:DirectlyAffectedPopulation,
+        disaster:IndirectlyAffectedPopulation ;
+    skos:prefLabel "Betroffene Bevölkerung"@de,
+        "Affected Population"@en,
+        "Población afectada"@es,
+        "Population touchée"@fr,
+        "Popolazione colpita"@it,
+        "População afetada"@pt .
+
+disaster:AffectednessType a owl:Class ;
+    rdfs:comment "Classification of how a population is affected: directly or indirectly."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Affectedness Type"@en .
+
+disaster:FrequencyType a owl:Class ;
+    rdfs:comment "Classification of disaster recurrence frequency."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Frequency Type"@en .
+
+disaster:OnsetType a owl:Class ;
+    rdfs:comment "Classification of disaster onset speed."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Onset Type"@en .
+
+disaster:ScaleType a owl:Class ;
+    rdfs:comment "Classification of disaster geographic/administrative scale."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Scale Type"@en .
+

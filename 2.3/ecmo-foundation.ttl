@@ -1,0 +1,869 @@
+@prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix disaster: <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix drivers: <http://data.europa.eu/h8v/ecmo/core/drivers/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix d0: <http://www.ontologydesignpatterns.org/ont/d0.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln: <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema: <https://w3id.org/framester/schema/> .
+@prefix governance: <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard: <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix impact: <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix ph: <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response: <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk: <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix spec: <http://www.ontologydesignpatterns.org/cp/owl/specialization.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ecmocore:foundation a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Hub module of the ECMO ontology network: DUL alignment stubs, shared annotation and observation infrastructure, FrameCluster scheme, and utility classes shared across all frame modules."@en ;
+    owl:versionInfo "2.2" ;
+    skos:prefLabel "ECMO-CORE Foundation Module"@en .
+
+foundation:HazardCategory a owl:Class ;
+    rdfs:comment "A hazard category classification: Biological, Environmental, Geological, Hydrometeorological, Technological."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "hazard category"@en,
+        "categoria del pericolo"@it .
+
+foundation:PathogenRiskDomain a foundation:AssessmentDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Pathogen Risk"@en .
+
+foundation:Population a owl:Class ;
+    rdfs:comment "A group of people sharing a geographic area, administrative boundary, or common demographic characteristics, relevant as an element of exposure or as an affected entity. Typed as dul:Collective (⊑ dul:Collection ⊓ dul:SocialAgent) so instances are both a collection of members and a group-agent."@en ;
+    rdfs:subClassOf dul:Collective ;
+    skos:prefLabel "Bevölkerung"@de,
+        "Population"@en,
+        "Población"@es,
+        "Population"@fr,
+        "Popolazione"@it,
+        "População"@pt .
+
+foundation:SendaiFrameworkTerminology a owl:NamedIndividual,
+        skos:ConceptScheme ;
+    dcterms:source <https://www.undrr.org/drr-glossary/terminology> ;
+    skos:hasTopConcept capacity:Resilience,
+        disaster:Disaster,
+        governance:RiskManagement,
+        hazard:Hazard,
+        risk:Risk ;
+    skos:prefLabel "Sendai Framework Terminology on Disaster Risk Reduction"@en .
+
+foundation:SeverityDomain a foundation:AssessmentDomainType,
+        owl:NamedIndividual ;
+    skos:prefLabel "Severity"@en .
+
+foundation:SeverityLevelScale a owl:Class ;
+    rdfs:comment "A scale used to categorize the severity levels of impacts."@en ;
+    rdfs:subClassOf foundation:QualitativeAssessmentLevelScale ;
+    skos:prefLabel "Severity Level Scale"@en .
+
+foundation:SeverityLevelValue a owl:Class ;
+    rdfs:comment "A qualitative evaluation of the severity of a given situation."@en ;
+    rdfs:subClassOf foundation:QualitativeAssessmentLevelValue ;
+    skos:prefLabel "Severity Level Value"@en .
+
+foundation:contributesTo a owl:ObjectProperty ;
+    rdfs:comment "Generic contribution relation between DRR activities and goals."@en ;
+    skos:prefLabel "contributes to"@en,
+        "contribuisce a"@it .
+
+foundation:frameCluster a owl:ObjectProperty ;
+    rdfs:comment "Relates any class, property or individual to the FrameCluster Description that groups it within the Sendai DRR conceptual frame organisation. SubPropertyOf dul:isDescribedBy: the entity is described/framed by the cluster."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range foundation:FrameCluster ;
+    rdfs:subPropertyOf dul:isDescribedBy ;
+    skos:prefLabel "frame cluster"@en .
+
+foundation:hasAssessmentDomain a owl:ObjectProperty ;
+    rdfs:comment "Classifies a qualitative assessment scale by its domain."@en ;
+    rdfs:domain foundation:QualitativeAssessmentLevelScale ;
+    rdfs:range foundation:AssessmentDomainType ;
+    skos:prefLabel "has assessment domain"@en .
+
+foundation:includesEvent a owl:TransitiveProperty ;
+	owl:subPropertyOf dul:includesEvent ;
+    rdfs:comment "A mereological relation holding for eventualities (either events, event types, or situations)."@en ;
+    rdfs:domain d0:Eventuality ;
+    rdfs:range d0:Eventuality ;
+    skos:prefLabel "includes event"@en .
+
+foundation:isEvolvedAs a owl:ObjectProperty ;
+    rdfs:comment "A causal relation holding for eventualities (either events, event types, or situations)."@en ;
+    rdfs:domain d0:Eventuality ;
+    rdfs:range d0:Eventuality ;
+    skos:prefLabel "is evolved as"@en .
+
+foundation:hasJustification a owl:DatatypeProperty ;
+    rdfs:comment "Provides a textual justification or explanation for the qualitative assessment."@en ;
+    rdfs:domain foundation:QualitativeAssessment ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has justification"@en,
+        "ha giustificazione"@it .
+
+foundation:hasReportDate a owl:DatatypeProperty ;
+    rdfs:comment "The date the risk assessment report was issued."@en ;
+    rdfs:domain foundation:RiskAssessmentReport ;
+    rdfs:range xsd:date ;
+    skos:prefLabel "report date"@en .
+
+foundation:isComplementaryTo a owl:ObjectProperty,
+        owl:SymmetricProperty ;
+    rdfs:comment "Links two concepts that serve as complementary determinants of disaster risk: vulnerability (negative factor increasing susceptibility) and capacity (positive factor reducing susceptibility)."@en ;
+    skos:prefLabel "is complementary to"@en,
+        "es complementario a"@es,
+        "est complémentaire à"@fr,
+        "è complementare a"@it .
+
+foundation:isQualitativelyAssessedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the entity that is associated with a given qualitative assessment."@en ;
+    rdfs:domain foundation:QualitativeAssessment ;
+    rdfs:range dul:Entity ;
+    owl:inverseOf foundation:hasQualitativeAssessment ;
+    skos:prefLabel "is assessed by"@en .
+
+foundation:orderInScale a owl:DatatypeProperty ;
+    rdfs:comment "Indicates the ordinal position of a qualitative assessment level value within its scale."@en ;
+    rdfs:domain foundation:QualitativeAssessmentLevelValue ;
+    rdfs:range xsd:integer ;
+    skos:prefLabel "order in scale"@en .
+
+foundation:previousValue a owl:ObjectProperty ;
+    rdfs:comment "Indicates the next lower qualitative assessment level value in a scale."@en ;
+    rdfs:domain foundation:QualitativeAssessmentLevelValue ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:inverseOf foundation:nextValue ;
+    skos:prefLabel "previous value"@en .
+
+foundation:scopeExclusion a owl:AnnotationProperty ;
+    rdfs:comment "Documents what is explicitly excluded from the scope of a concept."@en ;
+    skos:prefLabel "scope exclusion"@en .
+
+foundation:sendaiAnnotation a owl:AnnotationProperty ;
+    rdfs:comment "Annotation text from the UNDRR Sendai Framework Terminology entry."@en ;
+    skos:prefLabel "Sendai annotation"@en .
+
+foundation:sourceTermURL a owl:AnnotationProperty ;
+    rdfs:comment "URL of the original UNDRR terminology page."@en ;
+    skos:prefLabel "source term URL"@en .
+
+foundation:termNumber a owl:AnnotationProperty ;
+    rdfs:comment "Position in the 38-term Sendai Framework Terminology list."@en ;
+    skos:prefLabel "term number"@en .
+
+dc:creator a owl:AnnotationProperty .
+
+dc:date a owl:AnnotationProperty .
+
+dcterms:creator a owl:AnnotationProperty .
+
+dcterms:issued a owl:AnnotationProperty .
+
+dcterms:license a owl:AnnotationProperty .
+
+dcterms:source a owl:AnnotationProperty .
+
+spec:isSpecializedBy a owl:TransitiveProperty ;
+    rdfs:comment "A partial order relation that holds between Concepts. It can represent the subsumption relation between e.g. a Concept and another Concept that is narrower in extensional interpretation, but broader in intensional interpretation. For example, the role Student is specialized by the role PhDStudent."@en ;
+    owl:inverseOf spec:specializes ;
+    owl:subPropertyOf fschema:subsumedUnder ;
+    skos:prefLabel "is specialized by"@en .
+
+dul:Action a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: an intentional event performed by an agent."@en ;
+    rdfs:subClassOf dul:Event ;
+    skos:prefLabel "Action"@en .
+
+dul:ContextualDisposition a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a disposition that is bound to certain contextual conditions. Those dispositions are descriptions."@en ;
+    skos:prefLabel "Contextual Disposition"@en .
+
+d0:Eventuality a owl:Class ;
+  	owl:equivalentClass [
+    	a owl:Class ;
+    	owl:unionOf (
+     		<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Event>
+    		<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#EventType>
+    		<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation>
+   		)
+  	] ;
+    rdfs:comment "DOLCE Zero: a generalization over events, situations, or event types."@en ;
+    skos:prefLabel "Eventuality"@en .
+
+dul:Norm a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a social norm, regulation, or standard."@en ;
+    rdfs:subClassOf dul:Description ;
+    skos:prefLabel "Norm"@en .
+
+dul:Plan a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a description of actions to achieve a goal."@en ;
+    rdfs:subClassOf dul:Description ;
+    skos:prefLabel "Plan"@en .
+
+dul:Situation a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a relational context or state of affairs."@en ;
+    skos:prefLabel "Situation"@en .
+
+dul:hasQuality a owl:ObjectProperty ;
+    rdfs:range dul:Quality ;
+    owl:inverseOf dul:isQualityOf .
+
+dul:hasRole a owl:ObjectProperty ;
+    rdfs:range dul:Role .
+
+dul:isSatisfiedBy a owl:ObjectProperty ;
+    owl:inverseOf dul:satisfies .
+
+xsd:duration a rdfs:Datatype .
+
+skos:altLabel a owl:AnnotationProperty .
+
+skos:broader a owl:AnnotationProperty .
+
+skos:definition a owl:AnnotationProperty .
+
+skos:editorialNote a owl:AnnotationProperty .
+
+skos:hasTopConcept a owl:AnnotationProperty .
+
+skos:inScheme a owl:AnnotationProperty .
+
+skos:member a owl:AnnotationProperty .
+
+skos:narrower a owl:AnnotationProperty .
+
+skos:notation a owl:AnnotationProperty .
+
+skos:related a owl:AnnotationProperty .
+
+skos:topConceptOf a owl:AnnotationProperty .
+
+foundation:F1 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Risk Frame groups concepts that characterise disaster risk as a relational configuration of hazard, exposure, vulnerability and capacity. ecmocore:Risk is the central concept, typed as dul:Description (it frames the conditions a disaster must satisfy), dul:Quality (risk level inheres in a community), and dul:Situation (the relational state itself). Sub-types ExtensiveRisk, IntensiveRisk and ResidualRisk differentiate risk by frequency, scale and residual character after risk reduction measures."@en ;
+    skos:altLabel "F1"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member risk:AcceptableRisk,
+        risk:ExtensiveRisk,
+        risk:IntensiveRisk,
+        risk:ResidualRisk,
+        risk:Risk ;
+    skos:notation "F1" ;
+    skos:prefLabel "Risk Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:F10 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Impact and Loss Frame groups concepts that describe the consequences of disasters on human life, the environment and the economy. ecmocore:Impact (dul:Event + dul:Situation) is the broadest impact concept. ecmocore:HumanImpact and ecmocore:EnvironmentalImpact are typed as dul:Event + dul:Situation in parallel. ecmocore:EconomicLoss (dul:Situation) captures monetary damage; DirectEconomicLoss and IndirectEconomicLoss distinguish direct asset destruction from indirect economic disruption. DisasterDamage (dul:Situation) specifically covers physical destruction of built assets."@en ;
+    skos:altLabel "F10"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member impact:DirectEconomicLoss,
+        impact:EconomicLoss,
+        impact:EnvironmentalImpact,
+        impact:HumanImpact,
+        impact:Impact,
+        impact:ImpactIntensityLevel,
+        impact:ImpactType,
+        impact:IndirectEconomicLoss ;
+    skos:notation "F10" ;
+    skos:prefLabel "Impact and Loss Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:F2 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Hazard Frame groups concepts that describe the physical or anthropogenic processes that may cause loss of life, injury or other health impacts, property damage, social and economic disruption, or environmental damage. ecmocore:Hazard is the anchor concept, typed as dul:Description (the hazard type frames conditions HazardousEvents must satisfy) and dul:Quality (the hazard disposition inheres in the environment). Hazard sub-types (NaturalHazard, TechnologicalHazard, etc.) are punned class+individuals linked via fschema:subsumedUnder. ecmocore:HazardousEvent is the actual manifestation (dul:Event + dul:Situation) satisfying the hazard frame. MultiHazardContext groups cases where two or more hazards interact."@en ;
+    skos:altLabel "F2"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member disaster:FrequentDisaster,
+        disaster:InfrequentDisaster,
+        disaster:LargeScaleDisaster,
+        disaster:SlowOnsetDisaster,
+        disaster:SmallScaleDisaster,
+        disaster:SuddenOnsetDisaster,
+        hazard:AnthropogenicHazard,
+        hazard:BiologicalHazard,
+        hazard:ChemicalHazard,
+        hazard:EnvironmentalHazard,
+        hazard:ExtraterrestrialHazard,
+        hazard:GeologicalHazard,
+        hazard:Hazard,
+        hazard:HazardousEvent,
+        hazard:HydrometeorologicalHazard,
+        hazard:IntensityObservation,
+        hazard:MagnitudeObservation,
+        hazard:MultiHazardContext,
+        hazard:NaturalHazard,
+        hazard:NuclearHazard,
+        hazard:ObservationSource,
+        hazard:QuantitativeScale,
+        hazard:RadiologicalHazard,
+        hazard:SeverityAssessment,
+        hazard:SocietalHazard,
+        hazard:SocionaturalHazard,
+        hazard:TechnologicalHazard,
+        ph:CaseFatalityRate,
+        ph:IncubationPeriod,
+        ph:Infectiousness,
+        ph:PathogenCharacteristic,
+        ph:PathogenRiskAssessment,
+        ph:Toxicity,
+        ph:Transmissibility ;
+    skos:notation "F2" ;
+    skos:prefLabel "Hazard Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:F3 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Disaster Frame groups concepts that describe the occurrence, scale and population effects of disasters — serious disruptions of the functioning of a community or society — triggered by hazardous events. ecmocore:Disaster is typed as dul:Event (it occurs) and dul:Situation (it instantiates the conditions defined by Risk as Description). Sub-types distinguish onset speed (SuddenOnset, SlowOnset), scale (LargeScale, SmallScale) and frequency (Frequent, Infrequent). ecmocore:Emergency is an acute episode that may or may not reach disaster severity. Population concepts (AffectedPopulation, Community) and DisasterDamage round out the frame."@en ;
+    skos:altLabel "F3"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member disaster:AffectedPopulation,
+        disaster:Community,
+        disaster:DirectlyAffectedPopulation,
+        disaster:Disaster,
+        disaster:Emergency,
+        disaster:IndirectlyAffectedPopulation,
+        impact:HazardousEventDamage ;
+    skos:notation "F3" ;
+    skos:prefLabel "Disaster Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:F4 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Exposure and Vulnerability Frame groups concepts that characterise the susceptibility of people, assets and systems to hazard impacts. ecmocore:Exposure (dul:Quality + dul:Situation) describes the presence of people, livelihoods and assets in hazard-prone areas. ecmocore:Vulnerability (dul:Quality + dul:Situation) characterises the conditions that increase susceptibility to harmful consequences. VulnerabilityDimension and its four typed sub-concepts (Economic, Environmental, Physical, Social) decompose vulnerability into measurable axes. ExposedElement denotes the people, infrastructure or assets in the exposed area."@en ;
+    skos:altLabel "F4"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member expvuln:CriticalInfrastructureType,
+        expvuln:EconomicAssetType,
+        expvuln:EconomicVulnerability,
+        expvuln:EnvironmentalAssetType,
+        expvuln:EnvironmentalVulnerability,
+        expvuln:ExposedElement,
+        expvuln:ExposedElementType,
+        expvuln:Exposure,
+        expvuln:InfrastructureType,
+        expvuln:PhysicalVulnerability,
+        expvuln:PopulationGroupType,
+        expvuln:ServiceType,
+        expvuln:SocialVulnerability,
+        expvuln:Vulnerability,
+        expvuln:VulnerabilityDimension ;
+    skos:notation "F4" ;
+    skos:prefLabel "Exposure and Vulnerability Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:F5 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Capacity and Resilience Frame groups concepts that characterise the ability of communities, organisations and systems to manage disaster risk and adapt to adverse conditions. ecmocore:Capacity (dul:Quality) is the aggregate of all strengths, attributes and resources available to manage and reduce disaster risk. ecmocore:Resilience (dul:Quality) is the ability to resist, absorb and recover from hazard effects while maintaining essential functions. Supporting concepts include CopingCapacity, EssentialFunction, CollectiveAttribute, Knowledge and Resource as constituents of capacity stocks. CapacityAssessment and CapacityDevelopment are the associated process types."@en ;
+    skos:altLabel "F5"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member capacity:Capacity,
+        capacity:CapacityAssessment,
+        capacity:CapacityDevelopment,
+        capacity:CapacityExceedanceAssessment,
+        capacity:CollectiveAttribute,
+        capacity:CopingCapacity,
+        capacity:EssentialFunction,
+        capacity:Knowledge,
+        capacity:Resilience,
+        capacity:Resource ;
+    skos:notation "F5" ;
+    skos:prefLabel "Capacity and Resilience Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:F6 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Governance and Management Frame groups concepts that describe the institutional, policy and legal structures through which disaster risk is governed and managed. ecmocore:RiskGovernance (dul:Description + dul:Situation) frames the conditions of institutional coordination. ecmocore:RiskReduction (dul:Description + dul:Situation) is both the overarching goal frame and the enacted reduction process. RiskManagement, its sub-types (Corrective, Compensatory, Prospective, Community-based), and supporting structures (Policy, LegalFramework, Institution, NationalPlatform, Sector) constitute the governance apparatus. RiskInformation and RiskAssessment provide the knowledge base. LocalAndIndigenousApproach recognises non-Western governance traditions."@en ;
+    skos:altLabel "F6"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member governance:CivilSociety,
+        governance:CommunityBasedRiskManagement,
+        governance:CompensatoryRiskManagement,
+        governance:CorrectiveRiskManagement,
+        governance:EmergencyManagement,
+        governance:Institution,
+        governance:Jurisdiction,
+        governance:LegalFramework,
+        governance:LocalAndIndigenousApproach,
+        governance:NationalPlatformForDRR,
+        governance:Policy,
+        governance:ProspectiveRiskManagement,
+        governance:RiskAssessment,
+        governance:RiskGovernance,
+        governance:RiskInformation,
+        governance:RiskManagement,
+        governance:RiskManagementPlan,
+        governance:RiskReduction,
+        governance:RiskReductionStrategy,
+        governance:Sector,
+        governance:Stakeholder,
+        response:RiskReductionPhase ;
+    skos:notation "F6" ;
+    skos:prefLabel "Governance and Management Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:F7 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Response and Recovery Frame groups concepts describing the phases of the disaster risk management cycle from preparedness through response to recovery and reconstruction. All phase classes are typed as dul:Action + dul:Situation (enacted and constituting an ongoing state). ecmocore:Preparedness frames anticipatory actions; ecmocore:Response frames immediate post-event actions; ecmocore:Recovery, ecmocore:Reconstruction and ecmocore:Rehabilitation frame post-disaster restoration. ecmocore:Prevention and ecmocore:Mitigation address risk reduction before events. ecmocore:BuildBackBetter (dul:Description + dul:Situation) is the normative frame for resilient reconstruction. ecmocore:SustainableDevelopment (dul:Description + dul:Situation) situates DRR within the broader development agenda."@en ;
+    skos:altLabel "F7"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member governance:SustainableDevelopment,
+        response:BuildBackBetter,
+        response:ContingencyPlanning,
+        response:EmergencyService,
+        response:Evacuation,
+        response:EvacuationPlan,
+        response:Intervention,
+        response:Mitigation,
+        response:Preparedness,
+        response:PreparednessPlan,
+        response:Prevention,
+        response:Readiness,
+        response:Reconstruction,
+        response:Recovery,
+        response:Rehabilitation,
+        response:Response,
+        response:RiskReductionPhase,
+        response:ShelterInPlace ;
+    skos:notation "F7" ;
+    skos:prefLabel "Response and Recovery Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:F8 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Risk Reduction Instruments Frame groups the tools, systems and mechanisms used to implement disaster risk reduction in practice. It includes physical instruments (StructuralMeasure, NonStructuralMeasure, Retrofitting, BuildingCode, CriticalInfrastructure, Structure), information and warning systems (EarlyWarningSystem, MultiHazardEarlyWarningSystem, EWSComponent and its four sub-types, Warning, DisasterLossDatabase), financial instruments (RiskTransfer, Insurance, Reinsurance, CatastropheBond, ReserveFund, NationalContingencyFund, ContingentCreditFacility), and essential services (EssentialService)."@en ;
+    skos:altLabel "F8"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member instruments:BuildingCode,
+        instruments:CatastropheBond,
+        instruments:ContingentCreditFacility,
+        instruments:CriticalInfrastructure,
+        instruments:DisasterLossDatabase,
+        instruments:EWSComponent,
+        instruments:EarlyWarningSystem,
+        instruments:EssentialService,
+        instruments:Insurance,
+        instruments:Measure,
+        instruments:MonitoringAndForecastingComponent,
+        instruments:MultiHazardEarlyWarningSystem,
+        instruments:NationalContingencyFund,
+        instruments:NonStructuralMeasure,
+        instruments:Reinsurance,
+        instruments:ReserveFund,
+        instruments:ResponsePreparednessComponent,
+        instruments:Retrofitting,
+        instruments:RiskKnowledgeComponent,
+        instruments:RiskTransfer,
+        instruments:StructuralMeasure,
+        instruments:Structure,
+        instruments:Warning,
+        instruments:WarningDisseminationComponent ;
+    skos:notation "F8" ;
+    skos:prefLabel "Risk Reduction Instruments Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:F9 a foundation:FrameCluster,
+        owl:NamedIndividual,
+        skos:Concept ;
+    rdfs:comment "The Underlying Risk Drivers Frame groups structural conditions that generate and amplify disaster risk over time. These are typed as dul:Quality (they are properties inhering in a territory or society) and dul:Situation (they constitute ongoing relational conditions). ecmocore:RiskDriver is the anchor concept. Its sub-types cover the four Sendai Framework systemic drivers: ClimateChangeAndVariability (alters hazard profiles), DemographicChange (shifts population exposure), EnvironmentalDegradation (erodes natural buffers), PovertyAndInequality (constrains coping capacity), and UnplannedUrbanization (concentrates exposure in hazard-prone areas). WeakGovernance is included as a cross-cutting amplifier."@en ;
+    skos:altLabel "F9"@en ;
+    skos:inScheme <http://data.europa.eu/h8v/ecmo/core> ;
+    skos:member drivers:ClimateChangeAndVariability,
+        drivers:DemographicChange,
+        drivers:EnvironmentalDegradation,
+        drivers:PovertyAndInequality,
+        drivers:RiskDriver,
+        drivers:UnplannedUrbanization,
+        drivers:WeakGovernance ;
+    skos:notation "F9" ;
+    skos:prefLabel "Underlying Risk Drivers Frame"@en ;
+    skos:topConceptOf foundation:FrameClusterScheme .
+
+foundation:confirmsEvent a owl:ObjectProperty ;
+    rdfs:comment "Indicates that an event validation confirms a hazardous event."@en ;
+    rdfs:domain foundation:EventValidation ;
+    rdfs:range hazard:HazardousEvent ;
+    owl:inverseOf foundation:isConfirmedBy ;
+    skos:prefLabel "confirms event"@en .
+
+foundation:generatesSignal a owl:ObjectProperty ;
+    rdfs:comment "Indicates that an observation source generates a signal."@en ;
+    rdfs:domain hazard:ObservationSource ;
+    rdfs:range foundation:Signal ;
+    owl:inverseOf foundation:isSignalFrom ;
+    skos:prefLabel "generates signal"@en .
+
+foundation:hasConfidenceScore a owl:DatatypeProperty ;
+    rdfs:comment "Confidence score (0-1) for a signal."@en ;
+    rdfs:domain foundation:Signal ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has confidence score"@en .
+
+foundation:hasLevel a owl:ObjectProperty ;
+    rdfs:comment "Indicates the qualitative assessment level value assigned in a qualitative assessment."@en ;
+    rdfs:domain foundation:QualitativeAssessment ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:inverseOf foundation:isLevelOf ;
+    skos:prefLabel "has level"@en,
+        "ha livello"@it .
+
+foundation:hasLocation a owl:ObjectProperty ;
+    rdfs:comment "Relates a HazardousEvent or exposed entity to the dul:Place where it occurs or is situated."@en ;
+    rdfs:range dul:Place ;
+    owl:inverseOf foundation:isLocationOf ;
+    skos:prefLabel "has location"@en,
+        "ha luogo"@it .
+
+foundation:hasMaxValue a owl:ObjectProperty ;
+    rdfs:comment "Indicates the maximum value of a qualitative assessment level scale."@en ;
+    rdfs:domain foundation:QualitativeAssessmentLevelScale ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:inverseOf foundation:isMaxValueOf ;
+    skos:prefLabel "has max value"@en .
+
+foundation:hasMinValue a owl:ObjectProperty ;
+    rdfs:comment "Indicates the minimum value of a qualitative assessment level scale."@en ;
+    rdfs:domain foundation:QualitativeAssessmentLevelScale ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:inverseOf foundation:isMinValueOf ;
+    skos:prefLabel "has min value"@en .
+
+foundation:hasQualitativeAssessment a owl:ObjectProperty ;
+    rdfs:comment "Indicates the qualitative assessment associated with a given entity."@en ;
+    rdfs:domain dul:Entity ;
+    rdfs:range foundation:QualitativeAssessment ;
+    skos:prefLabel "has qualitative assessment"@en,
+        "ha valutazione qualitativa"@it .
+
+foundation:hasRiskAssessmentReport a owl:ObjectProperty ;
+    rdfs:comment "Links a hazardous event to its risk assessment report."@en ;
+    rdfs:domain hazard:HazardousEvent ;
+    rdfs:range foundation:RiskAssessmentReport ;
+    owl:inverseOf foundation:isReportFor ;
+    skos:prefLabel "has risk assessment report"@en .
+
+foundation:hasScaleValue a owl:ObjectProperty ;
+    rdfs:comment "Indicates a level value belonging to this scale."@en ;
+    owl:inverseOf foundation:inScale ;
+    skos:prefLabel "has scale value"@en .
+
+foundation:hasSignal a owl:ObjectProperty ;
+    rdfs:comment "Indicates that a hazardous event has been signalled."@en ;
+    owl:inverseOf foundation:pertainsToEvent ;
+    skos:prefLabel "has signal"@en .
+
+foundation:hasTemporalValidity a owl:ObjectProperty ;
+    rdfs:comment "The time interval during which the observed or assessed value is considered valid."@en ;
+    rdfs:range dul:TimeInterval ;
+    owl:inverseOf foundation:isTemporalValidityOf ;
+    skos:prefLabel "has temporal validity"@en,
+        "ha validità temporale"@it .
+
+foundation:inScale a owl:ObjectProperty ;
+    rdfs:comment "Indicates the qualitative assessment level scale to which a given value belongs."@en ;
+    rdfs:domain foundation:QualitativeAssessmentLevelValue ;
+    rdfs:range foundation:QualitativeAssessmentLevelScale ;
+    owl:inverseOf foundation:hasScaleValue ;
+    skos:prefLabel "in scale"@en .
+
+foundation:isConfirmedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates that a hazardous event has been confirmed by a validation process."@en ;
+    owl:inverseOf foundation:confirmsEvent ;
+    skos:prefLabel "is confirmed by"@en .
+
+foundation:isLevelOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the assessment to which this level value is assigned."@en ;
+    owl:inverseOf foundation:hasLevel ;
+    skos:prefLabel "is level of"@en .
+
+foundation:isLocationOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the entity located at this place."@en ;
+    owl:inverseOf foundation:hasLocation ;
+    skos:prefLabel "is location of"@en .
+
+foundation:isMaxValueOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the scale of which this is the maximum value."@en ;
+    owl:inverseOf foundation:hasMaxValue ;
+    skos:prefLabel "is max value of"@en .
+
+foundation:isMinValueOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the scale of which this is the minimum value."@en ;
+    owl:inverseOf foundation:hasMinValue ;
+    skos:prefLabel "is min value of"@en .
+
+foundation:isRecommendedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the report recommending this measure type."@en ;
+    owl:inverseOf foundation:recommendsMeasure ;
+    skos:prefLabel "is recommended by"@en .
+
+foundation:isReportFor a owl:ObjectProperty ;
+    rdfs:comment "Indicates the hazardous event that a risk assessment report covers."@en ;
+    owl:inverseOf foundation:hasRiskAssessmentReport ;
+    skos:prefLabel "is report for"@en .
+
+foundation:isSignalFrom a owl:ObjectProperty ;
+    rdfs:comment "Indicates the observation source from which a signal originates."@en ;
+    owl:inverseOf foundation:generatesSignal ;
+    skos:prefLabel "is signal from"@en .
+
+foundation:isTemporalValidityOf a owl:ObjectProperty ;
+    rdfs:comment "Indicates the entity for which this time interval is valid."@en ;
+    owl:inverseOf foundation:hasTemporalValidity ;
+    skos:prefLabel "is temporal validity of"@en .
+
+foundation:isValidatedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the validation process examining this signal."@en ;
+    owl:inverseOf foundation:validatesSignal ;
+    skos:prefLabel "is validated by"@en .
+
+foundation:nextValue a owl:ObjectProperty ;
+    rdfs:comment "Indicates the next higher qualitative assessment level value in a scale."@en ;
+    rdfs:domain foundation:QualitativeAssessmentLevelValue ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    skos:prefLabel "next value"@en .
+
+foundation:pertainsToEvent a owl:ObjectProperty ;
+    rdfs:comment "Relates a Signal to the HazardousEvent it may indicate."@en ;
+    rdfs:domain foundation:Signal ;
+    rdfs:range hazard:HazardousEvent ;
+    owl:inverseOf foundation:hasSignal ;
+    skos:prefLabel "pertains to event"@en .
+
+foundation:recommendsMeasure a owl:ObjectProperty ;
+    rdfs:comment "A risk assessment report recommends a specific measure type."@en ;
+    rdfs:domain foundation:RiskAssessmentReport ;
+    rdfs:range response:MeasureType ;
+    owl:inverseOf foundation:isRecommendedBy ;
+    skos:prefLabel "recommends measure"@en .
+
+spec:specializes a owl:TransitiveProperty ;
+    rdfs:comment "A partial order relation that holds between Concepts. It can represent the subsumption relation between e.g. a Concept and another Concept that is broader in extensional interpretation, but narrower in intensional interpretation. For example, the role PhDStudent specializes the role Student."@en ;
+    owl:subPropertyOf fschema:subsumedUnder ;
+    skos:prefLabel "specializes"@en .
+
+dul:Agent a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: an entity that acts intentionally."@en ;
+    rdfs:subClassOf dul:Object ;
+    skos:prefLabel "Agent"@en .
+
+dul:Place a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a spatial region."@en ;
+    skos:prefLabel "Place"@en .
+
+dul:Process a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: an event with temporal extension."@en ;
+    rdfs:subClassOf dul:Event ;
+    skos:prefLabel "Process"@en .
+
+dul:Role a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a concept classifying an entity within a context."@en ;
+    rdfs:subClassOf dul:SocialObject ;
+    skos:prefLabel "Role"@en .
+
+dul:TimeInterval a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a temporal region."@en ;
+    skos:prefLabel "Time Interval"@en .
+
+dul:isDescribedBy a owl:ObjectProperty ;
+    rdfs:range dul:Description .
+
+dul:isQualityOf a owl:ObjectProperty .
+
+dul:satisfies a owl:ObjectProperty ;
+    rdfs:range dul:Description .
+
+xsd:date a rdfs:Datatype .
+
+foundation:EventValidation a owl:Class ;
+    rdfs:comment "The process of confirming the veracity and nature of a Signal to determine if it represents a real hazardous event."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty foundation:validatesSignal ;
+            owl:someValuesFrom foundation:Signal ],
+        dul:Process ;
+    skos:prefLabel "Ereignisvalidierung"@de,
+        "Event Validation"@en,
+        "Validacion de evento"@es,
+        "Validation d'evenement"@fr,
+        "Validazione dell'evento"@it,
+        "Validacao de evento"@pt .
+
+foundation:validatesSignal a owl:ObjectProperty ;
+    rdfs:comment "Indicates that an event validation process examines a signal."@en ;
+    rdfs:domain foundation:EventValidation ;
+    rdfs:range foundation:Signal ;
+    owl:inverseOf foundation:isValidatedBy ;
+    skos:prefLabel "validates signal"@en .
+
+dul:Event a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: something that happens in time."@en ;
+    skos:prefLabel "Event"@en .
+
+dul:InformationObject a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a piece of information."@en ;
+    rdfs:subClassOf dul:SocialObject ;
+    skos:prefLabel "Information Object"@en .
+
+dul:Object a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a physical or social object."@en ;
+    skos:prefLabel "Object"@en .
+
+dul:Quality a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: an inherent attribute of an entity."@en ;
+    skos:prefLabel "Quality"@en .
+
+skos:ConceptScheme a owl:Class .
+
+fschema:subsumedUnder a owl:TransitiveProperty ;
+    rdfs:comment "Transitive subsumption relation from the Framester schema, used in OWL2 punning contexts to express intensional (frame-level) subsumption among individuals that serve as type-classifiers. Unlike rdfs:subClassOf (extensional set inclusion), subsumedUnder links Description-level individuals without entailing instance-level class membership."@en ;
+    skos:editorialNote """DESIGN RECOMMENDATION FOR INDIVIDUAL-LEVEL SUBSUMPTION
+
+fschema:subsumedUnder is the recommended mechanism for expressing taxonomic relationships
+among *individuals* that represent types (e.g. hazard types, health conditions, risk categories).
+This arises from the OWL2 punning pattern used throughout ECMO-CORE.
+
+PATTERN:
+  :SpecificType a owl:NamedIndividual, :ParentType ;
+      fschema:subsumedUnder :ParentType .
+
+EXAMPLE 1 — Hazard hierarchy (instances as type classifiers):
+  hazard:Earthquake a owl:NamedIndividual, hazard:GeologicalHazard ;
+      skos:prefLabel "Earthquake"@en ;
+      fschema:subsumedUnder hazard:GeologicalHazard .
+  hazard:GeologicalHazard fschema:subsumedUnder hazard:NaturalHazard .
+  hazard:NaturalHazard fschema:subsumedUnder hazard:Hazard .
+
+EXAMPLE 2 — Health condition hierarchy:
+  ph:COVID19 a owl:NamedIndividual, ph:InfectiousDiseaseOrSyndrome ;
+      skos:prefLabel "COVID-19"@en ;
+      fschema:subsumedUnder ph:CoronavirusDisease .
+  ph:CoronavirusDisease a owl:NamedIndividual, ph:InfectiousDiseaseOrSyndrome ;
+      fschema:subsumedUnder ph:InfectiousDiseaseOrSyndrome .
+
+EXAMPLE 3 — Risk category hierarchy:
+  risk:IntensiveRisk fschema:subsumedUnder risk:Risk .
+
+RATIONALE:
+  - Preserves the D&S boundary: Description-level individuals relate via subsumedUnder;
+    Situation-level classes relate via rdfs:subClassOf.
+  - Avoids metaclass conflation that would arise from rdfs:subClassOf between punned entities.
+  - Supports transitive reasoning along the type hierarchy without OWL Full commitment.
+"""@en ;
+    skos:prefLabel "subsumed under"@en .
+
+foundation:AssessmentDomainType a owl:Class ;
+    rdfs:comment "Classification of the domain to which a qualitative assessment scale belongs (e.g. severity, pathogen risk)."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Assessment Domain Type"@en .
+
+foundation:RiskAssessmentReport a owl:Class ;
+    rdfs:comment "A documented assessment of the risk posed by a hazardous event, including likelihood and impact analysis."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty risk:assessesRisk ;
+            owl:someValuesFrom risk:Risk ],
+        dul:InformationObject ;
+    skos:prefLabel "Risikobewertungsbericht"@de,
+        "Risk Assessment Report"@en,
+        "Informe de evaluacion de riesgos"@es,
+        "Rapport d'evaluation des risques"@fr,
+        "Rapporto di valutazione del rischio"@it,
+        "Relatorio de avaliacao de riscos"@pt .
+
+dul:SocialObject a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a socially constructed entity."@en ;
+    rdfs:subClassOf dul:Object ;
+    skos:prefLabel "Social Object"@en .
+
+foundation:QualitativeAssessment a owl:Class ;
+    rdfs:comment "A qualitative evaluation of a given situation or entity, based on a specific qualitative assessment level scale."@en ;
+    rdfs:subClassOf dul:Description ;
+    skos:prefLabel "Qualitative Bewertung"@de,
+        "Qualitative Assessment"@en,
+        "Evaluación cualitativa"@es,
+        "Évaluation qualitative"@fr,
+        "Valutazione qualitativa"@it,
+        "Avaliação qualitativa"@pt .
+
+foundation:QualitativeAssessmentLevelScale a owl:Class ;
+    rdfs:comment "A scale used to categorize qualitative levels of assessment."@en ;
+    rdfs:subClassOf dul:Description ;
+    skos:prefLabel "Qualitative Bewertungsskala"@de,
+        "Qualitative Level Scale"@en,
+        "Escala de nivel cualitativo"@es,
+        "Échelle de niveau qualitatif"@fr,
+        "Scala di livello qualitativo"@it,
+        "Escala de nível qualitativo"@pt .
+
+foundation:Signal a owl:Class ;
+    rdfs:comment "An indication or anomaly detected in open-source data that may point to a potential public health event."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty foundation:hasConfidenceScore ;
+            owl:someValuesFrom xsd:decimal ],
+        dul:InformationObject ;
+    skos:prefLabel "Signal"@de,
+        "Signal"@en,
+        "Senal"@es,
+        "Signal"@fr,
+        "Segnale"@it,
+        "Sinal"@pt .
+
+dul:Description a owl:Class ;
+    rdfs:comment "DOLCE Ultralite: a conceptualisation or plan."@en ;
+    rdfs:subClassOf dul:SocialObject ;
+    skos:prefLabel "Description"@en .
+
+foundation:FrameClusterScheme a owl:NamedIndividual,
+        skos:ConceptScheme ;
+    rdfs:comment "A SKOS concept scheme organising the ten FrameCluster individuals (F1-F10) that partition the Sendai DRR ontology into semantically coherent conceptual frames. Each cluster is also a dul:Description instance, making membership queryable via both SKOS (skos:member) and DUL (ecmocore:frameCluster subPropertyOf dul:isDescribedBy)."@en ;
+    skos:hasTopConcept foundation:F1,
+        foundation:F10,
+        foundation:F2,
+        foundation:F3,
+        foundation:F4,
+        foundation:F5,
+        foundation:F6,
+        foundation:F7,
+        foundation:F8,
+        foundation:F9 ;
+    skos:prefLabel "Sendai DRR Frame Cluster Scheme"@en .
+
+foundation:QualitativeAssessmentLevelValue a owl:Class ;
+    rdfs:comment "A qualitative assessment level value."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Qualitative Assessment Level Value"@en .
+
+skos:Concept a owl:Class .
+
+foundation:FrameCluster a owl:Class ;
+    rdfs:comment "A FrameCluster is a dul:Description that groups semantically related Sendai DRR concepts into a named conceptual frame. Each cluster corresponds to a coherent domain of the Sendai Framework — hazards, risk, disaster, exposure, capacity, governance, response, risk reduction instruments, underlying drivers, and impacts. Membership is expressed via ecmocore:frameCluster (subPropertyOf dul:isDescribedBy). FrameCluster individuals are punned as both class individuals and named frame types."@en ;
+    rdfs:subClassOf dul:Description ;
+    skos:prefLabel "Frame Cluster"@en .
+
+
+# =============================================================================
+# v2.3 CP-FND-03 — inverse of foundation:hasQualitativeAssessment.
+# =============================================================================
+foundation:isQualitativeAssessmentOf a owl:ObjectProperty ;
+    rdfs:comment "Inverse of foundation:hasQualitativeAssessment. Points from an assessment to the entity it assesses."@en ;
+    rdfs:domain foundation:QualitativeAssessment ;
+    rdfs:range dul:Entity ;
+    owl:inverseOf foundation:hasQualitativeAssessment ;
+    skos:prefLabel "is qualitative assessment of"@en .

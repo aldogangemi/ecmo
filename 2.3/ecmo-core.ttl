@@ -1,0 +1,45 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.europa.eu/h8v/ecmo/core> a owl:Ontology ;
+    dcterms:creator "Designed by the JRC Team; bootstrapped from knowledge extraction from UNDRR Sendai Framework Terminology" ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:modified "2026-04-07"^^xsd:date ;
+    dcterms:source <https://www.undrr.org/drr-glossary/terminology> ;
+    rdfs:comment "OWL2 ontology bootstrapped by formalising the 38 terms of the Sendai Framework Terminology on Disaster Risk Reduction (UNDRR 2017), organised into 10 conceptual frames with OWL2 punning, existential restrictions, DUL alignment, and multilingual labels."@en ;
+                              owl:imports <http://data.europa.eu/h8v/ecmo/public-health> ,
+                                          <http://data.europa.eu/h8v/ecmo/hera> ,
+                                          <http://data.europa.eu/h8v/ecmo/bio> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/capacity> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/disaster> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/drivers> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/expvuln> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/foundation> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/governance> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/impact> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/instruments> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/response> ,
+                                          <http://data.europa.eu/h8v/ecmo/core/risk> ;
+    owl:versionIRI ecmocore:2.2 ;
+    owl:versionInfo "2.2" ;
+    skos:editorialNote "Further work, if needed — Complete domain and range restriction, and named inverses, of object properties."@en,
+        "Modelling convention — Description vs Situation: dul:Description is applied only to anchor classes (ecmocore:Hazard, ecmocore:Risk, and selected governance/policy frames). Their subclasses carry the extensional DUL typing (dul:ContextualDisposition, dul:Situation, dul:Event) for instance-level inference. The intensional/frame-level hierarchy among hazard types and risk subtypes is expressed through fschema:subsumedUnder (a transitive property from the Framester schema), which is kept separate from rdfs:subClassOf to preserve the OWL2 punning wall and prevent unintended metaclass conflation."@en,
+        "This module adds no classes, properties or individuals of its own. It serves purely as a single entry point that, via OWL import closure, assembles the complete ECMO-CORE v1.8 knowledge graph from its modular components. It preserves the original ontology IRI <http://data.europa.eu/h8v/ecmo/core> and versionIRI so that existing references to the monolithic ontology continue to resolve."@en,
+        "v1.5 changes: (1) added missing skos:prefLabel and rdfs:comment for Housing, Infrastructure, ProductionCapacity, Competence, Population, EarlyWarningSystem; (2) introduced the Intervention frame (ecmocore:Intervention class and properties: involvesIntervention, involvesMeasureType, involvesCapacity) from the Luigi Schema proposal; (3) added inter-cluster linking properties to reduce orphan classes (hasEnvironmentalImpact, hasHumanImpact, involvesEmergencyService, etc.)."@en,
+        "v1.6 changes: resolved 9 'consider reification' editorial notes on datatype properties (hasIntensity, hasMagnitude, hasSeverityLevel, hasCaseFatalityRate, hasIncubationPeriod, hasInfectiousness, hasToxicity, hasTransmissibility, exceedsCapacityOf). Introduced shared observation infrastructure (QuantitativeScale, ObservationSource, shared datatype/object properties), three HazardousEvent observation classes (IntensityObservation, MagnitudeObservation, SeverityAssessment), five PathogenCharacteristic subclasses for BiologicalHazard, and CapacityExceedanceAssessment. Original datatype properties retained as shortcuts."@en,
+        "v1.7 changes: (1) introduced ph: and bio: namespace classes for the Pathogen, Disease and Transmission frames (Pathogen, DiseaseOrSyndrome, InfectiousDiseaseOrPathogen, InfectiousDiseaseOrSyndrome, DiseaseVector, Toxin, Pest, RouteOfTransmission, HealthCondition, DiseaseOutcome, SignOrSymptom, SusceptibleHost + bio:Organism, bio:BiologicalEntity, bio:Animal) connected to ecmocore:BiologicalHazard; (2) renamed PathogenCharacteristic subclasses by dropping 'Observation' suffix; (3) introduced PathogenRiskAssessment as intermediate subclass of PathogenCharacteristic, with all former subclasses now under it; (4) Hazard subtypes, DisasterRisk subtypes, and Disaster classification types: removed rdfs:subClassOf from parent anchor classes, retaining fschema:subsumedUnder as the sole taxonomic mechanism at the Description/individual level (D&S pattern: classes remain as Situation types, punned individuals are typed as instances of the anchor class and related via subsumedUnder — avoids conflation of Description and Situation boundaries); (5) added isTaskOf property linking DRM phases to DisasterRiskManagementPlan via restrictions, with D&S editorial notes."@en,
+        "v1.8 changes: Fixed the intricate issue with types of hazards and their situational counterparts by treating subtypes as subclasses, but preventing by best practice to introduce further subclasses."@en,
+        "v1.9 changes: Created a Hub&Spoke network architecture for ECMO-CORE. Eliminated redundancy of DRR phase classes, using D&S and Task to simplify the schema."@en,
+        "v2.0 changes: (1) Fixed multilingual labels for Event subclasses. (2) Disaster redefined as HazardousEvent with very high impact intensity (owl:equivalentClass). (3) Added Impact class with hasImpactIntensity, ImpactIntensityLevel. (4) Imported HIP hazard types: ChemicalHazard, NuclearHazard, RadiologicalHazard + corresponding Events. (5) Added fschema:subsumedUnder design recommendation with worked examples. (6) Added bio:TaxonomicRank, bio:hasRank, bio:BiologicalEntityType. (7) Added ExposedElementType taxonomy (InfrastructureType, ServiceType, PopulationGroupType, EnvironmentalAssetType, EconomicAssetType). (8) Revised Exposure with multi-source IPCC/UNDRR definitions. (9) Expanded hasCausativeAgent range to include Toxin, Pest, ChemicalHazard, EnvironmentalHazard. (10) Integrated QualitativeAssessment framework and HERA risk prioritisation module. (11) Added Risk and RiskDriver as equivalents to DisasterRisk and UnderlyingDisasterRiskDriver. (12) Integrated 104 HIPS hazard individuals (Hydrometeorological + Technological) with owl:sameAs links and fschema:subsumedUnder hierarchy. (13) Added ExtraterrestrialHazard and SocietalHazard types + Events. (14) Added MeasureType and CapacityType for intervention classification. (15) Added ExposedElement object-level classes (CriticalInfrastructureOrService, EnergyInfrastructure, etc.) and involvesExposedElementOrType/affects properties. (16) Added ImpactType + hasImpactType/hasReportedImpactType/hasEstimatedImpactType. (17) Fixed namespaces."@en,
+        "v2.1 changes: (1) Added inverse object properties. (2) Introduced spec:specializes as a more intuitive property for the fschema:subsumedUnder recommendation. (3) Changed namespaces. (4) Split public-health and bio modules. (5) Added scale values in the HERA module, using the discrete scale design pattern."@en ,
+        "v2.2 changes: (1) Changes IRIs for individual ecmo-core elements. (2) Removed duplicated elements and axioms previously harmless due to unique namespace, now removed. (3) Fixed minor issues."@en ;
+    skos:prefLabel "ECMO-CORE Ontology, designed on top of knowledge extraction from Sendai Framework Terminology on Disaster Risk Reduction"@en .
+
+dcterms:modified a owl:AnnotationProperty .
+

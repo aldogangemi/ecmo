@@ -1,0 +1,322 @@
+@prefix bio:         <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix capacity:    <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix drivers:     <http://data.europa.eu/h8v/ecmo/core/drivers/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix time:        <http://www.w3.org/2006/time#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO Property Alignments to DUL/d0 — proposal v0.1
+#
+# This file groups ECMO
+# object properties by their intended DUL super-property, following his hints:
+#
+#  - when eventualities or situations are involved: dul:sameSettingAs
+#  - when there are pure events involved:           dul:coparticipatesWith
+#  - other frequent alignments:                     dul:hasParticipant, dul:hasPart
+#
+# I add four more super-properties that emerge from the ECMO relation
+# neighbourhood:
+#
+#  - dul:hasComponent          (Description-side conceptual mereology)
+#  - dul:satisfies             (Situation → Description, D&S linkage)
+#  - dul:isClassifiedBy        (any → Concept, classification)
+#  - dul:isAbout               (InformationObject → Entity, aboutness)
+#  - dul:hasLocation           (Place attachment)
+#
+# Nine super-properties total. Each ECMO property below sits under one
+# (occasionally more) of them.
+#
+#
+# NOTHING IN THIS FILE OVERRIDES v2.2 — every triple below is an additive
+# rdfs:subPropertyOf. Existing usage remains valid; the alignments give
+# reasoners a route to DUL-level entailments.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/property-alignments> a owl:Ontology ;
+    dcterms:issued "2026-06-08"^^xsd:date ;
+    rdfs:comment "Proposed DUL/d0 property alignments for ECMO 2.2. Additive rdfs:subPropertyOf only; no domain/range changes."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core> ;
+    owl:versionInfo "0.1-proposal" ;
+    skos:prefLabel "ECMO → DUL property alignments (proposal)"@en .
+
+# =============================================================================
+# Group A — dul:sameSettingAs
+# Symmetric. "Two eventualities that share a spatiotemporal / causal setting."
+# ECMO's asymmetric relations sit UNDER this when the two endpoints jointly
+# constitute the same setting (a disaster event and its impacts share the
+# setting of the disaster).
+# Sub-propertying an asymmetric property under a symmetric super-property is
+# safe: the sub-property remains asymmetric; only the super-property gets
+# entailed (in both directions, correctly).
+# =============================================================================
+
+hazard:hasImpact              rdfs:subPropertyOf dul:sameSettingAs .
+    # A HazardousEvent and its Impact share the disaster setting.
+
+disaster:causesDamage         rdfs:subPropertyOf dul:sameSettingAs .
+disaster:causesEconomicLoss   rdfs:subPropertyOf dul:sameSettingAs .
+disaster:hasHumanImpact       rdfs:subPropertyOf dul:sameSettingAs .
+disaster:hasEnvironmentalImpact rdfs:subPropertyOf dul:sameSettingAs .
+    # All four are Event → Impact/Loss/Damage; endpoints share the disaster setting.
+
+disaster:hasVulnerabilityContext rdfs:subPropertyOf dul:sameSettingAs .
+    # Disaster Situation and Vulnerability Situation share the disaster context.
+
+# =============================================================================
+# Group B — dul:coparticipatesWith
+# Symmetric. "Two events involving a shared participant, potentially at
+# different points." ECMO's causal chains between events sit here — trigger
+# and triggered share at least the affected population/asset as participant.
+# =============================================================================
+
+hazard:triggers               rdfs:subPropertyOf dul:coparticipatesWith .
+disaster:isTriggeredBy        rdfs:subPropertyOf dul:coparticipatesWith .
+    # Trigger and triggered share participants (place, population, sometimes agents).
+
+hazard:hasCascadingEffect     rdfs:subPropertyOf dul:coparticipatesWith .
+    # Same reasoning as triggers.
+
+# =============================================================================
+# Group C — dul:hasParticipant / dul:isParticipantIn
+# The Event/Situation → Object relations for "who/what is involved". Not
+# symmetric; direction preserved.
+# =============================================================================
+
+expvuln:exposesElement        rdfs:subPropertyOf dul:hasParticipant .
+    # Exposure Situation has the ExposedElement as its participant.
+
+hazard:affectsPopulation      rdfs:subPropertyOf dul:hasParticipant .
+    # A HazardousEvent has the AffectedPopulation as its participant.
+
+response:involvesEmergencyService rdfs:subPropertyOf dul:hasParticipant .
+    # Response Action has the EmergencyService as its participant.
+
+response:involvesCapacity     rdfs:subPropertyOf dul:hasParticipant .
+    # An Intervention takes the (Coping) Capacity as a participant it needs.
+
+response:requiresCapacity     rdfs:subPropertyOf dul:hasParticipant .
+    # An Intervention requires a Capacity as a participant.
+
+governance:involvesStakeholder rdfs:subPropertyOf dul:hasParticipant .
+governance:involvesCivilSociety rdfs:subPropertyOf dul:hasParticipant .
+governance:involvesCommunity   rdfs:subPropertyOf dul:hasParticipant .
+governance:involvesSector      rdfs:subPropertyOf dul:hasParticipant .
+    # Governance situations have stakeholders/civil society/community/sector as participants.
+
+# =============================================================================
+# Group D — dul:hasPart (Object-side mereology)
+# Physical / social parthood: the ECMO 'includes*' properties on the STOCK
+# branch of Capacity, and on the Instrument compositional structures.
+# =============================================================================
+
+capacity:includesResource      rdfs:subPropertyOf dul:hasPart .
+capacity:includesInstitution   rdfs:subPropertyOf dul:hasPart .
+capacity:includesKnowledge     rdfs:subPropertyOf dul:hasPart .
+    # StockCapacity has these as physical/social/informational parts.
+
+instruments:hasEWSComponent    rdfs:subPropertyOf dul:hasPart .
+    # An EWS has its four component sub-systems as parts.
+
+# =============================================================================
+# Group E — dul:hasComponent (Description-side conceptual mereology)
+# The 'four determinants' family — Risk description has Hazard/Exposure/
+# Vulnerability/Capacity as CONCEPTUAL components (frame roles), not physical
+# parts. hasComponent (in DUL) sits under hasPart but is intensional.
+# =============================================================================
+
+risk:hasHazardDeterminant       rdfs:subPropertyOf dul:hasComponent .
+risk:hasExposureDeterminant     rdfs:subPropertyOf dul:hasComponent .
+risk:hasVulnerabilityDeterminant rdfs:subPropertyOf dul:hasComponent .
+risk:hasCapacityDeterminant     rdfs:subPropertyOf dul:hasComponent .
+    # Risk description is compositionally made up of these four determinant roles.
+
+foundation:includesEvent        rdfs:subPropertyOf dul:hasComponent .
+    # Already subPropertyOf dul:includesEvent per ECMO 2.2; this extends it to hasComponent
+    # so that the MultiHazardContext / Compound-event pattern inherits mereology.
+
+# =============================================================================
+# Group F — dul:satisfies (Situation → Description; D&S linkage)
+# The canonical D&S move: a Situation satisfies the Description that frames it.
+# ECMO already has these correctly under dul:satisfies in v2.2; listed here for
+# completeness of the alignment ledger.
+# =============================================================================
+
+hazard:isManifestationOf       rdfs:subPropertyOf dul:satisfies .
+    # Already declared in ECMO 2.2; kept for the ledger.
+disaster:realizesRisk          rdfs:subPropertyOf dul:satisfies .
+    # Already declared in ECMO 2.2.
+risk:materializesAs            rdfs:subPropertyOf dul:isSatisfiedBy .
+    # Already declared in ECMO 2.2 as sub of both isSatisfiedBy and isQualityOf.
+
+# =============================================================================
+# Group G — dul:isClassifiedBy (Entity → Concept)
+# The "classified by a type" family: hazard category, disaster onset/scale/
+# frequency, impact type, vulnerability dimension.
+# =============================================================================
+
+hazard:hasHazardCategory       rdfs:subPropertyOf dul:isClassifiedBy .
+disaster:hasOnsetType          rdfs:subPropertyOf dul:isClassifiedBy .
+disaster:hasScaleType          rdfs:subPropertyOf dul:isClassifiedBy .
+disaster:hasFrequencyType      rdfs:subPropertyOf dul:isClassifiedBy .
+disaster:hasAffectednessType   rdfs:subPropertyOf dul:isClassifiedBy .
+impact:hasImpactType           rdfs:subPropertyOf dul:isClassifiedBy .
+impact:hasImpactIntensity      rdfs:subPropertyOf dul:isClassifiedBy .
+expvuln:hasVulnerabilityDimension rdfs:subPropertyOf dul:isClassifiedBy .
+expvuln:hasAssetDomain         rdfs:subPropertyOf dul:isClassifiedBy .
+expvuln:hasInfrastructureSector rdfs:subPropertyOf dul:isClassifiedBy .
+response:involvesMeasureType   rdfs:subPropertyOf dul:isClassifiedBy .
+    # All are Entity → Concept classifications.
+
+# =============================================================================
+# Group H — dul:isAbout (InformationObject → Entity)
+# The RiskAssessment / assessment-report / analysis family. These reify
+# knowledge-about-something.
+# =============================================================================
+
+governance:analysesHazard         rdfs:subPropertyOf dul:isAbout .
+governance:evaluatesExposure      rdfs:subPropertyOf dul:isAbout .
+governance:evaluatesVulnerability rdfs:subPropertyOf dul:isAbout .
+governance:evaluatesCopingCapacity rdfs:subPropertyOf dul:isAbout .
+    # A RiskAssessment (Description/InformationObject) is *about* each of these.
+
+foundation:isReportFor           rdfs:subPropertyOf dul:isAbout .
+    # RiskAssessmentReport is about the HazardousEvent it covers.
+
+foundation:recommendsMeasure     rdfs:subPropertyOf dul:isAbout .
+    # A report is about the measures it recommends (weaker reading; open to revision).
+
+foundation:hasQualitativeAssessment rdfs:subPropertyOf dul:isAbout .
+    # An Entity has an assessment that is about it — the reverse could equally hold.
+
+# =============================================================================
+# Group I — dul:hasLocation, dul:hasTimeInterval (spatiotemporal attachment)
+# DUL provides both. ECMO already has foundation:hasLocation that could be
+# a subProperty of dul:hasLocation directly; not sure v2.2 declares that.
+# =============================================================================
+
+foundation:hasLocation           rdfs:subPropertyOf dul:hasLocation .
+    # DUL provides dul:hasLocation; use it directly.
+
+# AG correction (Q-PA-1): temporal properties use DUL's own bindings.
+# dul:hasTimeInterval connects to intervals as entities (Regions).
+# dul:hasIntervalDate connects intervals to xsd:dateTime.
+
+disaster:hasTemporalExtent       rdfs:subPropertyOf dul:hasTimeInterval .
+    # HazardousEvent → TimeInterval entity.
+foundation:hasTemporalValidity   rdfs:subPropertyOf dul:hasTimeInterval .
+    # Situation (assessment / classification / signal) → TimeInterval entity.
+
+# For datatype properties that carry xsd:dateTime directly on a TimeInterval,
+# use dul:hasIntervalDate. ECMO 2.2 does not currently have any such property
+# on TimeInterval instances directly (it uses time:inXSDDate via OWL-Time),
+# so no direct alignment triples added here. If future ECMO stubs introduce
+# an ECMO-native dateTime binding on intervals, it should be:
+#     :hasIntervalDateTime rdfs:subPropertyOf dul:hasIntervalDate .
+
+# =============================================================================
+# Group J — COREF pattern → PROV + DUL
+# Most are already declared correctly in coref-pattern.ttl. Listing for the
+# ledger.
+# =============================================================================
+
+coref:concernsOccurrence         rdfs:subPropertyOf prov:specializationOf .
+    # Already in COREF pattern v0.1.
+
+coref:sameOccurrenceAs           rdfs:subPropertyOf prov:alternateOf .
+    # Already in COREF pattern v0.1.
+
+coref:supersededBy               rdfs:subPropertyOf prov:wasInvalidatedBy .
+    # Already in COREF pattern v0.1.
+
+# NEW proposal: coref:concernsOccurrence could also be a fschema:frameFor
+# projection — the local situation is a frame-occurrence of the Occurrence
+# frame.
+# coref:concernsOccurrence rdfs:subPropertyOf fschema:frameFor .
+
+# =============================================================================
+# Group K — foundation:isComplementaryTo (symmetric)
+# Symmetric ECMO relation between Capacity's Ability branch and Vulnerability.
+# AG: dul:coparticipatesWith as a natural home for such pairs, but
+# isComplementaryTo is stronger than mere coparticipation — it's the
+# DRR "capacity offsets vulnerability" balance. Two options:
+#
+#  Option i:  isComplementaryTo rdfs:subPropertyOf dul:coparticipatesWith .
+#  Option ii: keep isComplementaryTo unaligned to DUL; document the
+#             semantics narratively. This is the safer default.
+#
+# Left unaligned in this file.
+# =============================================================================
+
+# =============================================================================
+# Group L — Framester binding on the coref: pattern
+# When (c) proceeds, the coref:HazardClassificationSituation → coref:Occurrence
+# link is a natural fschema:frameFor. Not asserting here — will land in the
+# frame-model TTL once the frame model is validated.
+# =============================================================================
+
+# =============================================================================
+# Notes for revision pass
+#
+#  - Groups A/B/C/D/E/F/G/H are the load-bearing sections; corrections here
+#    ripple through the audits.
+#  - Group I (hasTemporalExtent / hasTemporalValidity) uses dul:hasSetting as
+#    a hedge because DUL doesn't provide a direct object-property for
+#    "has time interval". Alternatives: leave unaligned, or introduce
+#    a foundation-level dul:hasTimeInterval stub.
+#  - Group K (isComplementaryTo) is unaligned intentionally — DRR's
+#    complementarity is stronger than DUL coparticipation and I'd rather
+#    ask than assume.
+#  - I did NOT propose subPropertyOf into dul:hasQuality. Several candidates
+#    (foundation:hasLevel, expvuln:hasVulnerabilityDimension when viewed as
+#    the value of a Quality) could go there, but the Q/Value axis in ECMO
+#    is already carried by the QualitativeAssessment scale-value pattern
+#    which is Framester-style. Keeping this section OUT rather than proposing
+#    tentative alignments.
+# =============================================================================
+
+# =============================================================================
+# v2.3 CP-CORE-27..33 — Causal-aboutness alignments.
+# Distinct semantic reading from Group H (assessments/reports) so under the
+# DUL's sameSettingAs for now. CP-CORE-27 and CP-CORE-31 use dul:hasParticipant
+# (they're participation-in-a-situation relations, not aboutness).
+# =============================================================================
+
+impact:affects                    rdfs:subPropertyOf dul:hasParticipant .
+    # CP-CORE-27: Impact Situation has the affected element as participant.
+expvuln:isExposedTo               rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-28: Exposure Situation is in the sameSettingAs the Hazard type it faces.
+expvuln:increasesSusceptibilityTo rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-29: Vulnerability Situation is in the sameSettingAs the Hazard it worsens exposure to.
+response:lessensImpactOf          rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-30: Response is in the sameSettingAs the Hazard it lessens.
+response:meetsNeedsOf             rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-31: Response has the affected population as participant.
+instruments:reducesImpactOf       rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-32: Measure is in the sameSettingAs the Hazard it reduces.
+instruments:forecastsEvent        rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-33: Warning is in the sameSettingAs the HazardousEvent it forecasts.
+
+
+# =============================================================================
+# v2.3 task (d) — CP-PH-02: align ph:producesToxin
+# =============================================================================
+ph:producesToxin rdfs:subPropertyOf dul:sameSettingAs .
+    # Pathogen and its produced Toxin share the biological setting where production occurs.

@@ -1,0 +1,496 @@
+@prefix capacity:    <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix hera:        <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix mp:          <http://data.europa.eu/h8v/ecmo/main-pattern/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix time:        <http://www.w3.org/2006/time#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# Agency vocabularies (placeholders; real definitions live in the alignment module).
+@prefix ews:    <http://example.org/agency/ews/> .
+@prefix argus:  <http://example.org/agency/argus/> .
+@prefix ecrc:   <http://example.org/agency/ecrc/> .
+@prefix athina: <http://example.org/agency/athina/> .
+@prefix ipcr:   <http://example.org/agency/ipcr/> .
+@prefix ecmp:   <http://example.org/agency/ecmp/> .
+@prefix agency: <http://example.org/agency/> .
+
+# Case data namespace.
+@prefix :       <http://data.europa.eu/h8v/ecmo/examples/hondius/> .
+
+# =============================================================================
+# Worked example: Andes hantavirus outbreak aboard MV Hondius (May 2026)
+#
+# Full ABox illustrating how the ECMO-CORE Main Pattern + the Data-Level
+# Coreference Pattern fit together for one realistic event. The case touches
+# all twelve anchor classes of the CORE pattern plus the COREF Occurrence
+# anchor, the classification chain, agency-local situations, HERA pathogen
+# prioritisation, RiskAssessment, Intervention, and an EarlyWarningSystem.
+#
+# Clinical background (for grounding only — not modelled here):
+#   - Andes orthohantavirus causes Hantavirus Pulmonary Syndrome (HPS),
+#     CFR ~30-40%.
+#   - Andes is the one hantavirus with documented person-to-person
+#     transmission, which makes a cruise-ship outbreak materially worse
+#     than the typical rodent-excreta exposure.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/examples/hondius> a owl:Ontology ;
+    dcterms:issued "2026-06-03"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "ABox for the MV Hondius Hantavirus outbreak fixture: end-to-end illustration of the ECMO main pattern + COREF pattern."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
+                <http://data.europa.eu/h8v/ecmo/coref> ,
+                <http://data.europa.eu/h8v/ecmo/main-pattern> ;
+    owl:versionInfo "0.1" ;
+    skos:prefLabel "MV Hondius Hantavirus Outbreak — Worked Case"@en .
+
+# -----------------------------------------------------------------------------
+# Place and agencies
+# -----------------------------------------------------------------------------
+
+:MV_Hondius a dul:Object ;
+    skos:prefLabel "MV Hondius"@en ;
+    rdfs:comment "Netherlands-flagged passenger cruise vessel, ~310 souls on board, on a South-Atlantic itinerary terminating at Cape Verde."@en .
+
+:SouthAtlanticItinerary a dul:Place ;
+    skos:prefLabel "South Atlantic cruise itinerary ending at Cape Verde"@en .
+
+agency:EWS    a prov:Organization ; skos:prefLabel "ECDC Early Warning and Response System"@en .
+agency:ARGUS  a prov:Organization ; skos:prefLabel "EU Commission ARGUS"@en .
+agency:ECRC   a prov:Organization ; skos:prefLabel "Emergency Response Coordination Centre (ECHO)"@en .
+agency:ATHINA a prov:Organization ; skos:prefLabel "ATHINA platform"@en .
+agency:IPCR   a prov:Organization ; skos:prefLabel "Integrated Political Crisis Response (Council)"@en .
+agency:ECMP   a prov:Organization ; skos:prefLabel "ECMP platform"@en .
+agency:ECDC   a prov:Organization ; skos:prefLabel "European Centre for Disease Prevention and Control"@en .
+agency:HERA   a prov:Organization ; skos:prefLabel "EU Health Emergency Preparedness and Response Authority"@en .
+
+# -----------------------------------------------------------------------------
+# Occurrence anchor — the world-event referent
+# -----------------------------------------------------------------------------
+
+:HondiusOutbreak a coref:Occurrence ;
+    skos:prefLabel "Hantavirus outbreak aboard MV Hondius (May 2026)"@en ;
+    rdfs:comment "Minimal-commitment anchor: location and opening date agreed across all reporting agencies. No hazard typing, no severity, no impact at this node — all such claims live on linked Situations and are attributed."@en ;
+    foundation:hasLocation :SouthAtlanticItinerary ;
+    disaster:hasTemporalExtent [
+        a time:Interval ;
+        time:hasBeginning [ a time:Instant ; time:inXSDDate "2026-05-02"^^xsd:date ]
+    ] .
+
+# -----------------------------------------------------------------------------
+# Hazard frame (CORE pattern)
+# -----------------------------------------------------------------------------
+
+:CruiseShipHantavirusEvent a hazard:HazardousEvent ;
+    skos:prefLabel "Cruise-ship hantavirus outbreak event (manifestation)"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    hazard:isManifestationOf hazard:BiologicalHazard ;
+    foundation:hasLocation :SouthAtlanticItinerary ;
+    disaster:hasTemporalExtent [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ]
+    ] ;
+    hazard:hasCausativeAgent ph:AndesOrthohantavirus ;
+    foundation:hasJustification "Hazardous event manifesting the BiologicalHazard typing; final causative agent set after PCR confirmation on 08 May (per Cls_t2_andesvirus). Earlier classifications remain in the graph via the refinedBy chain on the Occurrence."@en .
+
+# -----------------------------------------------------------------------------
+# Reified hazard classification chain (COREF)
+# -----------------------------------------------------------------------------
+
+:UnknownBiologicalAgent a hazard:BiologicalHazard, owl:NamedIndividual ;
+    skos:prefLabel "Unknown biological agent (etiology pending)"@en ;
+    rdfs:comment "Placeholder individual used when an outbreak is reported before any species-level identification is possible. Refined via fschema:subsumedUnder when identification narrows."@en .
+
+ph:Hantaviridae a hazard:BiologicalHazard, owl:NamedIndividual ;
+    skos:prefLabel "Hantaviridae"@en ;
+    fschema:subsumedUnder ph:Pathogen .
+
+ph:AndesOrthohantavirus a hazard:BiologicalHazard, ph:PathogenicVirus, owl:NamedIndividual ;
+    skos:prefLabel "Andes orthohantavirus"@en ;
+    fschema:subsumedUnder ph:Hantaviridae .
+
+:Cls_t0_unknown a coref:HazardClassificationSituation ;
+    skos:prefLabel "Hazard classification @ 02-03 May — etiology unknown"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    coref:classifiesAs :UnknownBiologicalAgent ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-05-03"^^xsd:date ]
+    ] ;
+    coref:refinedBy :Cls_t1_hantaviridae ;
+    prov:wasAttributedTo agency:EWS .
+
+:Cls_t1_hantaviridae a coref:HazardClassificationSituation ;
+    skos:prefLabel "Hazard classification @ 03-08 May — Hantaviridae (family-level)"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    coref:classifiesAs ph:Hantaviridae ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-03"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    coref:refinedBy :Cls_t2_andesvirus ;
+    prov:wasAttributedTo agency:ARGUS, agency:ECRC, agency:ECDC .
+
+:Cls_t2_andesvirus a coref:HazardClassificationSituation ;
+    skos:prefLabel "Hazard classification @ 08 May+ — Andes orthohantavirus (PCR-confirmed)"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    coref:classifiesAs ph:AndesOrthohantavirus ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    prov:wasAttributedTo agency:IPCR, agency:ECDC .
+
+# -----------------------------------------------------------------------------
+# A realistic ConflictReport: while only Hantaviridae was known (03-08 May), two
+# agencies briefly differed on the working hypothesis of which Hantavirus
+# species was likely. The conflict was on the species-level identification at
+# a moment when the official classification stayed at family level.
+# -----------------------------------------------------------------------------
+
+:Cls_t1a_argus_SinNombre a coref:HazardClassificationSituation ;
+    skos:prefLabel "Working hypothesis @ 04 May — Sin Nombre virus (ARGUS internal)"@en ;
+    rdfs:comment "ARGUS's internal working hypothesis on 04 May, never elevated to an official classification; corrected by the 08 May PCR confirmation. Recorded as a parallel Situation so the disagreement is auditable rather than erased."@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    coref:classifiesAs ph:SinNombreVirus ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-04"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    coref:correctedBy :Cls_t2_andesvirus ;
+    coref:conflictsWith :Cls_t1b_ecrc_SeoulVirus ;
+    prov:wasAttributedTo agency:ARGUS .
+
+:Cls_t1b_ecrc_SeoulVirus a coref:HazardClassificationSituation ;
+    skos:prefLabel "Working hypothesis @ 04 May — Seoul virus (ECRC internal)"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    coref:classifiesAs ph:SeoulVirus ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-04"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    coref:correctedBy :Cls_t2_andesvirus ;
+    coref:conflictsWith :Cls_t1a_argus_SinNombre ;
+    prov:wasAttributedTo agency:ECRC .
+
+ph:SinNombreVirus a ph:PathogenicVirus, owl:NamedIndividual ;
+    skos:prefLabel "Sin Nombre virus"@en ;
+    fschema:subsumedUnder ph:Hantaviridae .
+
+ph:SeoulVirus a ph:PathogenicVirus, owl:NamedIndividual ;
+    skos:prefLabel "Seoul orthohantavirus"@en ;
+    fschema:subsumedUnder ph:Hantaviridae .
+
+:ConflictReport_SpeciesHypothesis a coref:ConflictReport ;
+    skos:prefLabel "Conflict on suspected species (04 May, ARGUS vs ECRC)"@en ;
+    coref:disputedProperty coref:classifiesAs ;
+    rdfs:comment "Two simultaneous internal working hypotheses disagreed on which Hantavirus species was most likely. Both were corrected by the 08 May PCR result naming AndesOrthohantavirus. Resolved by the HubAssessment of 09 May."@en .
+
+:Cls_t1a_argus_SinNombre coref:hasConflictReport :ConflictReport_SpeciesHypothesis .
+:Cls_t1b_ecrc_SeoulVirus coref:hasConflictReport :ConflictReport_SpeciesHypothesis .
+
+# -----------------------------------------------------------------------------
+# Per-agency local Situations (typed via alignment module to ECMO foundation)
+# -----------------------------------------------------------------------------
+
+:s_ews_n1 a ews:Notification, foundation:Signal ;
+    skos:prefLabel "EWS notification of unknown outbreak — 02 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ]
+    ] ;
+    foundation:isSignalFrom agency:EWS ;
+    foundation:hasConfidenceScore 0.4 ;
+    foundation:pertainsToEvent :CruiseShipHantavirusEvent .
+
+:s_ecmp_sig1 a ecmp:Signal, foundation:Signal ;
+    skos:prefLabel "ECMP signal — 02 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ECMP .
+
+:s_argus_p1 a argus:Phase1_Event, foundation:Signal ;
+    skos:prefLabel "ARGUS Phase 1 event activation — 06 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ARGUS .
+
+:s_ecrc_act a ecrc:UCPM_Activation, governance:EmergencyManagement ;
+    skos:prefLabel "ECRC / UCPM activation — 06 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ] ;
+    prov:wasAttributedTo agency:ECRC .
+
+:s_athina_sig a athina:Signal, foundation:Signal ;
+    skos:prefLabel "ATHINA signal — 06 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ATHINA .
+
+:s_ipcr_ism a ipcr:InfoSharingMode_Event, governance:EmergencyManagement ;
+    skos:prefLabel "IPCR information-sharing-mode activation — 08 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ] ] ;
+    prov:wasAttributedTo agency:IPCR .
+
+:s_ews_n2 a ews:Notification, foundation:Signal ;
+    skos:prefLabel "EWS revised notification — 13 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    foundation:hasTemporalValidity [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-13"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:EWS ;
+    coref:supersedes :s_ews_n1 .
+
+# A validation chain: ARGUS Phase 1 was treated by ECDC as a validating event for the early signal.
+:Validation_ECDC_06May a foundation:EventValidation ;
+    skos:prefLabel "ECDC validation of the early signal — 06 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    foundation:validatesSignal :s_ews_n1 ;
+    foundation:confirmsEvent :CruiseShipHantavirusEvent ;
+    prov:wasAttributedTo agency:ECDC .
+
+# -----------------------------------------------------------------------------
+# Public-health frame: pathogen + disease + HERA prioritisation
+# -----------------------------------------------------------------------------
+
+ph:AndesOrthohantavirus
+    ph:hasCaseFatalityRateValue 0.35 ;
+    hera:hasPathogenicity :Patho_Andes ;
+    hera:hasTransmissibilityAssessment :Trans_Andes ;
+    hera:hasPHEICPotential :PHEIC_Andes ;
+    hera:hasEUCrossBorderThreatPotential :CB_Andes ;
+    hera:hasPopulationImmunity :Imm_Andes ;
+    hera:hasAvailabilityOfTherapeutics :Ther_Andes ;
+    hera:hasAvailabilityOfVaccines :Vac_Andes ;
+    hera:hasPriority :Prio_Andes .
+
+:Patho_Andes a hera:Pathogenicity ;
+    foundation:hasLevel hera:High_Pathogenicity ;
+    foundation:hasJustification "Case-fatality ratio ~30-40% for HPS makes Andes a high-pathogenicity assessment."@en .
+
+:Trans_Andes a hera:Transmissibility ;
+    foundation:hasLevel hera:High_Transmissibility ;
+    foundation:hasJustification "Documented person-to-person transmission, unique among hantaviruses, and closed-quarters cruise-ship setting."@en .
+
+:PHEIC_Andes a hera:PHEICPotential ;
+    foundation:hasLevel hera:High_PHEICPotential .
+
+:CB_Andes a hera:EUCrossBorderThreatPotential ;
+    foundation:hasLevel hera:VeryHigh_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "Cruise vessel terminating at Cape Verde with international itinerary; potential repatriation routes across multiple EU MS."@en .
+
+:Imm_Andes a hera:PopulationImmunity ;
+    foundation:hasLevel hera:Low_PopulationImmunity .
+
+:Ther_Andes a hera:AvailabilityOfTherapeutics ;
+    foundation:hasLevel hera:NotAvailable_Therapeutics .
+
+:Vac_Andes a hera:AvailabilityOfVaccines ;
+    foundation:hasLevel hera:NotAvailable_Vaccines .
+
+:Prio_Andes a hera:PathogenPrioritisation ;
+    foundation:hasLevel hera:VeryHigh_Priority ;
+    foundation:hasJustification "High pathogenicity AND high transmissibility AND no MCM AND high cross-border threat = top priority cluster."@en .
+
+:HantavirusPulmonarySyndrome a ph:InfectiousDiseaseOrSyndrome ;
+    skos:prefLabel "Hantavirus Pulmonary Syndrome (HPS)"@en ;
+    ph:hasCausativeAgent ph:AndesOrthohantavirus ;
+    ph:hasRouteOfTransmission ph:RespiratoryDroplet_Route, ph:RodentExcretaContact_Route ;
+    ph:hasSignOrSymptom :Fever, :Myalgia, :PulmonaryEdema .
+
+ph:RespiratoryDroplet_Route a ph:RouteOfTransmission ; skos:prefLabel "Respiratory droplet"@en .
+ph:RodentExcretaContact_Route a ph:RouteOfTransmission ; skos:prefLabel "Contact with rodent excreta"@en .
+:Fever a ph:SignOrSymptom ; skos:prefLabel "Fever"@en .
+:Myalgia a ph:SignOrSymptom ; skos:prefLabel "Myalgia"@en .
+:PulmonaryEdema a ph:SignOrSymptom ; skos:prefLabel "Non-cardiogenic pulmonary oedema"@en .
+
+# -----------------------------------------------------------------------------
+# Exposure / ExposedElement
+# -----------------------------------------------------------------------------
+
+:MV_Hondius_PaxAndCrew a expvuln:ExposedElement ;
+    skos:prefLabel "Passengers and crew aboard MV Hondius"@en ;
+    rdfs:comment "Approx. 310 souls — ~270 passengers + ~40 crew (illustrative figures)."@en .
+
+:HondiusExposure a expvuln:Exposure ;
+    skos:prefLabel "Exposure of MV Hondius passengers and crew to Andes hantavirus"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    expvuln:exposesElement :MV_Hondius_PaxAndCrew ;
+    expvuln:isExposedTo hazard:BiologicalHazard ;
+    expvuln:hasExposedPopulationCount 310 ;
+    foundation:hasLocation :SouthAtlanticItinerary .
+
+# -----------------------------------------------------------------------------
+# Vulnerability — closed-quarters maritime + droplet transmission
+# -----------------------------------------------------------------------------
+
+:HondiusVulnerability a expvuln:Vulnerability ;
+    skos:prefLabel "Cruise-ship vulnerability to droplet-transmissible pathogen"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    expvuln:hasVulnerabilityDimension expvuln:Social ;
+    expvuln:increasesSusceptibilityTo hazard:BiologicalHazard ;
+    foundation:hasQualitativeAssessment :VulnAssess_Hondius_high .
+
+:VulnAssess_Hondius_high a foundation:QualitativeAssessment ;
+    foundation:hasJustification "Confined accommodation, shared ventilation, mid-cruise (no port returns until Cape Verde); person-to-person transmission documented for Andes specifically."@en .
+
+# -----------------------------------------------------------------------------
+# Capacity — DRR capacity available to the EU emergency network
+# -----------------------------------------------------------------------------
+
+:EU_DRR_Capacity a capacity:Capacity ;
+    skos:prefLabel "EU DRR capacity activated for the MV Hondius outbreak"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    capacity:includesInstitution agency:ECRC, agency:ECDC, agency:HERA ;
+    capacity:includesKnowledge :HantavirusClinicalKnowledge ;
+    capacity:includesResource :EU_MaritimeMedEvac, :EU_PCR_Lab_Capacity .
+
+:HantavirusClinicalKnowledge a capacity:Knowledge ; skos:prefLabel "Clinical and laboratory knowledge of Hantaviridae"@en .
+:EU_MaritimeMedEvac a capacity:Resource ; skos:prefLabel "EU maritime medical-evacuation capability"@en .
+:EU_PCR_Lab_Capacity a capacity:Resource ; skos:prefLabel "EU PCR laboratory capacity for orthohantaviruses"@en .
+
+# -----------------------------------------------------------------------------
+# Risk — relational hub (CORE pattern)
+# -----------------------------------------------------------------------------
+
+:HondiusRisk a risk:Risk ;
+    skos:prefLabel "Risk of a major Hantavirus outbreak from the MV Hondius event"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    risk:hasHazardDeterminant hazard:BiologicalHazard ;
+    risk:hasExposureDeterminant :HondiusExposure ;
+    risk:hasVulnerabilityDeterminant :HondiusVulnerability ;
+    risk:hasCapacityDeterminant :EU_DRR_Capacity ;
+    risk:materializesAs :CruiseShipHantavirusEvent .
+
+# -----------------------------------------------------------------------------
+# Risk Assessment (ECDC Rapid Risk Assessment)
+# -----------------------------------------------------------------------------
+
+:ECDC_RRA_06May a governance:RiskAssessment ;
+    skos:prefLabel "ECDC Rapid Risk Assessment — 06 May 2026"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    governance:analysesHazard hazard:BiologicalHazard ;
+    governance:evaluatesExposure :HondiusExposure ;
+    governance:evaluatesVulnerability :HondiusVulnerability ;
+    governance:evaluatesCopingCapacity :EU_DRR_Capacity ;
+    foundation:recommendsMeasure :MedicalEvacuationMeasureType, :ContactTracingMeasureType ;
+    risk:assessesRisk :HondiusRisk ;
+    prov:wasAttributedTo agency:ECDC .
+    
+:ECDC_RRA__Report_06May a foundation:RiskAssessmentReport ;
+	dul:isAbout :ECDC_RRA_06May ;
+    foundation:hasReportDate "2026-05-06"^^xsd:date ;
+    foundation:isReportFor :CruiseShipHantavirusEvent .
+
+# -----------------------------------------------------------------------------
+# Response / Intervention
+# -----------------------------------------------------------------------------
+
+:MedicalEvacuationMeasureType a response:MeasureType ; skos:prefLabel "Medical evacuation"@en .
+:ContactTracingMeasureType a response:MeasureType ; skos:prefLabel "Contact tracing"@en .
+:PortHealthScreeningMeasureType a response:MeasureType ; skos:prefLabel "Port-of-arrival health screening"@en .
+
+:UCPM_Intervention_06May a response:Intervention ;
+    skos:prefLabel "UCPM medical evacuation intervention — 06-08 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    response:involvesMeasureType :MedicalEvacuationMeasureType ;
+    response:requiresCapacity :EU_MaritimeMedEvac ;
+    response:lessensImpactOf hazard:BiologicalHazard ;
+    response:meetsNeedsOf :HondiusAffectedPopulation ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    prov:wasAttributedTo agency:ECRC .
+
+:CapeVerde_Screening_08May a response:Intervention ;
+    skos:prefLabel "Cape Verde port-of-arrival health screening — 08 May"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    response:involvesMeasureType :PortHealthScreeningMeasureType ;
+    response:meetsNeedsOf :HondiusAffectedPopulation ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    prov:wasAttributedTo agency:ECRC, agency:IPCR .
+
+:HondiusAffectedPopulation a disaster:DirectlyAffectedPopulation ;
+    skos:prefLabel "MV Hondius directly affected population"@en ;
+    coref:concernsOccurrence :HondiusOutbreak .
+
+# -----------------------------------------------------------------------------
+# Instrument: the ECDC EWS as a multi-hazard early warning system
+# -----------------------------------------------------------------------------
+
+:EWS_System a instruments:EarlyWarningSystem ;
+    skos:prefLabel "ECDC Early Warning and Response System"@en ;
+    instruments:monitorsHazard hazard:BiologicalHazard ;
+    instruments:hasWarning :EWS_Warning_02May .
+
+:EWS_Warning_02May a instruments:Warning ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    instruments:isWarningOf :CruiseShipHantavirusEvent ;
+    instruments:disseminatesWarningTo agency:ECRC, agency:ECDC, agency:HERA ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ]
+    ] .
+
+# -----------------------------------------------------------------------------
+# Impact
+# -----------------------------------------------------------------------------
+
+:HondiusHumanImpact a impact:HumanImpact ;
+    skos:prefLabel "Human impact: HPS cases among MV Hondius population"@en ;
+    coref:concernsOccurrence :HondiusOutbreak ;
+    impact:hasImpactType impact:HumanImpactType ;
+    impact:hasImpactIntensity impact:MediumImpactIntensity .
+
+:CruiseShipHantavirusEvent hazard:hasImpact :HondiusHumanImpact .
+
+# Use the proposed mp:manifestsCondition link (introduced in the main-pattern v0.1;
+# pending re-anchoring as subPropertyOf dul:hasComponent in v2.3).
+:HondiusHumanImpact mp:manifestsCondition :HantavirusPulmonarySyndrome .
+
+# -----------------------------------------------------------------------------
+# HubAssessment + MergePolicy (consolidation, 09 May)
+# -----------------------------------------------------------------------------
+
+:LatestNonCorrectedPolicy a coref:MergePolicy ;
+    skos:prefLabel "Latest non-corrected classification wins"@en ;
+    rdfs:comment "Of classifications concerning the same Occurrence with overlapping or adjacent validity, pick the one with the latest beginning and no outgoing correctedBy. Refinements are preserved; corrections invalidate their predecessors."@en .
+
+:HondiusHubAssessment_v1 a coref:HubAssessment ;
+    skos:prefLabel "Consolidated hub assessment — v1, 09 May"@en ;
+    coref:appliesMergePolicy :LatestNonCorrectedPolicy ;
+    coref:aggregatesAssessment :Cls_t2_andesvirus ;
+    coref:hasConflictReport :ConflictReport_SpeciesHypothesis ;
+    prov:wasAttributedTo agency:ECRC ;
+    prov:generatedAtTime "2026-05-09T12:00:00Z"^^xsd:dateTime .
+
+:HondiusOutbreak coref:hostsAssessment :HondiusHubAssessment_v1 .

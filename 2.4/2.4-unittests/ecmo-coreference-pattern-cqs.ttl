@@ -1,0 +1,247 @@
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix cqs:         <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.europa.eu/h8v/ecmo/phsm/cqs> a owl:Ontology ;
+    dcterms:issued "2026-07-20"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Competency Questions (Q+ and Q-) for the ECMO coreference module. Each CQ is a cqs:CompetencyQuestion with an executable cpa:hasUnitTest (SPARQL or SHACL). Prefixes phsm:, response:, expvuln:, governance:, dul:, skos:, rdfs: are assumed bound."@en ;
+    owl:versionInfo "0.1" ;
+    skos:prefLabel "ECMO PHSM CQ Catalogue v0.1"@en .
+
+
+# =============================================================================
+# SHACL shapes — safety constraints
+# =============================================================================
+
+coref:RefinementMustBeTaxonomicShape a sh:NodeShape ;
+    sh:targetSubjectsOf coref:refinedBy ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "coref:refinedBy used between classifications whose later classifiesAs target is not fschema:subsumedUnder the earlier — should be coref:correctedBy instead."@en ;
+        sh:select """
+            PREFIX coref:   <http://data.europa.eu/h8v/ecmo/coref/>
+            PREFIX fschema: <https://w3id.org/framester/schema/>
+            SELECT $this ?later ?earlierHz ?laterHz WHERE {
+                $this coref:refinedBy ?later .
+                $this coref:classifiesAs ?earlierHz .
+                ?later coref:classifiesAs ?laterHz .
+                FILTER NOT EXISTS { ?laterHz fschema:subsumedUnder* ?earlierHz . }
+            }
+        """
+    ] .
+
+coref:NoConflictingClassificationAtSameInstantShape a sh:NodeShape ;
+    sh:targetClass coref:Occurrence ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Two non-comparable classifications hold simultaneously at the same instant for this Occurrence — exactly one should be valid (the others should be supersededBy)."@en ;
+        sh:select """
+            PREFIX coref:     <http://data.europa.eu/h8v/ecmo/coref/>
+            PREFIX foundation:<http://data.europa.eu/h8v/ecmo/core/foundation/>
+            PREFIX time:      <http://www.w3.org/2006/time#>
+            SELECT $this ?c1 ?c2 WHERE {
+                ?c1 a coref:HazardClassificationSituation ; coref:concernsOccurrence $this .
+                ?c2 a coref:HazardClassificationSituation ; coref:concernsOccurrence $this .
+                FILTER (STR(?c1) < STR(?c2))
+                FILTER NOT EXISTS { ?c1 coref:supersededBy+ ?c2 . }
+                FILTER NOT EXISTS { ?c2 coref:supersededBy+ ?c1 . }
+                ?c1 foundation:hasTemporalValidity ?i1 .
+                ?c2 foundation:hasTemporalValidity ?i2 .
+                ?i1 time:hasBeginning ?b1 .   OPTIONAL { ?i1 time:hasEnd ?e1 }
+                ?i2 time:hasBeginning ?b2 .   OPTIONAL { ?i2 time:hasEnd ?e2 }
+                FILTER ( BOUND(?e1) && BOUND(?e2) && ?b1 < ?e2 && ?b2 < ?e1 )
+            }
+        """
+    ] .
+
+coref:NoOwlSameAsBetweenLocalSituationsShape a sh:NodeShape ;
+    sh:targetClass dul:Situation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "owl:sameAs asserted between two local Situations that share a coref:Occurrence target — use shared concernsOccurrence instead; sameAs collapses provenance and is forbidden in this pattern."@en ;
+        sh:select """
+            PREFIX coref: <http://data.europa.eu/h8v/ecmo/coref/>
+            PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+            SELECT $this ?other WHERE {
+                $this owl:sameAs ?other .
+                $this coref:concernsOccurrence ?o .
+                ?other coref:concernsOccurrence ?o .
+                FILTER ($this != ?other)
+            }
+        """
+    ] .
+
+coref:NoOrphanStakeholderSituationShape a sh:NodeShape ;
+    sh:targetClass foundation:Signal ;
+    sh:property [
+        sh:path coref:concernsOccurrence ;
+        sh:minCount 1 ;
+        sh:message "Signal lacks a coref:concernsOccurrence link — orphan local record cannot participate in cross-agency coreference."@en
+    ] .
+    
+    
+# =============================================================================
+# Competency questions — CQ-COREF-P*/N* (pattern-specific)
+# =============================================================================
+
+cqs:CQ-COREF-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "List all local Situations that concern a given Occurrence." ;
+    cqs:exercisesPattern "concernsOccurrence inverse" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?s WHERE { ?s coref:concernsOccurrence ex:HondiusOutbreak . }""" .
+
+cqs:CQ-COREF-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "What was the identified hazard for the Occurrence at a given date (e.g. 04 May 2026)?" ;
+    cqs:exercisesPattern "HazardClassificationSituation × time filter" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?hazard WHERE {
+  ?c a coref:HazardClassificationSituation ; coref:concernsOccurrence ex:HondiusOutbreak ;
+     coref:classifiesAs ?hazard ; foundation:hasTemporalValidity ?i .
+  ?i time:hasBeginning/time:inXSDDate ?b .
+  OPTIONAL { ?i time:hasEnd/time:inXSDDate ?e . }
+  FILTER (?b <= "2026-05-04"^^xsd:date && (!BOUND(?e) || "2026-05-04"^^xsd:date < ?e))
+}""" .
+
+cqs:CQ-COREF-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Give the latest non-superseded hazard classification for an Occurrence." ;
+    cqs:exercisesPattern "leaf of the supersededBy chain" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?hazard WHERE {
+  ?c a coref:HazardClassificationSituation ; coref:concernsOccurrence ex:HondiusOutbreak ;
+     coref:classifiesAs ?hazard .
+  FILTER NOT EXISTS { ?c coref:supersededBy ?later . }
+}""" .
+
+cqs:CQ-COREF-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Walk the refinement chain of classifications for an Occurrence, oldest to newest." ;
+    cqs:exercisesPattern "refinedBy transitive walk (property path)" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?earlier ?later WHERE {
+  ?earlier coref:concernsOccurrence ex:HondiusOutbreak ; coref:refinedBy+ ?later .
+}""" .
+
+cqs:CQ-COREF-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Which agencies have contributed to the assessment of an Occurrence?" ;
+    cqs:exercisesPattern "prov:wasAttributedTo aggregation across concernsOccurrence" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT DISTINCT ?agency WHERE {
+  ?s coref:concernsOccurrence ex:HondiusOutbreak ; prov:wasAttributedTo ?agency .
+}""" .
+
+cqs:CQ-COREF-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Retrieve the current HubAssessment of an Occurrence and the merge policy it applied." ;
+    cqs:exercisesPattern "hostsAssessment + appliesMergePolicy" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?hub ?policy WHERE {
+  ex:HondiusOutbreak coref:hostsAssessment ?hub .
+  ?hub coref:appliesMergePolicy ?policy .
+}""" .
+
+cqs:CQ-COREF-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Find all local Signals that concern the same Occurrence as a given local record (computed coreference, no sameAs)." ;
+    cqs:exercisesPattern "shared concernsOccurrence target" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?other WHERE {
+  ex:s_argus_p1 coref:concernsOccurrence ?o .
+  ?other coref:concernsOccurrence ?o .
+  FILTER (?other != ex:s_argus_p1)
+}""" .
+
+cqs:CQ-COREF-P08 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Distinguish refinements from corrections in the classification history of an Occurrence." ;
+    cqs:exercisesPattern "refinedBy vs correctedBy" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?earlier ?later ?kind WHERE {
+  ?earlier coref:concernsOccurrence ex:HondiusOutbreak .
+  { ?earlier coref:refinedBy ?later . BIND ("refinement" AS ?kind) }
+  UNION
+  { ?earlier coref:correctedBy ?later . BIND ("correction" AS ?kind) }
+}""" .
+
+cqs:CQ-COREF-P09 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Return all open ConflictReports on an Occurrence — disagreements not yet resolved by a HubAssessment." ;
+    cqs:exercisesPattern "ConflictReport not aggregated by any HubAssessment" ;
+    cqs:testKind "sparql_select" ;
+    cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?conflict WHERE {
+  ?s coref:concernsOccurrence ex:HondiusOutbreak ; coref:hasConflictReport ?conflict .
+  FILTER NOT EXISTS { ?hub a coref:HubAssessment ; coref:hasConflictReport ?conflict . }
+}""" .
+
+cqs:CQ-COREF-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Is owl:sameAs ever asserted between two local Situations that share a concernsOccurrence target?" ;
+    cqs:exercisesPattern "sameAs leakage between local situations" ;
+    cqs:testKind "sparql_ask" ;
+    cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK {
+  ?a owl:sameAs ?b . FILTER (?a != ?b)
+  ?a coref:concernsOccurrence ?o . ?b coref:concernsOccurrence ?o .
+}""" .
+
+cqs:CQ-COREF-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Do two non-comparable hazard classifications hold simultaneously at the same epistemic instant for one Occurrence?" ;
+    cqs:exercisesPattern "epistemic singleton at each instant (SHACL)" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """# See coref:NoConflictingClassificationAtSameInstantShape""" .
+
+cqs:CQ-COREF-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Is coref:refinedBy ever used between classifications whose later target is NOT fschema:subsumedUnder the earlier?" ;
+    cqs:exercisesPattern "taxonomic-monotonicity of refinement (SHACL)" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """# See coref:RefinementMustBeTaxonomicShape""" .
+
+cqs:CQ-COREF-N04 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
+    cqs:hasNLText "Are there foundation:Signal instances lacking a concernsOccurrence link (orphan local records)?" ;
+    cqs:exercisesPattern "orphan-record check (SHACL)" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest """# See coref:NoOrphanStakeholderSituationShape""" .
+
+# Cross-references to the master CQ catalogue
+<http://data.europa.eu/h8v/ecmo/coref> cpa:relatedCPs
+    cqs:CQ-COREF-P01, cqs:CQ-COREF-P02, cqs:CQ-COREF-P03, cqs:CQ-COREF-P04,
+    cqs:CQ-COREF-P05, cqs:CQ-COREF-P06, cqs:CQ-COREF-P07, cqs:CQ-COREF-P08,
+    cqs:CQ-COREF-P09,
+    cqs:CQ-COREF-N01, cqs:CQ-COREF-N02, cqs:CQ-COREF-N03, cqs:CQ-COREF-N04 .

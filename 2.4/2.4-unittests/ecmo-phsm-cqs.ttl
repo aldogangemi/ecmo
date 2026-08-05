@@ -1,0 +1,203 @@
+@prefix cqs:         <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix phsm:        <http://data.europa.eu/h8v/ecmo/phsm/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.europa.eu/h8v/ecmo/phsm/cqs> a owl:Ontology ;
+    dcterms:issued "2026-07-20"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Competency Questions (Q+ and Q-) for the ECMO PHSM module. Each CQ is a cqs:CompetencyQuestion with an executable cpa:hasUnitTest (SPARQL or SHACL). Prefixes phsm:, response:, expvuln:, governance:, dul:, skos:, rdfs: are assumed bound."@en ;
+    owl:versionInfo "0.1" ;
+    skos:prefLabel "ECMO PHSM CQ Catalogue v0.1"@en .
+
+# ============================ POSITIVE CQs ====================================
+
+cqs:CQ-PHSM-P01 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Which measure types belong to the PHSM taxonomy (i.e. specialise response:MeasureType through phsm:PublicHealthMeasureType)?" ;
+    cqs:exercisesPattern "MeasureType specialisation (subsumption)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?type WHERE {
+  ?type rdfs:subClassOf* phsm:PublicHealthMeasureType .
+} LIMIT 5""" .
+
+cqs:CQ-PHSM-P02 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "For a high-level indicator (e.g. phsm:Masks), which first-level PHSM category does it fall under?" ;
+    cqs:exercisesPattern "taxonomy ancestor traversal" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?first WHERE {
+  phsm:Masks rdfs:subClassOf+ ?first .
+  ?first rdfs:subClassOf phsm:PHSMType .
+}""" .
+
+cqs:CQ-PHSM-P03 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Which measure types are merged from more than one source taxonomy (multi-provenance)?" ;
+    cqs:exercisesPattern "provenance merge (fromSourceTaxonomy count)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?type (COUNT(DISTINCT ?src) AS ?n) WHERE {
+  ?type phsm:fromSourceTaxonomy ?src .
+} GROUP BY ?type HAVING (COUNT(DISTINCT ?src) > 1)""" .
+
+cqs:CQ-PHSM-P04 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "From which source taxonomies is a given measure type (e.g. phsm:Quarantine) declared, and with what per-source notation?" ;
+    cqs:exercisesPattern "provenance + notation lookup" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?src ?notation WHERE {
+  phsm:Quarantine phsm:fromSourceTaxonomy ?src ; skos:notation ?notation .
+}""" .
+
+cqs:CQ-PHSM-P05 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "For an enacted public health measure, retrieve its category, legal status, implementation scope, geographic scope, target population group, setting and jurisdiction (the ECDC-JRC RMD record view)." ;
+    cqs:exercisesPattern "RMD parametrization of an enacted measure" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?m ?cat ?status ?impl ?geo ?grp ?setting ?juris WHERE {
+  ?m a phsm:PublicHealthMeasure ; phsm:hasMeasureCategory ?cat .
+  OPTIONAL { ?m phsm:hasLegalStatus ?status }
+  OPTIONAL { ?m phsm:hasImplementationScope ?impl }
+  OPTIONAL { ?m phsm:hasGeographicScope ?geo }
+  OPTIONAL { ?m phsm:targetsPopulationGroup ?grp }
+  OPTIONAL { ?m phsm:appliesInSetting ?setting }
+  OPTIONAL { ?m phsm:appliesInJurisdiction ?juris }
+}""" .
+
+cqs:CQ-PHSM-P06 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Which measure types are pharmaceutical countermeasures (outside the WHO PHSM non-pharmaceutical scope)?" ;
+    cqs:exercisesPattern "pharmaceutical flag" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?type WHERE { ?type phsm:isPharmaceutical true . }""" .
+
+cqs:CQ-PHSM-P07 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Which measure types belong to the WHO/ECDC non-pharmaceutical PHSM subset?" ;
+    cqs:exercisesPattern "WHO PHSM subset (subClassOf phsm:PHSMType)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?type WHERE {
+  ?type rdfs:subClassOf* phsm:PHSMType .
+  FILTER NOT EXISTS { ?type phsm:isPharmaceutical true }
+} LIMIT 10""" .
+
+cqs:CQ-PHSM-P08 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Using the ECMO response-module hook, retrieve the immediate generalisation of a measure type via response:isSpecializationOfMeasureType." ;
+    cqs:exercisesPattern "reuse of response:isSpecializationOfMeasureType (punned individual graph)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?parent WHERE {
+  phsm:ContactTracing <http://data.europa.eu/h8v/ecmo/core/response/isSpecializationOfMeasureType> ?parent .
+}""" .
+
+cqs:CQ-PHSM-P09 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Which PHSM measure types cross-map (skos:relatedMatch) to an existing ECMO core response class?" ;
+    cqs:exercisesPattern "crosswalk to ECMO core (Evacuation / ShelterInPlace / PPE)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?type ?coreClass WHERE { ?type skos:relatedMatch ?coreClass . }""" .
+
+cqs:CQ-PHSM-P10 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "List the enumerated WHO PHSM settings (physical-environment attributes)." ;
+    cqs:exercisesPattern "Settings enumeration" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?setting WHERE { ?setting a phsm:Setting . }""" .
+
+cqs:CQ-PHSM-P11 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "How many high-level indicators does each WHO first-level category contain?" ;
+    cqs:exercisesPattern "taxonomy aggregation" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?first (COUNT(?leaf) AS ?n) WHERE {
+  ?first rdfs:subClassOf phsm:PHSMType .
+  ?leaf rdfs:subClassOf+ ?first .
+  FILTER NOT EXISTS { ?mid rdfs:subClassOf ?leaf . ?mid rdfs:subClassOf+ ?first . }
+} GROUP BY ?first""" .
+
+cqs:CQ-PHSM-P12 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Which enacted measures are non-pharmaceutical (WHO PHSM / NPI) measures?" ;
+    cqs:exercisesPattern "NonPharmaceuticalMeasure typing" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?m WHERE { ?m a phsm:NonPharmaceuticalMeasure . }""" .
+
+cqs:CQ-PHSM-P13 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "For an enacted measure, retrieve its current lifecycle status and its start and end dates (JRC EWRS 'Measure details')." ;
+    cqs:exercisesPattern "measure lifecycle / temporal details" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?m ?status ?start ?end WHERE {
+  ?m a phsm:PublicHealthMeasure ; phsm:hasLifecycleStatus ?status .
+  OPTIONAL { ?m phsm:hasStartDate ?start }
+  OPTIONAL { ?m phsm:hasEndDate ?end }
+}""" .
+
+cqs:CQ-PHSM-P14 a cqs:CompetencyQuestion ;
+    cqs:hasPolarity "positive" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm/alignments> ;
+    cqs:hasNLText "Which kind of MCMC medical countermeasure does each pharmaceutical PHSM measure type deploy? (Requires the ecmo-phsm-alignments graph.)" ;
+    cqs:exercisesPattern "phsm:deploysCountermeasure General Class Inclusion axioms (PHSM->MCMC bridge)" ;
+    cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
+    cpa:hasUnitTest """SELECT ?measureType ?countermeasureKind WHERE {
+  ?lhs owl:onProperty phsm:hasMeasureCategory ; owl:hasValue ?measureType .
+  ?lhs rdfs:subClassOf ?rhs .
+  ?rhs owl:onProperty phsm:deploysCountermeasure ; owl:someValuesFrom ?countermeasureKind .
+}""" .
+
+# ============================ NEGATIVE CQs ====================================
+
+cqs:CQ-PHSM-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Can an enacted measure carry two different measure categories at once? (It must not: hasMeasureCategory is functional / maxCount 1.)" ;
+    cqs:exercisesPattern "functional hasMeasureCategory (b33-NEGCQ, enforced by SHACL)" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK {
+  ?m a phsm:PublicHealthMeasure ;
+     phsm:hasMeasureCategory ?c1, ?c2 .
+  FILTER (?c1 != ?c2)
+}""" .
+
+cqs:CQ-PHSM-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Is any pharmaceutical measure type also part of the WHO non-pharmaceutical PHSM subset? (It must not be.)" ;
+    cqs:exercisesPattern "pharma / non-pharma disjointness of the WHO subset" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK {
+  ?type phsm:isPharmaceutical true .
+  ?type rdfs:subClassOf* phsm:PHSMType .
+}""" .
+
+cqs:CQ-PHSM-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Can a measure's legal status be a value outside {Mandatory, Voluntary, Not available}? (It must not.)" ;
+    cqs:exercisesPattern "closed enumeration of PHSMLegalStatus (SHACL sh:in)" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "See ecmo-phsm-shapes.ttl : phsm:PublicHealthMeasureShape / phsm:hasLegalStatus sh:in ( phsm:Mandatory phsm:Voluntary phsm:LegalStatusNotAvailable )." .
+
+cqs:CQ-PHSM-N04 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Can an enacted public health measure exist with no measure category? (It must not: minCount 1.)" ;
+    cqs:exercisesPattern "mandatory classification (SHACL minCount)" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "See ecmo-phsm-shapes.ttl : phsm:PublicHealthMeasureShape / phsm:hasMeasureCategory sh:minCount 1." .
+
+cqs:CQ-PHSM-N06 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Can a measure's lifecycle status be a value outside {Scheduled, Ongoing, Completed, Suspended}? (It must not.)" ;
+    cqs:exercisesPattern "closed enumeration of MeasureLifecycleStatus (SHACL sh:in)" ;
+    cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "See ecmo-phsm-shapes.ttl : phsm:PublicHealthMeasureShape / phsm:hasLifecycleStatus sh:in ( phsm:Scheduled phsm:Ongoing phsm:Completed phsm:Suspended )." .
+
+cqs:CQ-PHSM-N05 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:targetsModule <http://data.europa.eu/h8v/ecmo/phsm> ;
+    cqs:hasNLText "Is any individual asserted as both a dul:Description and a dul:Situation? (D&S disjointness must hold.)" ;
+    cqs:exercisesPattern "Description/Situation disjointness (feedback_ds_disjointness)" ;
+    cqs:testKind "sparql_ask" ; cqs:expectedAnswer "false" ;
+    cpa:hasUnitTest """ASK {
+  ?x a <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Description> ,
+       <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation> .
+}""" .

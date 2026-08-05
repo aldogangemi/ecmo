@@ -1,0 +1,302 @@
+@prefix bio:         <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix capacity:    <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix drivers:     <http://data.europa.eu/h8v/ecmo/core/drivers/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix hera:        <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix : <http://data.europa.eu/h8v/ecmo/frames/> .
+
+# =============================================================================
+# ECMO Frame Model v0.1 — Framester-native encoding of the CORE Main Pattern
+#
+# Every frame Fi (fschema:Frame). Every semantic role has fschema:ontoType
+# pinning its DOLCE ancestor. Perspective shifts use fschema:hasPerspective.
+# Class-level annotations use fschema:playsRoleIn + fschema:hasUnaryType.
+#
+# Coverage: the 12 anchor concepts of the CORE Main Pattern plus their
+# frame-role annotations. Full ECMO coverage will be added in task (d).
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/frames> a owl:Ontology ;
+    dcterms:issued "2026-06-08"^^xsd:date ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core> ;
+    rdfs:comment "ECMO Frame Model — Framester-native encoding of the CORE Main Pattern's frame structure. Approved via Q-FR-1/2/3, 2026-06-08."@en ;
+    owl:versionInfo "0.1" ;
+    skos:prefLabel "ECMO Frame Model v0.1"@en .
+
+# -----------------------------------------------------------------------------
+# Frames — one fschema:Frame per Sendai frame plus PH/BIO/HERA/COREF.
+# -----------------------------------------------------------------------------
+
+:F1  a fschema:Frame, fschema:CompositionalFrame ;
+     rdfs:label "Risk frame"@en ;
+     fschema:intensionalComponent :F2, :F4, :F5 .
+
+:F2  a fschema:Frame ; rdfs:label "Hazard frame"@en .
+:F3  a fschema:Frame ; rdfs:label "Disaster frame"@en .
+:F4  a fschema:Frame ; rdfs:label "Exposure & Vulnerability frame"@en .
+:F5  a fschema:Frame ; rdfs:label "Capacity & Resilience frame"@en .
+:F6  a fschema:Frame ; rdfs:label "Governance frame"@en .
+:F7  a fschema:Frame ; rdfs:label "Response & Recovery frame"@en .
+:F8  a fschema:Frame ; rdfs:label "Instruments frame"@en .
+:F9  a fschema:Frame, fschema:PerspectivalFrame ; rdfs:label "Underlying Risk Drivers frame"@en .
+:F10 a fschema:Frame ; rdfs:label "Impact & Loss frame"@en .
+:PH   a fschema:Frame ; rdfs:label "Public Health frame"@en .
+:BIO  a fschema:Frame ; rdfs:label "Biological Entities frame"@en .
+:HERA a fschema:Frame ; rdfs:label "HERA Prioritisation frame"@en .
+:COREF a fschema:Frame ; rdfs:label "Data-level Coreference frame"@en .
+
+# -----------------------------------------------------------------------------
+# Semantic roles per frame — CORE Main Pattern subset.
+# Every role has fschema:ontoType (DOLCE ancestor filler must inherit).
+# Perspective shifts get fschema:hasPerspective.
+# -----------------------------------------------------------------------------
+
+# F1 — Risk
+:F1.Anchor          a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Description ; rdfs:label "F1 anchor"@en .
+:F1.Hazard          a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Description ; fschema:hasPerspective :F2 .
+:F1.Exposure        a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Quality ;    fschema:hasPerspective :F4 .
+:F1.Vulnerability   a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Quality ;    fschema:hasPerspective :F4 .
+:F1.Capacity        a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType capacity:Capacity ; fschema:hasPerspective :F5 .
+:F1.Materialisation a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Situation ;  fschema:hasPerspective :F2 .
+
+# F2 — Hazard
+:F2.Anchor          a fschema:SemanticRole ; fschema:semanticRoleOf :F2 ; fschema:ontoType dul:Description .
+:F2.Manifestation   a fschema:SemanticRole ; fschema:semanticRoleOf :F2 ; fschema:ontoType dul:Situation .
+:F2.CausativeAgent  a fschema:SemanticRole ; fschema:semanticRoleOf :F2 ; fschema:ontoType dul:Description ; fschema:hasPerspective :PH .
+:F2.SubAnchor_BiologicalHazard a fschema:SemanticRole ; fschema:semanticRoleOf :F2 ; fschema:ontoType dul:Description .
+
+# F3 — Disaster
+:F3.Anchor            a fschema:SemanticRole ; fschema:semanticRoleOf :F3 ; fschema:ontoType dul:Situation .
+:F3.AffectedPopulation a fschema:SemanticRole ; fschema:semanticRoleOf :F3 ; fschema:ontoType dul:Collective .
+
+# F4 — Exposure & Vulnerability
+:F4.Exposure_Aspect        a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:Quality .
+:F4.Vulnerability_Aspect   a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:Quality .
+:F4.ExposedElement         a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:Object .
+
+# F5 — Capacity (union anchor, per Q-FR-2)
+:F5.Anchor      a fschema:SemanticRole ; fschema:semanticRoleOf :F5 ; fschema:ontoType capacity:Capacity .   # union
+:F5.Stock       a fschema:SemanticRole ; fschema:semanticRoleOf :F5 ; fschema:ontoType dul:Collection .
+:F5.Ability     a fschema:SemanticRole ; fschema:semanticRoleOf :F5 ; fschema:ontoType dul:Disposition .
+:F5.Bearer      a fschema:SemanticRole ; fschema:semanticRoleOf :F5 ; fschema:ontoType dul:SocialAgent .
+:F5.ManagesAdversity a fschema:SemanticRole ; fschema:semanticRoleOf :F5 ; fschema:ontoType dul:Situation ; fschema:hasPerspective :F2 .
+
+# F6 — Governance
+:F6.Anchor         a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+:F6.RiskAssessment a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+
+# F7 — Response & Recovery
+:F7.Anchor       a fschema:SemanticRole ; fschema:semanticRoleOf :F7 ; fschema:ontoType dul:Action .
+:F7.Intervention a fschema:SemanticRole ; fschema:semanticRoleOf :F7 ; fschema:ontoType dul:Action .
+:F7.MeasureType  a fschema:SemanticRole ; fschema:semanticRoleOf :F7 ; fschema:ontoType dul:Concept .
+
+# F8 — Instruments
+:F8.Anchor a fschema:SemanticRole ; fschema:semanticRoleOf :F8 ; fschema:ontoType dul:Description .
+:F8.EWS    a fschema:SemanticRole ; fschema:semanticRoleOf :F8 ; fschema:ontoType dul:Description .
+
+# F10 — Impact
+:F10.Anchor      a fschema:SemanticRole ; fschema:semanticRoleOf :F10 ; fschema:ontoType dul:Situation .
+:F10.HumanImpact a fschema:SemanticRole ; fschema:semanticRoleOf :F10 ; fschema:ontoType dul:Situation .
+
+# PH — Public Health
+:PH.Pathogen                    a fschema:SemanticRole ; fschema:semanticRoleOf :PH ; fschema:ontoType dul:Description .
+:PH.HealthCondition_Situation   a fschema:SemanticRole ; fschema:semanticRoleOf :PH ; fschema:ontoType dul:Situation .
+:PH.HazardProjection            a fschema:SemanticRole ; fschema:semanticRoleOf :PH ; fschema:ontoType dul:Description ; fschema:hasPerspective :F2 .
+:PH.OutcomeProjection           a fschema:SemanticRole ; fschema:semanticRoleOf :PH ; fschema:ontoType dul:Situation ; fschema:hasPerspective :F10 .
+
+# BIO — Biological Entities
+:BIO.BiologicalEntity_Projection a fschema:SemanticRole ; fschema:semanticRoleOf :BIO ; fschema:ontoType dul:Object .
+
+# -----------------------------------------------------------------------------
+# Class-level projections — fschema:playsRoleIn + fschema:hasUnaryType
+# CORE Main Pattern coverage (task c).
+# -----------------------------------------------------------------------------
+
+# F2 — Hazard frame classes
+hazard:Hazard          fschema:playsRoleIn :F2 ; fschema:hasUnaryType :F2.Anchor .
+hazard:HazardousEvent  fschema:playsRoleIn :F2 ; fschema:hasUnaryType :F2.Manifestation .
+hazard:BiologicalHazard fschema:playsRoleIn :F2, :PH ;
+                       fschema:hasUnaryType :F2.SubAnchor_BiologicalHazard , :PH.HazardProjection .
+
+# F1 — Risk
+risk:Risk              fschema:playsRoleIn :F1 ; fschema:hasUnaryType :F1.Anchor .
+
+# F4 — Exposure & Vulnerability
+expvuln:Exposure       fschema:playsRoleIn :F4 ; fschema:hasUnaryType :F4.Exposure_Aspect .
+expvuln:Vulnerability  fschema:playsRoleIn :F4 ; fschema:hasUnaryType :F4.Vulnerability_Aspect .
+expvuln:ExposedElement fschema:playsRoleIn :F4 ; fschema:hasUnaryType :F4.ExposedElement .
+
+# F5 — Capacity (union) after CP-CORE-09
+capacity:Capacity      fschema:playsRoleIn :F5 ; fschema:hasUnaryType :F5.Anchor .
+capacity:StockCapacity fschema:playsRoleIn :F5 ; fschema:hasUnaryType :F5.Stock .
+capacity:CopingCapacity fschema:playsRoleIn :F5 ; fschema:hasUnaryType :F5.Ability .
+
+# F3 — Disaster
+disaster:AffectedPopulation fschema:playsRoleIn :F3 ; fschema:hasUnaryType :F3.AffectedPopulation .
+
+# F10 — Impact
+impact:Impact          fschema:playsRoleIn :F10 ; fschema:hasUnaryType :F10.Anchor .
+impact:HumanImpact     fschema:playsRoleIn :F10, :PH ;
+                       fschema:hasUnaryType :F10.HumanImpact , :PH.OutcomeProjection .
+
+# F6 — Governance
+governance:RiskAssessment fschema:playsRoleIn :F6 ; fschema:hasUnaryType :F6.RiskAssessment .
+
+# F7 — Response
+response:Intervention  fschema:playsRoleIn :F7 ; fschema:hasUnaryType :F7.Intervention .
+response:MeasureType   fschema:playsRoleIn :F7 ; fschema:hasUnaryType :F7.MeasureType .
+
+# F8 — Instruments (after CP-CORE-19: Measure ⊄ dul:Action)
+instruments:Measure    fschema:playsRoleIn :F8 ; fschema:hasUnaryType :F8.Anchor .
+instruments:EarlyWarningSystem fschema:playsRoleIn :F8 ; fschema:hasUnaryType :F8.EWS .
+
+# PH — Public Health (after CP-CORE-23: severed class-level BiologicalHazard on OrPathogen)
+ph:Pathogen            fschema:playsRoleIn :PH, :BIO ;
+                       fschema:hasUnaryType :PH.Pathogen , :BIO.BiologicalEntity_Projection .
+ph:HealthCondition     fschema:playsRoleIn :PH ; fschema:hasUnaryType :PH.HealthCondition_Situation .
+
+# -----------------------------------------------------------------------------
+# v2.3 addition — new roles introduced by the EpiPulse alignment (ecmo-epipulse.ttl)
+# -----------------------------------------------------------------------------
+
+:COREF.SurveillanceSignal a fschema:SemanticRole ;
+    fschema:semanticRoleOf :COREF ;
+    fschema:ontoType dul:InformationObject ;
+    rdfs:label "COREF surveillance signal role — a per-source tracking record"@en .
+
+:PH.Signal a fschema:SemanticRole ;
+    fschema:semanticRoleOf :PH ;
+    fschema:ontoType dul:InformationObject ;
+    rdfs:label "PH signal role — a surveillance record about a public-health event"@en .
+
+:F6.Institution a fschema:SemanticRole ;
+    fschema:semanticRoleOf :F6 ;
+    fschema:ontoType dul:SocialAgent ;
+    rdfs:label "F6 institution role — a governance/coordination body"@en .
+
+
+# -----------------------------------------------------------------------------
+# v2.3 task (d) — additional roles for BIO, F2, F3, F4, F5, F6, F7, F8, F9, F10, PH, HERA, COREF, FND
+# -----------------------------------------------------------------------------
+
+# BIO
+:BIO.Anchor           a fschema:SemanticRole ; fschema:semanticRoleOf :BIO ; fschema:ontoType dul:Object .
+:BIO.Organism         a fschema:SemanticRole ; fschema:semanticRoleOf :BIO ; fschema:ontoType dul:Object .
+
+# F3 Disaster — additional subtypes
+:F3.OnsetProfile      a fschema:SemanticRole ; fschema:semanticRoleOf :F3 ; fschema:ontoType dul:Concept .
+:F3.ScaleProfile      a fschema:SemanticRole ; fschema:semanticRoleOf :F3 ; fschema:ontoType dul:Concept .
+:F3.FrequencyProfile  a fschema:SemanticRole ; fschema:semanticRoleOf :F3 ; fschema:ontoType dul:Concept .
+
+# F4 — CriticalInfrastructure
+:F4.CriticalInfrastructure a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:SocialObject .
+
+# F6 — RiskManagement variants + Sub-roles
+:F6.RiskManagement_Corrective   a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+:F6.RiskManagement_Prospective  a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+:F6.RiskManagement_Compensatory a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+:F6.RiskManagement_Community    a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+:F6.Policy         a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+:F6.LegalFramework a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+:F6.SurveillanceProcess a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Process ;
+    rdfs:comment "Long-term surveillance activity role — introduced by ecmo-epipulse v0.2 for LongTermMonitoringThread."@en .
+
+# F7 Response phases
+:F7.Preparedness   a fschema:SemanticRole ; fschema:semanticRoleOf :F7 ; fschema:ontoType dul:Action .
+:F7.Recovery       a fschema:SemanticRole ; fschema:semanticRoleOf :F7 ; fschema:ontoType dul:Action .
+:F7.Reconstruction a fschema:SemanticRole ; fschema:semanticRoleOf :F7 ; fschema:ontoType dul:Action .
+:F7.Mitigation     a fschema:SemanticRole ; fschema:semanticRoleOf :F7 ; fschema:ontoType dul:Action .
+:F7.Prevention     a fschema:SemanticRole ; fschema:semanticRoleOf :F7 ; fschema:ontoType dul:Action .
+
+# F8 — EWS components
+:F8.EWSComponent_RiskKnowledge         a fschema:SemanticRole ; fschema:semanticRoleOf :F8 ; fschema:ontoType dul:Description .
+:F8.EWSComponent_MonitoringForecasting a fschema:SemanticRole ; fschema:semanticRoleOf :F8 ; fschema:ontoType dul:Description .
+:F8.EWSComponent_WarningDissemination  a fschema:SemanticRole ; fschema:semanticRoleOf :F8 ; fschema:ontoType dul:Description .
+:F8.EWSComponent_ResponsePreparedness  a fschema:SemanticRole ; fschema:semanticRoleOf :F8 ; fschema:ontoType dul:Description .
+
+# F9 Drivers
+:F9.Anchor    a fschema:SemanticRole ; fschema:semanticRoleOf :F9 ; fschema:ontoType dul:Quality .
+:F9.Mechanism a fschema:SemanticRole ; fschema:semanticRoleOf :F9 ; fschema:ontoType dul:Situation ;
+              rdfs:comment "Punned role per CP-DRV-02: class-level Situation (occurrences), individual-level Description (frame)."@en .
+
+# F10 Impact
+:F10.EconomicLoss a fschema:SemanticRole ; fschema:semanticRoleOf :F10 ; fschema:ontoType dul:Situation .
+
+# HERA
+:HERA.Anchor      a fschema:SemanticRole ; fschema:semanticRoleOf :HERA ; fschema:ontoType dul:Description .
+:HERA.Criterion   a fschema:SemanticRole ; fschema:semanticRoleOf :HERA ; fschema:ontoType dul:Concept .
+:HERA.LevelValue  a fschema:SemanticRole ; fschema:semanticRoleOf :HERA ; fschema:ontoType dul:Concept .
+:HERA.Scale       a fschema:SemanticRole ; fschema:semanticRoleOf :HERA ; fschema:ontoType dul:Description .
+
+# COREF
+:COREF.Occurrence a fschema:SemanticRole ; fschema:semanticRoleOf :COREF ; fschema:ontoType dul:Situation .
+:COREF.Validation a fschema:SemanticRole ; fschema:semanticRoleOf :COREF ; fschema:ontoType dul:Process .
+
+# -----------------------------------------------------------------------------
+# Class annotations — bulk playsRoleIn + hasUnaryType additions for task (d).
+# -----------------------------------------------------------------------------
+
+# BIO
+bio:BiologicalEntity fschema:playsRoleIn :BIO ; fschema:hasUnaryType :BIO.Anchor .
+
+# F3 Disaster subtypes
+disaster:Disaster fschema:playsRoleIn :F3 ; fschema:hasUnaryType :F3.Anchor .
+
+# F4 CriticalInfrastructureOrService
+expvuln:CriticalInfrastructureOrService fschema:playsRoleIn :F4 ; fschema:hasUnaryType :F4.CriticalInfrastructure .
+
+# F6 Governance
+governance:RiskGovernance fschema:playsRoleIn :F6 ; fschema:hasUnaryType :F6.Anchor .
+governance:CorrectiveRiskManagement   fschema:playsRoleIn :F6 ; fschema:hasUnaryType :F6.RiskManagement_Corrective .
+governance:ProspectiveRiskManagement  fschema:playsRoleIn :F6 ; fschema:hasUnaryType :F6.RiskManagement_Prospective .
+governance:CompensatoryRiskManagement fschema:playsRoleIn :F6 ; fschema:hasUnaryType :F6.RiskManagement_Compensatory .
+governance:CommunityBasedRiskManagement fschema:playsRoleIn :F6 ; fschema:hasUnaryType :F6.RiskManagement_Community .
+governance:Policy fschema:playsRoleIn :F6 ; fschema:hasUnaryType :F6.Policy .
+governance:LegalFramework fschema:playsRoleIn :F6 ; fschema:hasUnaryType :F6.LegalFramework .
+
+# F7 Response phases
+response:Preparedness  fschema:playsRoleIn :F7 ; fschema:hasUnaryType :F7.Preparedness .
+response:Response      fschema:playsRoleIn :F7 ; fschema:hasUnaryType :F7.Anchor .
+response:Recovery      fschema:playsRoleIn :F7 ; fschema:hasUnaryType :F7.Recovery .
+response:Reconstruction fschema:playsRoleIn :F7 ; fschema:hasUnaryType :F7.Reconstruction .
+response:Mitigation    fschema:playsRoleIn :F7 ; fschema:hasUnaryType :F7.Mitigation .
+response:Prevention    fschema:playsRoleIn :F7 ; fschema:hasUnaryType :F7.Prevention .
+
+# F8 EWS components
+instruments:RiskKnowledgeComponent          fschema:playsRoleIn :F8 ; fschema:hasUnaryType :F8.EWSComponent_RiskKnowledge .
+instruments:MonitoringAndForecastingComponent fschema:playsRoleIn :F8 ; fschema:hasUnaryType :F8.EWSComponent_MonitoringForecasting .
+instruments:WarningDisseminationComponent   fschema:playsRoleIn :F8 ; fschema:hasUnaryType :F8.EWSComponent_WarningDissemination .
+instruments:ResponsePreparednessComponent   fschema:playsRoleIn :F8 ; fschema:hasUnaryType :F8.EWSComponent_ResponsePreparedness .
+
+# F9 Drivers
+drivers:RiskDriver fschema:playsRoleIn :F9 ; fschema:hasUnaryType :F9.Anchor .
+drivers:Mechanism  fschema:playsRoleIn :F9 ; fschema:hasUnaryType :F9.Mechanism .
+
+# F10 Impact
+impact:EconomicLoss fschema:playsRoleIn :F10 ; fschema:hasUnaryType :F10.EconomicLoss .
+
+# HERA
+hera:PathogenPrioritisation fschema:playsRoleIn :HERA ; fschema:hasUnaryType :HERA.Anchor .
+
+# COREF
+coref:Occurrence fschema:playsRoleIn :COREF ; fschema:hasUnaryType :COREF.Occurrence .
+foundation:EventValidation fschema:playsRoleIn :COREF ; fschema:hasUnaryType :COREF.Validation .
+foundation:Signal fschema:playsRoleIn :COREF ; fschema:hasUnaryType :COREF.SurveillanceSignal .

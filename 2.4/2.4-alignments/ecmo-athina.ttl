@@ -1,0 +1,84 @@
+@prefix athina:      <http://data.europa.eu/h8v/ecmo/athina/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix hip:         <http://data.europa.eu/h8v/ecmo/hip/> .
+@prefix mcmc:        <http://data.europa.eu/h8v/ecmo/mcmc/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO ATHINA Module — HERA health-intelligence & MCM management — v0.2 (ECMO 2.3)
+#
+# Rebased from ATHINA v1.0 (purl.org/ecmo/athina#). Reuse decisions:
+#   - core:RiskAssessmentMethod -> athina:ThreatPrioritizationMethod ⊑ hip:RiskAssessmentMethod
+#   - core:CountermeasureSituation -> athina:ResponseOption ⊑ dul:InformationObject
+#   - core:HazardPotential (monitorsThreat range) -> hazard:Hazard
+#   - old mcmc# MedicalCountermeasure -> mcmc:MedicalCountermeasure (ECMO 2.3)
+#   - dul:InformationEntity corrected to dul:InformationObject
+# Complements the HERA prioritisation and MCMC modules.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/athina> a owl:Ontology ;
+    dcterms:issued "2026-07-09"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "ATHINA module of the ECMO network — the HERA IT system's role in health intelligence, threat prioritisation, and medical-countermeasure management. Models horizon scanning over health-intelligence data, threat-prioritisation methods, response options, MCM supply chains and strategic stockpiles."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/hip> ,
+                <http://data.europa.eu/h8v/ecmo/mcmc> ,
+                <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+                <http://data.europa.eu/h8v/ecmo/core/foundation> ;
+    owl:versionInfo "0.2" ;
+    skos:changeNote "v0.2: Rebased ATHINA v1.0 onto ECMO 2.3. ThreatPrioritizationMethod ⊑ hip:RiskAssessmentMethod; references mcmc:MedicalCountermeasure; dul:InformationEntity corrected; property alignments remapped (contributesToStockpile ⊑ dul:isMemberOf, informsThreatPrioritization/monitorsThreat left conservative)."@en ;
+    skos:prefLabel "ECMO ATHINA — HERA Health-Intelligence & MCM Management"@en .
+
+# ---- Classes ----------------------------------------------------------------
+athina:HealthIntelligenceData a owl:Class ; rdfs:label "Health Intelligence Data"@en ;
+    rdfs:subClassOf dul:InformationObject ; skos:prefLabel "Health Intelligence Data"@en .
+athina:HorizonScanning a owl:Class ; rdfs:label "Horizon Scanning"@en ;
+    rdfs:comment "The ongoing scanning process that ingests health-intelligence data to detect emerging threats."@en ;
+    rdfs:subClassOf dul:Process ; skos:prefLabel "Horizon Scanning"@en .
+athina:ThreatPrioritizationMethod a owl:Class ; rdfs:label "Threat Prioritization Method"@en ;
+    rdfs:comment "A method that ranks threats for countermeasure attention. Specialises hip:RiskAssessmentMethod (a dul:Method)."@en ;
+    rdfs:subClassOf hip:RiskAssessmentMethod ; skos:prefLabel "Threat Prioritization Method"@en .
+athina:ResponseOption a owl:Class ; rdfs:label "Response Option"@en ;
+    rdfs:comment "An information object describing a candidate countermeasure/response identified by ATHINA."@en ;
+    rdfs:subClassOf dul:InformationObject ; skos:prefLabel "Response Option"@en .
+athina:MCMCaseManagement a owl:Class ; rdfs:label "MCM Case Management"@en ;
+    rdfs:subClassOf dul:Process ; skos:prefLabel "MCM Case Management"@en .
+athina:MedicalCountermeasureSupplyChain a owl:Class ; rdfs:label "Medical Countermeasure Supply Chain"@en ;
+    rdfs:subClassOf dul:Situation ; skos:prefLabel "Medical Countermeasure Supply Chain"@en .
+athina:StrategicStockpile a owl:Class ; rdfs:label "Strategic Stockpile"@en ;
+    rdfs:comment "A managed collection of medical countermeasures held in reserve."@en ;
+    rdfs:subClassOf dul:Collection ; skos:prefLabel "Strategic Stockpile"@en .
+
+# ---- Properties (rebased) ---------------------------------------------------
+athina:contributesToStockpile a owl:ObjectProperty ; rdfs:label "contributes to stockpile"@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range athina:StrategicStockpile ;
+    rdfs:subPropertyOf dul:isMemberOf .
+athina:usesData a owl:ObjectProperty ; rdfs:label "uses data"@en ;
+    rdfs:comment "A prioritisation method uses health-intelligence data. SubPropertyOf dul:isAbout."@en ;
+    rdfs:domain athina:ThreatPrioritizationMethod ; rdfs:range athina:HealthIntelligenceData ;
+    rdfs:subPropertyOf dul:isAbout .
+athina:informsHorizonScanning a owl:ObjectProperty ; rdfs:label "informs horizon scanning"@en ;
+    rdfs:comment "Health-intelligence data feeds the horizon-scanning process. SubPropertyOf dul:isParticipantIn."@en ;
+    rdfs:domain athina:HealthIntelligenceData ; rdfs:range athina:HorizonScanning ;
+    rdfs:subPropertyOf dul:isParticipantIn .
+athina:informsThreatPrioritization a owl:ObjectProperty ; rdfs:label "informs threat prioritization"@en ;
+    rdfs:comment "Health-intelligence data informs a threat-prioritisation method. (No DUL super — the method prov:wasDerivedFrom the data.)"@en ;
+    rdfs:domain athina:HealthIntelligenceData ; rdfs:range athina:ThreatPrioritizationMethod .
+athina:managesMCMSupplyChain a owl:ObjectProperty ; rdfs:label "manages MCM supply chain"@en ;
+    rdfs:domain athina:MCMCaseManagement ; rdfs:range athina:MedicalCountermeasureSupplyChain .
+athina:identifiesResponseOption a owl:ObjectProperty ; rdfs:label "identifies response option"@en ;
+    rdfs:domain dul:Agent ; rdfs:range athina:ResponseOption .
+athina:monitorsThreat a owl:ObjectProperty ; rdfs:label "monitors threat"@en ;
+    rdfs:comment "An agent monitors a hazard/threat. (No DUL super — kept conservative.)"@en ;
+    rdfs:domain dul:Agent ; rdfs:range hazard:Hazard .
+
+# ---- Datatype properties ----------------------------------------------------
+athina:hasPrioritizationScore a owl:DatatypeProperty ; rdfs:label "has prioritization score"@en ; rdfs:range xsd:decimal .
+athina:supplyAvailabilityStatus a owl:DatatypeProperty ; rdfs:label "supply availability status"@en ; rdfs:range xsd:string .

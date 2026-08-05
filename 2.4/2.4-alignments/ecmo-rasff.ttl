@@ -1,0 +1,116 @@
+@prefix rasff:       <http://data.europa.eu/h8v/ecmo/rasff/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO RASFF Module — Rapid Alert System for Food and Feed — v0.2 (ECMO 2.3)
+#
+# Rebased from RASFF v1.0 (purl.org/ecmo/rasff#). Reuse decisions:
+#   - core:HazardPotential  -> rasff:FoodSafetyHazard ⊑ hazard:Hazard
+#   - core:ModeledEvent      -> rasff:FoodSafetyEvent ⊑ hazard:HazardousEvent
+#   - core:RiskScenario      -> rasff:RiskToHealth ⊑ risk:Risk
+#   - core:ExposureSimulation -> rasff:ConsumptionExposure ⊑ expvuln:Exposure
+#   - core:CommunicationEvent -> rasff:AlertNotification ⊑ instruments:Warning
+#   - core:CountermeasureSituation -> rasff:MeasureTaken ⊑ response:Response
+#   - old hip# props -> risk:has*Determinant / hazard:hasManifestationEvent
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/rasff> a owl:Ontology ;
+    dcterms:issued "2026-07-09"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "RASFF (Rapid Alert System for Food and Feed) module of the ECMO network. Models food/feed safety risk communication: food-safety hazards and their events, hazardous substances in product batches, consumption exposure, the health risk posed, the alert notifications reporting countries issue, and the control measures taken."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+                <http://data.europa.eu/h8v/ecmo/core/expvuln> ,
+                <http://data.europa.eu/h8v/ecmo/core/risk> ,
+                <http://data.europa.eu/h8v/ecmo/core/response> ,
+                <http://data.europa.eu/h8v/ecmo/core/instruments> ,
+                <http://data.europa.eu/h8v/ecmo/core/foundation> ;
+    owl:versionInfo "0.2" ;
+    skos:changeNote "v0.2: Rebased RASFF v1.0 onto ECMO 2.3; scaffolding classes mapped to hazard:/risk:/expvuln:/instruments:/response:; old hip# subproperties remapped to risk:has*Determinant and hazard:hasManifestationEvent; dul:InformationEntity corrected."@en ;
+    skos:prefLabel "ECMO RASFF — Rapid Alert System for Food and Feed"@en .
+
+# ---- Hazards / events / risk ------------------------------------------------
+rasff:FoodSafetyHazard a owl:Class ; rdfs:label "Food Safety Hazard"@en ;
+    rdfs:comment "A food/feed safety danger (pathogen, contaminant, allergen, foreign body). Specialises hazard:Hazard."@en ;
+    rdfs:subClassOf hazard:Hazard ; skos:prefLabel "Food Safety Hazard"@en .
+rasff:FoodSafetyEvent a owl:Class ; rdfs:label "Food Safety Event"@en ;
+    rdfs:subClassOf hazard:HazardousEvent ; skos:prefLabel "Food Safety Event"@en .
+rasff:RiskToHealth a owl:Class ; rdfs:label "Risk to Health"@en ;
+    rdfs:comment "The health risk a hazardous food/feed substance poses. Specialises risk:Risk."@en ;
+    rdfs:subClassOf risk:Risk ; skos:prefLabel "Risk to Health"@en .
+rasff:ConsumptionExposure a owl:Class ; rdfs:label "Consumption Exposure"@en ;
+    rdfs:subClassOf expvuln:Exposure ; skos:prefLabel "Consumption Exposure"@en .
+
+# ---- Products & substances (physical objects) -------------------------------
+rasff:FoodOrFeedProduct a owl:Class ; rdfs:label "Food or Feed Product"@en ;
+    rdfs:subClassOf dul:PhysicalObject ; skos:prefLabel "Food or Feed Product"@en .
+rasff:FoodProduct a owl:Class ; rdfs:label "Food Product"@en ; rdfs:subClassOf rasff:FoodOrFeedProduct ; skos:prefLabel "Food Product"@en .
+rasff:FeedProduct a owl:Class ; rdfs:label "Feed Product"@en ; rdfs:subClassOf rasff:FoodOrFeedProduct ; skos:prefLabel "Feed Product"@en .
+rasff:ProductBatch a owl:Class ; rdfs:label "Product Batch"@en ; rdfs:subClassOf dul:PhysicalObject ; skos:prefLabel "Product Batch"@en .
+rasff:HazardousSubstance a owl:Class ; rdfs:label "Hazardous Substance"@en ; rdfs:subClassOf dul:PhysicalObject ; skos:prefLabel "Hazardous Substance"@en .
+
+# ---- Communications / measures / places -------------------------------------
+rasff:AlertNotification a owl:Class ; rdfs:label "Alert Notification"@en ;
+    rdfs:subClassOf instruments:Warning ; skos:prefLabel "Alert Notification"@en .
+rasff:MeasureTaken a owl:Class ; rdfs:label "Measure Taken"@en ;
+    rdfs:comment "A control measure taken in response to a food-safety alert. Specialises response:Response."@en ;
+    rdfs:subClassOf response:Response ; skos:prefLabel "Measure Taken"@en .
+rasff:OriginCountry a owl:Class ; rdfs:label "Origin Country"@en ; rdfs:subClassOf dul:SpaceRegion ; skos:prefLabel "Origin Country"@en .
+rasff:DistributionCountry a owl:Class ; rdfs:label "Distribution Country"@en ; rdfs:subClassOf dul:SpaceRegion ; skos:prefLabel "Distribution Country"@en .
+rasff:ReportingCountry a owl:Class ; rdfs:label "Reporting Country"@en ; rdfs:subClassOf dul:SpaceRegion ; skos:prefLabel "Reporting Country"@en .
+
+# ---- Properties (rebased) ---------------------------------------------------
+rasff:manifestsAsFoodEvent a owl:ObjectProperty ; rdfs:label "manifests as food event"@en ;
+    rdfs:domain rasff:FoodSafetyHazard ; rdfs:range rasff:FoodSafetyEvent ;
+    rdfs:subPropertyOf hazard:hasManifestationEvent .
+rasff:emergesFromFoodHazard a owl:ObjectProperty ; rdfs:label "emerges from food hazard"@en ;
+    rdfs:domain rasff:RiskToHealth ; rdfs:range rasff:FoodSafetyHazard ;
+    rdfs:subPropertyOf risk:hasHazardDeterminant .
+rasff:involvesConsumption a owl:ObjectProperty ; rdfs:label "involves consumption"@en ;
+    rdfs:domain rasff:RiskToHealth ; rdfs:range rasff:ConsumptionExposure ;
+    rdfs:subPropertyOf risk:hasExposureDeterminant .
+rasff:exposedToContamination a owl:ObjectProperty ; rdfs:label "exposed to contamination"@en ;
+    rdfs:comment "Consumption exposure and the food-safety event share the disaster/contamination setting. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain rasff:ConsumptionExposure ; rdfs:range rasff:FoodSafetyEvent ;
+    rdfs:subPropertyOf dul:sameSettingAs .
+rasff:contains a owl:ObjectProperty ; rdfs:label "contains"@en ;
+    rdfs:domain rasff:FoodOrFeedProduct ; rdfs:range rasff:HazardousSubstance ;
+    rdfs:subPropertyOf dul:hasConstituent .
+rasff:poses a owl:ObjectProperty ; rdfs:label "poses"@en ;
+    rdfs:comment "A hazardous substance poses a health risk; the two share the risk setting. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain rasff:HazardousSubstance ; rdfs:range rasff:RiskToHealth ;
+    rdfs:subPropertyOf dul:sameSettingAs .
+rasff:generates a owl:ObjectProperty ; rdfs:label "generates"@en ;
+    rdfs:comment "A health risk generates an alert notification. (Provenance-flavoured; no DUL super.)"@en ;
+    rdfs:domain rasff:RiskToHealth ; rdfs:range rasff:AlertNotification .
+rasff:alertsAbout a owl:ObjectProperty ; rdfs:label "alerts about"@en ;
+    rdfs:domain rasff:AlertNotification ; rdfs:range rasff:FoodSafetyEvent ;
+    rdfs:subPropertyOf dul:isAbout .
+rasff:recommends a owl:ObjectProperty ; rdfs:label "recommends"@en ;
+    rdfs:domain rasff:AlertNotification ; rdfs:range rasff:MeasureTaken ;
+    rdfs:subPropertyOf dul:isAbout .
+rasff:reports a owl:ObjectProperty ; rdfs:label "reports"@en ;
+    rdfs:comment "A reporting country issues an alert notification. (Provenance-flavoured; no DUL super.)"@en ;
+    rdfs:domain rasff:ReportingCountry ; rdfs:range rasff:AlertNotification .
+rasff:hasOriginCountry a owl:ObjectProperty ; rdfs:label "has origin country"@en ;
+    rdfs:domain rasff:ProductBatch ; rdfs:range rasff:OriginCountry ;
+    rdfs:subPropertyOf foundation:hasLocation .
+rasff:isDistributedIn a owl:ObjectProperty ; rdfs:label "is distributed in"@en ;
+    rdfs:domain rasff:ProductBatch ; rdfs:range rasff:DistributionCountry ;
+    rdfs:subPropertyOf foundation:hasLocation .
+
+# ---- Datatype properties ----------------------------------------------------
+rasff:hasDate a owl:DatatypeProperty ; rdfs:label "has date"@en ; rdfs:range xsd:date .
+rasff:hasRiskLevel a owl:DatatypeProperty ; rdfs:label "has risk level"@en ; rdfs:range xsd:string .
+rasff:hasStatus a owl:DatatypeProperty ; rdfs:label "has status"@en ; rdfs:range xsd:string .

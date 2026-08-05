@@ -1,0 +1,121 @@
+@prefix eios:        <http://data.europa.eu/h8v/ecmo/eios/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO EIOS Module — Epidemic Intelligence from Open Sources — v0.2 (ECMO 2.3)
+#
+# Rebased from the standalone EIOS v1.0 (http://purl.org/ecmo/eios#, importing
+# the old purl.org/ecmo/core#) onto ECMO 2.3. Reuse decisions:
+#   - eios:EventValidation      -> REUSE foundation:EventValidation
+#   - eios:RiskAssessmentReport  -> REUSE foundation:RiskAssessmentReport
+#   - core:CommunicationEvent (Signal) -> eios:Signal ⊑ foundation:Signal
+#   - dul:InformationEntity (non-standard) -> dul:InformationObject
+#   - eios:pertainsToEvent       -> REUSE foundation:pertainsToEvent
+#   - old core: super-properties  -> foundation:/prov: equivalents
+# Kept (genuinely EIOS): OpenSourceData, InformationSource, InterventionRecommendation.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/eios> a owl:Ontology ;
+    dcterms:issued "2026-07-09"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "EIOS (Epidemic Intelligence from Open Sources) module of the ECMO network. Models open-source public-health threat detection: open-source data collected from information sources, the signals it yields, the public-health events those signals pertain to, event validation, and the risk-assessment reports and intervention recommendations produced. Reuses ECMO's foundation Signal/EventValidation/Report machinery."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/foundation> ,
+                <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+                <http://data.europa.eu/h8v/ecmo/core/response> ;
+    owl:versionInfo "0.2" ;
+    skos:changeNote "v0.2: Rebased EIOS v1.0 onto ECMO 2.3. Reuses foundation:EventValidation and foundation:RiskAssessmentReport (dropped the eios: shadow classes); eios:Signal ⊑ foundation:Signal; eios:PublicHealthEvent ⊑ hazard:HazardousEvent; dul:InformationEntity corrected to dul:InformationObject; property alignments remapped to foundation:/prov:."@en ;
+    skos:prefLabel "ECMO EIOS — Epidemic Intelligence from Open Sources"@en .
+
+# ---- Kept classes -----------------------------------------------------------
+eios:OpenSourceData a owl:Class ;
+    rdfs:label "Open Source Data"@en ;
+    rdfs:comment "A unit of publicly available information (news item, social-media post, official bulletin) ingested by the EIOS system."@en ;
+    rdfs:subClassOf dul:InformationObject ;
+    skos:prefLabel "Open Source Data"@en .
+
+eios:InformationSource a owl:Class ;
+    rdfs:label "Information Source"@en ;
+    rdfs:comment "The originating agent of open-source data — a media outlet, platform, agency or reporting entity."@en ;
+    rdfs:subClassOf dul:Agent ;
+    skos:prefLabel "Information Source"@en .
+
+eios:Signal a owl:Class ;
+    rdfs:label "Signal (EIOS)"@en ;
+    rdfs:comment "An open-source-derived surveillance signal — a specialisation of foundation:Signal generated from EIOS open-source data."@en ;
+    rdfs:subClassOf foundation:Signal ;
+    skos:prefLabel "EIOS Signal"@en .
+
+eios:PublicHealthEvent a owl:Class ;
+    rdfs:label "Public Health Event"@en ;
+    rdfs:comment "A public-health hazardous event that signals pertain to and validations confirm. Specialises hazard:HazardousEvent."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ;
+    skos:prefLabel "Public Health Event"@en .
+
+eios:InterventionRecommendation a owl:Class ;
+    rdfs:label "Intervention Recommendation"@en ;
+    rdfs:comment "An information object, produced within a risk-assessment report, recommending one or more response interventions."@en ;
+    rdfs:subClassOf dul:InformationObject ;
+    skos:prefLabel "Intervention Recommendation"@en .
+
+# ---- Properties (rebased) ---------------------------------------------------
+eios:collectedFrom a owl:ObjectProperty ;
+    rdfs:label "collected from"@en ;
+    rdfs:comment "Attributes a unit of open-source data to the information source it came from."@en ;
+    rdfs:domain eios:OpenSourceData ; rdfs:range eios:InformationSource ;
+    rdfs:subPropertyOf prov:wasAttributedTo .
+
+eios:generatesSignal a owl:ObjectProperty ;
+    rdfs:label "generates signal"@en ;
+    rdfs:comment "Relates open-source data to the eios:Signal derived from it. (Provenance-flavoured; left without a DUL super — the Signal prov:wasDerivedFrom the data.)"@en ;
+    rdfs:domain eios:OpenSourceData ; rdfs:range eios:Signal .
+
+eios:hasReport a owl:ObjectProperty ;
+    rdfs:label "has report"@en ;
+    rdfs:comment "Links a public-health event to a risk-assessment report about it. Inverse of foundation:isReportFor."@en ;
+    rdfs:domain eios:PublicHealthEvent ; rdfs:range foundation:RiskAssessmentReport ;
+    owl:inverseOf foundation:isReportFor .
+
+eios:validatesEvent a owl:ObjectProperty ;
+    rdfs:label "validates event"@en ;
+    rdfs:comment "Relates a foundation:EventValidation process to the public-health event it confirms. SubPropertyOf foundation:confirmsEvent."@en ;
+    rdfs:domain foundation:EventValidation ; rdfs:range eios:PublicHealthEvent ;
+    rdfs:subPropertyOf foundation:confirmsEvent .
+
+eios:undergoesValidation a owl:ObjectProperty ;
+    rdfs:label "undergoes validation"@en ;
+    rdfs:comment "Relates an eios:Signal to the foundation:EventValidation it is subjected to. Inverse of foundation:validatesSignal."@en ;
+    rdfs:domain eios:Signal ; rdfs:range foundation:EventValidation ;
+    owl:inverseOf foundation:validatesSignal .
+
+eios:recommendsIntervention a owl:ObjectProperty ;
+    rdfs:label "recommends intervention"@en ;
+    rdfs:comment "Relates a risk-assessment report to an intervention recommendation it carries. SubPropertyOf dul:hasComponent (the recommendation is a component of the report)."@en ;
+    rdfs:domain foundation:RiskAssessmentReport ; rdfs:range eios:InterventionRecommendation ;
+    rdfs:subPropertyOf dul:hasComponent .
+
+eios:aboutIntervention a owl:ObjectProperty ;
+    rdfs:label "about intervention"@en ;
+    rdfs:comment "Relates an intervention recommendation to the response:Intervention (or MeasureType) it advocates. SubPropertyOf dul:isAbout."@en ;
+    rdfs:domain eios:InterventionRecommendation ; rdfs:range response:Intervention ;
+    rdfs:subPropertyOf dul:isAbout .
+
+# NOTE: eios:pertainsToEvent is DROPPED — reuse foundation:pertainsToEvent
+#       (Signal → HazardousEvent), which covers eios:Signal → eios:PublicHealthEvent.
+
+# ---- Datatype properties ----------------------------------------------------
+# eios:hasConfidenceScore -> REUSE foundation:hasConfidenceScore
+# eios:reportDate         -> REUSE foundation:hasReportDate
+eios:hasStatus a owl:DatatypeProperty ;
+    rdfs:label "has status"@en ;
+    rdfs:comment "Workflow status of a signal or event (e.g. 'new', 'under-verification', 'confirmed', 'closed')."@en ;
+    rdfs:range xsd:string .

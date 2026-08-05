@@ -1,0 +1,163 @@
+@prefix cecis:       <http://data.europa.eu/h8v/ecmo/cecis/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO CECIS Module — Common Emergency Communication & Information System — v0.2
+#
+# Rebased from CECIS v1.0 (purl.org/ecmo/cecis#). Reuse decisions:
+#   - cecis:Emergency        -> ⊑ disaster:Emergency
+#   - cecis:EmergencyService  -> ⊑ response:EmergencyService
+#   - cecis:ResponsePhase     -> ⊑ response:RiskReductionPhase; the four phases
+#                                REUSE response:Prevention/Preparedness/Response/Recovery
+#   - cecis:EmergencyRiskAssessment -> ⊑ foundation:RiskAssessmentReport
+#   - cecis:ParticipatingState -> ⊑ governance:Institution
+#   - cecis:EmergencyEvent    -> ⊑ hazard:HazardousEvent
+#   - core:hasDataSource / hasOperationalPhase -> prov:/response: equivalents
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/cecis> a owl:Ontology ;
+    dcterms:issued "2026-07-09"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "CECIS (Common Emergency Communication and Information System) module of the ECMO network. Models the EU Civil Protection Mechanism's information exchange: emergencies and their triggering events, participating states, requests for and offers of assistance, emergency services, response phases, and the risk assessments emergencies are based on. Reuses ECMO's disaster / response / governance vocabulary."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/disaster> ,
+                <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+                <http://data.europa.eu/h8v/ecmo/core/response> ,
+                <http://data.europa.eu/h8v/ecmo/core/governance> ,
+                <http://data.europa.eu/h8v/ecmo/core/foundation> ;
+    owl:versionInfo "0.2" ;
+    skos:changeNote "v0.2: Rebased CECIS v1.0 onto ECMO 2.3. Emergency ⊑ disaster:Emergency, EmergencyService ⊑ response:EmergencyService, ResponsePhase ⊑ response:RiskReductionPhase (four DRM phases reuse response:Prevention/Preparedness/Response/Recovery), EmergencyRiskAssessment ⊑ foundation:RiskAssessmentReport, ParticipatingState ⊑ governance:Institution; property alignments remapped (precedesPhase ⊑ response:precedesPhase, originatesFrom ⊑ prov:wasAttributedTo, triggeredBy ⊑ disaster:isTriggeredBy)."@en ;
+    skos:prefLabel "ECMO CECIS — Common Emergency Communication & Information System"@en .
+
+# ---- Emergencies ------------------------------------------------------------
+cecis:Emergency a owl:Class ;
+    rdfs:label "Emergency"@en ;
+    rdfs:comment "An emergency tracked and coordinated through CECIS. Specialises disaster:Emergency."@en ;
+    rdfs:subClassOf disaster:Emergency ; skos:prefLabel "Emergency"@en .
+cecis:NaturalDisaster a owl:Class ; rdfs:label "Natural Disaster"@en ;
+    rdfs:subClassOf cecis:Emergency ; fschema:subsumedUnder hazard:NaturalHazard ; skos:prefLabel "Natural Disaster"@en .
+cecis:ManMadeDisaster a owl:Class ; rdfs:label "Man-Made Disaster"@en ;
+    rdfs:subClassOf cecis:Emergency ; fschema:subsumedUnder hazard:AnthropogenicHazard ; skos:prefLabel "Man-Made Disaster"@en .
+cecis:CBRNEmergency a owl:Class ; rdfs:label "CBRN Emergency"@en ;
+    rdfs:subClassOf cecis:Emergency ; skos:prefLabel "CBRN Emergency"@en .
+cecis:PublicHealthEmergency a owl:Class ; rdfs:label "Public Health Emergency"@en ;
+    rdfs:subClassOf cecis:Emergency ; fschema:subsumedUnder hazard:BiologicalHazard ; skos:prefLabel "Public Health Emergency"@en .
+
+cecis:EmergencyEvent a owl:Class ;
+    rdfs:label "Emergency Event"@en ;
+    rdfs:comment "The hazardous event that triggers an emergency. Specialises hazard:HazardousEvent."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ; skos:prefLabel "Emergency Event"@en .
+
+# ---- Coordination & information exchange ------------------------------------
+cecis:ParticipatingState a owl:Class ;
+    rdfs:label "Participating State"@en ;
+    rdfs:comment "A state participating in the Civil Protection Mechanism. Specialises governance:Institution."@en ;
+    rdfs:subClassOf governance:Institution ; skos:prefLabel "Participating State"@en .
+cecis:EmergencyService a owl:Class ;
+    rdfs:label "Emergency Service"@en ;
+    rdfs:subClassOf response:EmergencyService ; skos:prefLabel "Emergency Service"@en .
+cecis:InformationExchange a owl:Class ;
+    rdfs:label "Information Exchange"@en ;
+    rdfs:subClassOf dul:InformationObject ; skos:prefLabel "Information Exchange"@en .
+cecis:RequestForAssistance a owl:Class ; rdfs:label "Request for Assistance"@en ;
+    rdfs:subClassOf cecis:InformationExchange ; skos:prefLabel "Request for Assistance"@en .
+cecis:OfferOfAssistance a owl:Class ; rdfs:label "Offer of Assistance"@en ;
+    rdfs:subClassOf cecis:InformationExchange ; skos:prefLabel "Offer of Assistance"@en .
+cecis:Resource a owl:Class ;
+    rdfs:label "Resource"@en ;
+    rdfs:comment "A civil-protection asset offered or requested (teams, equipment, supplies)."@en ;
+    rdfs:subClassOf dul:Object ; skos:prefLabel "Resource"@en .
+cecis:EmergencyRiskAssessment a owl:Class ;
+    rdfs:label "Emergency Risk Assessment"@en ;
+    rdfs:comment "The risk-assessment document an emergency response is based on. Specialises foundation:RiskAssessmentReport."@en ;
+    rdfs:subClassOf foundation:RiskAssessmentReport ; skos:prefLabel "Emergency Risk Assessment"@en .
+cecis:IncidentLocation a owl:Class ;
+    rdfs:label "Incident Location"@en ;
+    rdfs:subClassOf dul:SpaceRegion ; skos:prefLabel "Incident Location"@en .
+
+# ---- Response phases (⊑ response:RiskReductionPhase) ------------------------
+# The four DRM phases REUSE response:Prevention / Preparedness / Response / Recovery.
+cecis:ResponsePhase a owl:Class ;
+    rdfs:label "Response Phase"@en ;
+    rdfs:comment "A phase of the disaster-management cycle. Specialises response:RiskReductionPhase. The concrete phases reuse response:Prevention, response:Preparedness, response:Response and response:Recovery."@en ;
+    rdfs:subClassOf response:RiskReductionPhase ; skos:prefLabel "Response Phase"@en .
+
+# ---- Properties (rebased) ---------------------------------------------------
+cecis:triggeredBy a owl:ObjectProperty ;
+    rdfs:label "triggered by"@en ;
+    rdfs:comment "Relates an emergency to the hazardous event that triggered it. SubPropertyOf disaster:isTriggeredBy."@en ;
+    rdfs:domain cecis:Emergency ; rdfs:range cecis:EmergencyEvent ;
+    rdfs:subPropertyOf disaster:isTriggeredBy .
+
+cecis:hasLocation a owl:ObjectProperty ;
+    rdfs:label "has location"@en ;
+    rdfs:domain cecis:Emergency ; rdfs:range cecis:IncidentLocation ;
+    rdfs:subPropertyOf foundation:hasLocation .
+
+cecis:basedOnRiskAssessment a owl:ObjectProperty ;
+    rdfs:label "based on risk assessment"@en ;
+    rdfs:comment "Relates an emergency to the risk-assessment document its coordination is based on. Left without a DUL super: the report is an InformationObject about the emergency (the report dul:isAbout the emergency), so this direction is not dul:isDescribedBy (whose range is dul:Description, disjoint from InformationObject in ECMO)."@en ;
+    rdfs:domain cecis:Emergency ; rdfs:range cecis:EmergencyRiskAssessment .
+
+cecis:hasResponsePhase a owl:ObjectProperty ;
+    rdfs:label "has response phase"@en ;
+    rdfs:comment "Relates an emergency to a response phase in its management cycle. Left without a DUL super (a management/temporal relation)."@en ;
+    rdfs:domain cecis:Emergency ; rdfs:range cecis:ResponsePhase .
+
+cecis:precedesPhase a owl:ObjectProperty ;
+    rdfs:label "precedes phase"@en ;
+    rdfs:domain cecis:ResponsePhase ; rdfs:range cecis:ResponsePhase ;
+    rdfs:subPropertyOf response:precedesPhase .
+
+cecis:respondsTo a owl:ObjectProperty ;
+    rdfs:label "responds to"@en ;
+    rdfs:comment "Relates an emergency service to the emergency it responds to. SubPropertyOf dul:isParticipantIn."@en ;
+    rdfs:domain cecis:EmergencyService ; rdfs:range cecis:Emergency ;
+    rdfs:subPropertyOf dul:isParticipantIn .
+
+cecis:relatesTo a owl:ObjectProperty ;
+    rdfs:label "relates to"@en ;
+    rdfs:comment "Relates an information exchange to the emergency it concerns. SubPropertyOf dul:isAbout."@en ;
+    rdfs:domain cecis:InformationExchange ; rdfs:range cecis:Emergency ;
+    rdfs:subPropertyOf dul:isAbout .
+
+cecis:originatesFrom a owl:ObjectProperty ;
+    rdfs:label "originates from"@en ;
+    rdfs:comment "Attributes an information exchange to the participating state that sent it. SubPropertyOf prov:wasAttributedTo."@en ;
+    rdfs:domain cecis:InformationExchange ; rdfs:range cecis:ParticipatingState ;
+    rdfs:subPropertyOf prov:wasAttributedTo .
+
+cecis:isSentTo a owl:ObjectProperty ;
+    rdfs:label "is sent to"@en ;
+    rdfs:comment "Relates an information exchange to the participating state it is addressed to. SubPropertyOf dul:hasParticipant."@en ;
+    rdfs:domain cecis:InformationExchange ; rdfs:range cecis:ParticipatingState ;
+    rdfs:subPropertyOf dul:hasParticipant .
+
+cecis:offers a owl:ObjectProperty ;
+    rdfs:label "offers"@en ;
+    rdfs:comment "Relates an offer of assistance to the resource offered. SubPropertyOf dul:isAbout."@en ;
+    rdfs:domain cecis:OfferOfAssistance ; rdfs:range cecis:Resource ;
+    rdfs:subPropertyOf dul:isAbout .
+cecis:requests a owl:ObjectProperty ;
+    rdfs:label "requests"@en ;
+    rdfs:comment "Relates a request for assistance to the resource requested. SubPropertyOf dul:isAbout."@en ;
+    rdfs:domain cecis:RequestForAssistance ; rdfs:range cecis:Resource ;
+    rdfs:subPropertyOf dul:isAbout .
+
+# ---- Datatype properties ----------------------------------------------------
+cecis:hasCategory a owl:DatatypeProperty ; rdfs:label "has category"@en ; rdfs:domain cecis:Emergency ; rdfs:range xsd:string .
+cecis:hasStatus a owl:DatatypeProperty ; rdfs:label "has status"@en ; rdfs:range xsd:string .
+cecis:hasTimestamp a owl:DatatypeProperty ; rdfs:label "has timestamp"@en ; rdfs:range xsd:dateTime .
+cecis:phaseDuration a owl:DatatypeProperty ; rdfs:label "phase duration"@en ; rdfs:domain cecis:ResponsePhase ; rdfs:range xsd:duration .

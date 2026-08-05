@@ -1,0 +1,108 @@
+@prefix phsm:        <http://data.europa.eu/h8v/ecmo/phsm/> .
+@prefix ewrs:        <http://data.europa.eu/h8v/ecmo/ewrs/> .
+@prefix cecis:       <http://data.europa.eu/h8v/ecmo/cecis/> .
+@prefix mcmc:        <http://data.europa.eu/h8v/ecmo/mcmc/> .
+@prefix rasff:       <http://data.europa.eu/h8v/ecmo/rasff/> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO PHSM cross-module alignments - v0.1
+#
+# Predicate discipline (per A. Gangemi): assert equivalence with the OWL
+# predicate matching the entity kind - owl:sameAs (individuals),
+# owl:equivalentClass (classes), owl:equivalentProperty (properties) - NEVER
+# skos:exactMatch; and assert equivalence ONLY where the two entities share a
+# DUL top-category and extension. Where they do not, use rdfs:subClassOf
+# (genuine subsumption of same-kind classes) or skos:relatedMatch (associative
+# link across DUL categories - a measure TYPE vs a product / information object).
+#
+# Kind analysis of the target classes:
+#   ewrs:ResponseAction   (r) subClassOf response:Response      -> ACTION
+#   rasff:MeasureTaken     (r) subClassOf response:Response      -> ACTION
+#   ewrs:Alert             (r) subClassOf instruments:Warning    -> INFORMATION OBJECT
+#   cecis:RequestForAssistance (r) subClassOf dul:InformationObject -> INFORMATION OBJECT
+#   cecis:InformationExchange  (r) subClassOf dul:InformationObject -> INFORMATION OBJECT
+#   mcmc:MedicalCountermeasure (r) subClassOf dul:Object          -> PRODUCT
+# phsm measure types are dul:SocialObject; phsm:PublicHealthMeasure is a
+# dul:Action. => No owl:sameAs / owl:equivalentClass / owl:equivalentProperty
+# assertion is warranted here (documented below). Two rdfs:subClassOf links hold.
+#
+# The pharmaceutical measure -> countermeasure PRODUCT relation is modelled not
+# as a skos mapping but as a dedicated object property, phsm:deploysCountermeasure
+# (subPropertyOf dul:hasParticipant: an action has a product as participant),
+# with General Class Inclusion axioms tying each pharmaceutical measure type to
+# the kind of mcmc product it deploys. This is a real semantic bridge, queryable
+# and reasoner-checkable, rather than an associative note.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/phsm/alignments> a owl:Ontology ;
+    dcterms:issued "2026-07-20"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Auxiliary alignment module linking the ECMO PHSM module to the EWRS, CECIS, MCMC and RASFF source modules. Kept separate from ecmo-phsm.ttl so the core module stays import-light."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/phsm> ,
+        <http://data.europa.eu/h8v/ecmo/ewrs> ,
+        <http://data.europa.eu/h8v/ecmo/cecis> ,
+        <http://data.europa.eu/h8v/ecmo/mcmc> ,
+        <http://data.europa.eu/h8v/ecmo/rasff> ;
+    owl:versionInfo "0.1" ;
+    skos:prefLabel "ECMO PHSM cross-module alignments"@en .
+
+# ---- 1. Firm subsumptions (same DUL kind: response:Response actions) ---------
+# An EWRS-advised countermeasure and a RASFF food-safety control measure are
+# both, ontologically, public health measures (actions). These enrich the
+# network: PHSM queries now reach EWRS/RASFF response instances.
+
+ewrs:ResponseAction rdfs:subClassOf phsm:PublicHealthMeasure ;
+    skos:editorialNote "An EWRS ResponseAction (countermeasure advised by a warning) is a public health measure."@en .
+
+rasff:MeasureTaken rdfs:subClassOf phsm:PublicHealthMeasure ;
+    skos:editorialNote "A RASFF MeasureTaken (food-safety control measure) is a public health measure. Note: rasff:MeasureTaken and phsm:NonPharmaceuticalMeasure both further specialise response:Response / instruments:Measure."@en .
+
+# ---- 2. Pharmaceutical measures deploy Medical Countermeasures (mcmc) --------
+# A dedicated object property bridges the enacted measure (a dul:Action) to the
+# countermeasure PRODUCT (a dul:Object) it administers. Type-level tendencies are
+# expressed as General Class Inclusion axioms: every enacted measure classified
+# by the given pharmaceutical type deploys some countermeasure of the matching
+# kind. Declared here (not in ecmo-phsm.ttl) so the core module need not import mcmc.
+
+phsm:deploysCountermeasure a owl:ObjectProperty ;
+    rdfs:comment "Relates an enacted public health measure (an action) to the medical countermeasure product it deploys or administers. Bridges the PHSM and MCMC modules."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ;
+    rdfs:range mcmc:MedicalCountermeasure ;
+    rdfs:subPropertyOf dul:hasParticipant ;
+    skos:prefLabel "deploys countermeasure"@en, "impiega contromisura"@it .
+
+[ a owl:Restriction ; owl:onProperty phsm:hasMeasureCategory ; owl:hasValue phsm:PostExposureVaccination ]
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty phsm:deploysCountermeasure ; owl:someValuesFrom mcmc:Vaccine ] .
+
+[ a owl:Restriction ; owl:onProperty phsm:hasMeasureCategory ; owl:hasValue phsm:Chemoprophylaxis ]
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty phsm:deploysCountermeasure ; owl:someValuesFrom mcmc:Therapeutic ] .
+
+[ a owl:Restriction ; owl:onProperty phsm:hasMeasureCategory ; owl:hasValue phsm:PostExposureChemoprophylaxis ]
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty phsm:deploysCountermeasure ; owl:someValuesFrom mcmc:Therapeutic ] .
+
+[ a owl:Restriction ; owl:onProperty phsm:hasMeasureCategory ; owl:hasValue phsm:AdministrationOfAntidotesAndToxicologicalTreatment ]
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty phsm:deploysCountermeasure ; owl:someValuesFrom mcmc:Antidote ] ,
+        [ a owl:Restriction ; owl:onProperty phsm:deploysCountermeasure ; owl:someValuesFrom mcmc:Therapeutic ] .
+
+[ a owl:Restriction ; owl:onProperty phsm:hasMeasureCategory ; owl:hasValue phsm:SpecificProphylaxisAvailability ]
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty phsm:deploysCountermeasure ; owl:someValuesFrom mcmc:MedicalCountermeasure ] .
+
+# ---- 3. Associative cross-category links (measure TYPE <-> information object) -
+# NOT equivalences and NOT participation: the target is a dul:InformationObject.
+# skos:relatedMatch is the correct, non-committal cross-scheme predicate here.
+
+# 3a. Notification / coordination measure types -> EWRS / CECIS information objects
+phsm:NotificationOfEarlyWarningSystems skos:relatedMatch ewrs:Alert .
+phsm:RequestForInternationalAssistance skos:relatedMatch cecis:RequestForAssistance .
+phsm:RequestOfUCPMActivation skos:relatedMatch cecis:RequestForAssistance .
+phsm:CrossBorderInformationSharing skos:relatedMatch cecis:InformationExchange .
+
+# 3b. Food recall measure type -> RASFF control measure (action, but broader/other-scheme)
+phsm:RecallOfContaminatedFoodItems skos:relatedMatch rasff:MeasureTaken .

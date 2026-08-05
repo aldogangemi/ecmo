@@ -1,0 +1,167 @@
+@prefix coreffixt:   <http://data.europa.eu/h8v/ecmo/coref/fixt> .
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix cqs:         <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:          <http://www.w3.org/ns/shacl#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix time:        <http://www.w3.org/2006/time#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# Fixture-only prefixes (agency-local vocabularies; placeholders for the alignment module).
+@prefix ews:         <http://example.org/agency/ews/> .
+@prefix argus:       <http://example.org/agency/argus/> .
+@prefix ecrc:        <http://example.org/agency/ecrc/> .
+@prefix athina:      <http://example.org/agency/athina/> .
+@prefix ipcr:        <http://example.org/agency/ipcr/> .
+@prefix ecmp:        <http://example.org/agency/ecmp/> .
+@prefix agency:      <http://example.org/agency/> .
+@prefix ex:          <http://data.europa.eu/h8v/ecmo/examples/hondius/> .
+
+# =============================================================================
+# Fixture A+ — Hantavirus outbreak aboard MV Hondius (the screenshot scenario)
+# =============================================================================
+
+# Hazard individuals used by the classifications (placeholders; the real
+# vocabulary lives in ecmo-public-health / a future viral taxonomy module).
+ex:UnknownDisease a hazard:BiologicalHazard, owl:NamedIndividual ;
+    skos:prefLabel "Unknown biological agent (etiology unknown)"@en .
+
+ph:Hantaviridae a hazard:BiologicalHazard, owl:NamedIndividual ;
+    fschema:subsumedUnder ph:Pathogen ;
+    skos:prefLabel "Hantaviridae"@en .
+
+ph:AndesVirus a hazard:BiologicalHazard, owl:NamedIndividual ;
+    fschema:subsumedUnder ph:Hantaviridae ;
+    skos:prefLabel "Andes orthohantavirus"@en .
+
+# Agencies
+agency:EWS   a prov:Organization ; skos:prefLabel "ECDC Early Warning System"@en .
+agency:ARGUS a prov:Organization ; skos:prefLabel "EU Commission ARGUS"@en .
+agency:ECRC  a prov:Organization ; skos:prefLabel "Emergency Response Coordination Centre (ECHO)"@en .
+agency:ATHINA a prov:Organization ; skos:prefLabel "ATHINA platform"@en .
+agency:IPCR  a prov:Organization ; skos:prefLabel "Integrated Political Crisis Response (Council)"@en .
+agency:ECMP  a prov:Organization ; skos:prefLabel "ECMP platform"@en .
+
+# The Occurrence anchor — minimal, agreed-upon kernel
+ex:HondiusOutbreak a coref:Occurrence ;
+    skos:prefLabel "Hantavirus outbreak aboard MV Hondius (May 2026)"@en ;
+    foundation:hasLocation ex:MV_Hondius_SouthAtlantic ;
+    disaster:hasTemporalExtent [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ]
+    ] .
+
+# Three reified hazard classifications, chained by refinedBy (all taxonomic)
+ex:Cls_t0_unknown a coref:HazardClassificationSituation ;
+    skos:prefLabel "Classification at t0 — unknown etiology"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    coref:classifiesAs ex:UnknownDisease ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-05-03"^^xsd:date ]
+    ] ;
+    coref:refinedBy ex:Cls_t1_hantaviridae ;
+    prov:wasAttributedTo agency:EWS .
+
+ex:Cls_t1_hantaviridae a coref:HazardClassificationSituation ;
+    skos:prefLabel "Classification at t1 — Hantaviridae family"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    coref:classifiesAs ph:Hantaviridae ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-03"^^xsd:date ] ;
+        time:hasEnd       [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    coref:refinedBy ex:Cls_t2_andesvirus ;
+    prov:wasAttributedTo agency:ARGUS, agency:ECRC .
+
+ex:Cls_t2_andesvirus a coref:HazardClassificationSituation ;
+    skos:prefLabel "Classification at t2 — Andes hantavirus (PCR-confirmed)"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    coref:classifiesAs ph:AndesVirus ;
+    foundation:hasTemporalValidity [
+        a time:Interval ;
+        time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ]
+    ] ;
+    prov:wasAttributedTo agency:IPCR .
+
+# Per-agency local Situations — typed via the alignment module to ECMO foundation classes.
+# The local class typings (ews:Notification, argus:Phase1_Event, etc.) are kept as the
+# stakeholder descriptions at the data layer — no separate StakeholderAssessment needed.
+ex:s_ews_n1 a ews:Notification, foundation:Signal ;
+    skos:prefLabel "EWS notification of unknown outbreak — 02 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:EWS ;
+    foundation:hasConfidenceScore 0.4 .
+
+ex:s_ecmp_sig1 a ecmp:Signal, foundation:Signal ;
+    skos:prefLabel "ECMP signal — 02 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ECMP .
+
+ex:s_argus_p1 a argus:Phase1_Event, foundation:Signal ;
+    skos:prefLabel "ARGUS Phase 1 event activation — 06 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ARGUS .
+
+ex:s_ecrc_act a ecrc:UCPM_Activation, governance:EmergencyManagement ;
+    skos:prefLabel "ECRC / UCPM activation — 06 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ] ;
+    prov:wasAttributedTo agency:ECRC .
+
+ex:s_athina_sig a athina:Signal, foundation:Signal ;
+    skos:prefLabel "ATHINA signal — 06 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-06"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ATHINA .
+
+ex:s_ipcr_ism a ipcr:InfoSharingMode_Event, governance:EmergencyManagement ;
+    skos:prefLabel "IPCR information-sharing-mode event — 08 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ] ] ;
+    prov:wasAttributedTo agency:IPCR .
+
+ex:s_athina_threat a athina:Threat, foundation:Signal ;
+    skos:prefLabel "ATHINA threat record — 08 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-08"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:ATHINA .
+
+ex:s_ews_n2 a ews:Notification, foundation:Signal ;
+    skos:prefLabel "EWS notification (revised) — 13 May"@en ;
+    coref:concernsOccurrence ex:HondiusOutbreak ;
+    foundation:hasTemporalValidity [ time:hasBeginning [ time:inXSDDate "2026-05-13"^^xsd:date ] ] ;
+    foundation:isSignalFrom agency:EWS ;
+    coref:supersedes ex:s_ews_n1 .
+
+# A consolidated HubAssessment (optional; appears once a coordinating hub adjudicates).
+ex:HondiusHubAssessment_v1 a coref:HubAssessment ;
+    skos:prefLabel "Consolidated assessment of the MV Hondius outbreak — v1, 09 May"@en ;
+    coref:appliesMergePolicy ex:LatestNonCorrectedPolicy ;
+    coref:aggregatesAssessment ex:Cls_t2_andesvirus ;
+    prov:wasAttributedTo agency:ECRC ;
+    prov:generatedAtTime "2026-05-09T12:00:00Z"^^xsd:dateTime .
+
+ex:HondiusOutbreak coref:hostsAssessment ex:HondiusHubAssessment_v1 .
+
+ex:LatestNonCorrectedPolicy a coref:MergePolicy ;
+    skos:prefLabel "Latest non-corrected classification wins"@en ;
+    rdfs:comment "Of the classifications concerning a given Occurrence, select the one with the highest hasTemporalValidity beginning that has no outgoing correctedBy. Refinements are preserved; corrections invalidate their predecessors."@en .

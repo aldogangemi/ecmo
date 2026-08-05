@@ -1,0 +1,25 @@
+@prefix phsm:       <http://data.europa.eu/h8v/ecmo/phsm/> .
+@prefix governance: <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix exn:        <http://data.europa.eu/h8v/ecmo/phsm/example-neg/> .
+@prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+
+# A- : negative fixture ABox. Each individual VIOLATES ecmo-phsm-shapes.ttl on
+# purpose, so pyshacl must report conforms=false. Used to prove the negative
+# competency questions (N01, N03, N04) actually bite (b33/b35).
+
+# N04: enacted measure with NO measure category (violates minCount 1)
+exn:Bad_NoCategory a phsm:PublicHealthMeasure ;
+    rdfs:label "Measure with no category (should fail minCount)"@en ;
+    phsm:hasLegalStatus phsm:Mandatory .
+
+# N01: two distinct measure categories (violates maxCount 1 / functional)
+exn:Bad_TwoCategories a phsm:PublicHealthMeasure ;
+    rdfs:label "Measure with two categories (should fail maxCount)"@en ;
+    phsm:hasMeasureCategory phsm:Masks, phsm:Gloves .
+
+# N03: legal status outside the closed enumeration (violates sh:in)
+exn:Bad_LegalStatus a phsm:PublicHealthMeasure ;
+    rdfs:label "Measure with illegal status value (should fail sh:in)"@en ;
+    phsm:hasMeasureCategory phsm:HandHygiene ;
+    phsm:hasLegalStatus exn:StronglyRecommended .

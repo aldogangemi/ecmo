@@ -1,0 +1,387 @@
+@prefix bio:         <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix capacity:    <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix cqs:         <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix drivers:     <http://data.europa.eu/h8v/ecmo/core/drivers/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix hera:        <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix sh:          <http://www.w3.org/ns/shacl#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix : <http://data.europa.eu/h8v/ecmo/shapes/> .
+
+# =============================================================================
+# ECMO consistency shapes — v0.2, Framester-native
+#
+# Change vs v0.1: Family III replaced. Instead of coref:hasFrameRole +
+# roles:expectsAncestor (my ad-hoc vocab), the shapes use Framester natively:
+#
+#  - fschema:playsRoleIn      (class → Frame)
+#  - fschema:hasUnaryType     (class → SemanticRole, the unary projection)
+#  - fschema:ontoType         (SemanticRole → OntologyClass, the DOLCE ancestor)
+#  - fschema:hasPerspective   (SemanticRole → Frame, perspective shift)
+#
+# Family I and Family II unchanged from v0.1 — they don't touch the frame
+# vocabulary.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/shapes> a owl:Ontology ;
+    dcterms:issued "2026-06-08"^^xsd:date ;
+    rdfs:comment "ECMO consistency shapes v0.2: DARKSIDE negative trail, Framester-native for Family III."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
+                <http://data.europa.eu/h8v/ecmo/coref> ,
+                <http://data.europa.eu/h8v/ecmo/property-alignments> ;
+    owl:versionInfo "0.2" ;
+    skos:prefLabel "ECMO Consistency Shapes (DARKSIDE, Framester-native)"@en .
+
+# -----------------------------------------------------------------------------
+# Family I — Ancestor-disjointness leaks (class-level). Unchanged from v0.1.
+# -----------------------------------------------------------------------------
+
+:DescriptionVsSituationAncestorShape a sh:NodeShape ;
+    sh:targetClass owl:Class ;
+    sh:message "Class inherits both dul:Description and dul:Situation — D&S boundary violation."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:select """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+            SELECT $this WHERE {
+              $this rdfs:subClassOf* dul:Description .
+              $this rdfs:subClassOf* dul:Situation .
+              FILTER($this != dul:Description && $this != dul:Situation)
+            }""" ] .
+
+:EventVsObjectAncestorShape a sh:NodeShape ;
+    sh:targetClass owl:Class ;
+    sh:message "Class inherits both dul:Event and dul:Object — DUL disjointness violation."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:select """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+        SELECT $this WHERE {
+          $this rdfs:subClassOf* dul:Event . $this rdfs:subClassOf* dul:Object .
+          FILTER($this != dul:Event && $this != dul:Object)
+        }""" ] .
+
+:EventVsQualityAncestorShape a sh:NodeShape ;
+    sh:targetClass owl:Class ;
+    sh:message "Class inherits both dul:Event and dul:Quality — DUL disjointness violation."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:select """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+        SELECT $this WHERE {
+          $this rdfs:subClassOf* dul:Event . $this rdfs:subClassOf* dul:Quality .
+          FILTER($this != dul:Event && $this != dul:Quality)
+        }""" ] .
+
+:ObjectVsQualityAncestorShape a sh:NodeShape ;
+    sh:targetClass owl:Class ;
+    sh:message "Class inherits both dul:Object and dul:Quality — Capacity ambiguity family."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:select """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+        SELECT $this WHERE {
+          $this rdfs:subClassOf* dul:Object . $this rdfs:subClassOf* dul:Quality .
+          FILTER($this != dul:Object && $this != dul:Quality)
+        }""" ] .
+
+:ConceptVsSituationAncestorShape a sh:NodeShape ;
+    sh:targetClass owl:Class ;
+    sh:message "Class inherits both dul:Concept and dul:Situation — DUL disjointness violation."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:select """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+        SELECT $this WHERE {
+          $this rdfs:subClassOf* dul:Concept . $this rdfs:subClassOf* dul:Situation .
+          FILTER($this != dul:Concept && $this != dul:Situation)
+        }""" ] .
+
+:DescriptionVsInformationObjectAncestorShape a sh:NodeShape ;
+    sh:targetClass owl:Class ;
+    sh:message "Class inherits both dul:Description and dul:InformationObject — DUL disjointness violation."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:select """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+        SELECT $this WHERE {
+          $this rdfs:subClassOf* dul:Description . $this rdfs:subClassOf* dul:InformationObject .
+          FILTER($this != dul:Description && $this != dul:InformationObject)
+        }""" ] .
+
+# -----------------------------------------------------------------------------
+# Family II — Property-range-induced disjointness. Unchanged from v0.1.
+# -----------------------------------------------------------------------------
+
+:RangeInducedObjectVsQualityShape a sh:NodeShape ;
+    sh:targetClass owl:Thing ;
+    sh:message "Resource asserted dul:Object AND object of a property with range ⊆ dul:Quality (or mirror). Capacity-ambiguity family."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:select """
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+        SELECT $this ?p ?R WHERE {
+          { $this a ?T . ?T rdfs:subClassOf* dul:Object .
+            ?s ?p $this . ?p rdfs:range ?R . ?R rdfs:subClassOf* dul:Quality . }
+          UNION
+          { $this a ?T . ?T rdfs:subClassOf* dul:Quality .
+            ?s ?p $this . ?p rdfs:range ?R . ?R rdfs:subClassOf* dul:Object . }
+        }""" ] .
+
+:RangeInducedEventVsObjectShape a sh:NodeShape ;
+    sh:targetClass owl:Thing ;
+    sh:message "Resource typed dul:Event AND object of a property with range ⊆ dul:Object (or mirror)."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:select """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+        SELECT $this ?p ?R WHERE {
+          { $this a ?T . ?T rdfs:subClassOf* dul:Event .
+            ?s ?p $this . ?p rdfs:range ?R . ?R rdfs:subClassOf* dul:Object . }
+          UNION
+          { $this a ?T . ?T rdfs:subClassOf* dul:Object .
+            ?s ?p $this . ?p rdfs:range ?R . ?R rdfs:subClassOf* dul:Event . }
+        }""" ] .
+
+:RangeInducedDescriptionVsSituationShape a sh:NodeShape ;
+    sh:targetClass owl:Thing ;
+    sh:message "Resource typed dul:Description AND object of a property with range ⊆ dul:Situation (or mirror) — D&S boundary leak."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ; sh:select """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+        SELECT $this ?p ?R WHERE {
+          { $this a ?T . ?T rdfs:subClassOf* dul:Description .
+            ?s ?p $this . ?p rdfs:range ?R . ?R rdfs:subClassOf* dul:Situation . }
+          UNION
+          { $this a ?T . ?T rdfs:subClassOf* dul:Situation .
+            ?s ?p $this . ?p rdfs:range ?R . ?R rdfs:subClassOf* dul:Description . }
+        }""" ] .
+
+# -----------------------------------------------------------------------------
+# Family III — Frame-role coherence, Framester-native (REPLACES v0.1 shapes).
+# The v0.1 versions used coref:hasFrameRole / roles:expectsAncestor. Those are
+# retired. The new shapes read the frame model via Framester:
+#
+#   ?class fschema:playsRoleIn  ?frame .
+#   ?class fschema:hasUnaryType ?role .        # role is a fschema:SemanticRole
+#   ?role  fschema:ontoType     ?dolceClass .  # DOLCE ancestor the class must inherit
+#   ?role  fschema:hasPerspective ?otherFrame . # perspective shift, optional
+#
+# When the frame model TTL (frames+roles as fschema:Frame/SemanticRole
+# individuals) is loaded alongside ECMO, the shapes fire on any class whose
+# hasUnaryType role's ontoType is not in the class's subClassOf* closure.
+# -----------------------------------------------------------------------------
+
+:FramesterOntoTypeCoherenceShape a sh:NodeShape ;
+    sh:targetClass owl:Class ;
+    sh:message "Class carries a fschema:hasUnaryType annotation whose SemanticRole's fschema:ontoType is not in the class's subClassOf* closure. Frame-role coherence violation."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:select """
+            PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX fschema: <https://w3id.org/framester/schema/>
+            SELECT $this ?role ?expected WHERE {
+              $this fschema:hasUnaryType ?role .
+              ?role fschema:ontoType ?expected .
+              FILTER NOT EXISTS { $this rdfs:subClassOf* ?expected . }
+            }""" ] .
+
+:FramesterCrossFrameProjectionShape a sh:NodeShape ;
+    sh:targetClass owl:Class ;
+    sh:message "Class plays roles in two frames whose fschema:ontoType targets are disjoint, without a mediating fschema:hasPerspective — projection collapse detected."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:select """
+            PREFIX fschema: <https://w3id.org/framester/schema/>
+            PREFIX owl:     <http://www.w3.org/2002/07/owl#>
+            SELECT $this ?role1 ?role2 ?anc1 ?anc2 WHERE {
+              $this fschema:hasUnaryType ?role1, ?role2 .
+              ?role1 fschema:ontoType ?anc1 . ?role2 fschema:ontoType ?anc2 .
+              ?anc1 owl:disjointWith ?anc2 .
+              FILTER (STR(?role1) < STR(?role2))
+              # exclude legitimate perspective shifts
+              FILTER NOT EXISTS { ?role1 fschema:hasPerspective ?fr . ?role2 fschema:semanticRoleOf ?fr . }
+              FILTER NOT EXISTS { ?role2 fschema:hasPerspective ?fr . ?role1 fschema:semanticRoleOf ?fr . }
+            }""" ] .
+
+:FramesterCompositionalFrameCoherenceShape a sh:NodeShape ;
+    sh:targetClass fschema:CompositionalFrame ;
+    sh:message "CompositionalFrame declares intensionalComponent frames whose union of ontoTypes is empty at DOLCE level — the composition cannot be instantiated coherently."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:select """
+            PREFIX fschema: <https://w3id.org/framester/schema/>
+            PREFIX owl:     <http://www.w3.org/2002/07/owl#>
+            SELECT $this ?f1 ?f2 ?anc1 ?anc2 WHERE {
+              $this fschema:intensionalComponent ?f1, ?f2 .
+              ?f1 fschema:semanticRole ?r1 . ?r1 fschema:ontoType ?anc1 .
+              ?f2 fschema:semanticRole ?r2 . ?r2 fschema:ontoType ?anc2 .
+              ?anc1 owl:disjointWith ?anc2 .
+              FILTER (STR(?f1) < STR(?f2))
+            }""" ] .
+
+# =============================================================================
+# CQ stubs referencing the shapes above.
+# =============================================================================
+
+cqs:CQ-CONS-N01 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/shapes> ;
+    cqs:hasNLText "Do any ECMO classes inherit both dul:Description and dul:Situation?" ;
+    cqs:exercisesPattern "Family I — ancestor-disjointness leak (D&S)" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "# See :DescriptionVsSituationAncestorShape" .
+
+cqs:CQ-CONS-N02 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/shapes> ;
+    cqs:hasNLText "Do any ECMO classes inherit both dul:Object and dul:Quality (Capacity-ambiguity family)?" ;
+    cqs:exercisesPattern "Family I — Object/Quality" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "# See :ObjectVsQualityAncestorShape" .
+
+cqs:CQ-CONS-N03 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/shapes> ;
+    cqs:hasNLText "Is any resource asserted dul:Object AND object of a property with Quality range (EU_DRR_Capacity + evaluatesCopingCapacity family)?" ;
+    cqs:exercisesPattern "Family II — property-range-induced O/Q" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "# See :RangeInducedObjectVsQualityShape" .
+
+cqs:CQ-CONS-N04 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/shapes> ;
+    cqs:hasNLText "Is any resource typed dul:Description AND object of a property with Situation range (or the mirror)?" ;
+    cqs:exercisesPattern "Family II — D/S leak via property range" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "# See :RangeInducedDescriptionVsSituationShape" .
+
+cqs:CQ-CONS-N05 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/shapes> ;
+    cqs:hasNLText "Does any class carry a fschema:hasUnaryType annotation whose SemanticRole's ontoType it does not inherit?" ;
+    cqs:exercisesPattern "Family III — Framester ontoType coherence" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "# See :FramesterOntoTypeCoherenceShape" .
+
+cqs:CQ-CONS-N06 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/shapes> ;
+    cqs:hasNLText "Does any class play roles in two frames whose ontoTypes are disjoint, without a mediating fschema:hasPerspective (projection collapse)?" ;
+    cqs:exercisesPattern "Family III — cross-frame projection collapse (Framester perspective shifts)" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "# See :FramesterCrossFrameProjectionShape" .
+
+cqs:CQ-CONS-N07 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ;
+    cqs:targetsModule <http://data.europa.eu/h8v/ecmo/shapes> ;
+    cqs:hasNLText "Does any fschema:CompositionalFrame declare component frames whose ontoTypes are pairwise disjoint (composition incoherent)?" ;
+    cqs:exercisesPattern "Family III — compositional-frame coherence" ;
+    cqs:testKind "shacl" ;
+    cqs:expectedAnswer "violation" ;
+    cpa:hasUnitTest "# See :FramesterCompositionalFrameCoherenceShape" .
+
+# =============================================================================
+# Load order (unchanged from v0.1)
+#
+#  - Load DUL.owl and d0.owl (for the disjointness axioms).
+#  - Load framester.owl (for fschema:* vocabulary).
+#  - Load the ECMO modules.
+#  - Load the frame-model TTL (frames + SemanticRoles as fschema individuals,
+#    class annotations via fschema:playsRoleIn / hasUnaryType). This file
+#    lands when the frame model in ecmo-frame-structure-v0.2.md is validated.
+#  - Load ecmo-property-alignments.ttl (the rdfs:subPropertyOf ledger).
+#  - Then run the judge or pyshacl to fire the shapes.
+# =============================================================================
+
+
+# =============================================================================
+# v2.3 task (d) — additional consistency shapes
+# =============================================================================
+
+# CP-IMP-02: every impact:Impact must carry at least one hasImpactIntensity triple.
+:ImpactMustHaveIntensityShape a sh:NodeShape ;
+    sh:targetClass impact:Impact ;
+    sh:message "impact:Impact instance lacks a hasImpactIntensity triple — every Impact must be intensity-observable."@en ;
+    sh:property [ sh:path impact:hasImpactIntensity ; sh:minCount 1 ] .
+
+# CP-HAZ-02: scope-exclusion — flag any hazard:Hazard instance whose label suggests
+# armed conflict / war / political tension (which the foundation:scopeExclusion excludes).
+:HazardScopeExclusionShape a sh:NodeShape ;
+    sh:targetClass hazard:Hazard ;
+    sh:message "hazard:Hazard instance whose label matches conflict/war/tension terms — foundation:scopeExclusion applies."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:select """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT $this WHERE {
+              $this rdfs:label ?l .
+              FILTER (REGEX(STR(?l), "armed conflict|war|political tension|social instability", "i"))
+            }""" ] .
+
+# CP-PH-03: PathogenCharacteristic instances must have an associated Pathogen.
+:PathogenCharacteristicOrphanShape a sh:NodeShape ;
+    sh:targetClass ph:PathogenCharacteristic ;
+    sh:message "ph:PathogenCharacteristic instance lacks an associated Pathogen — orphan characteristic."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:select """
+            PREFIX ph: <http://data.europa.eu/h8v/ecmo/public-health/>
+            SELECT $this WHERE {
+              FILTER NOT EXISTS {
+                { ?p ph:hasCaseFatalityRate $this }
+                UNION { ?p ph:hasIncubationPeriod $this }
+                UNION { ?p ph:hasInfectiousness $this }
+                UNION { ?p ph:hasToxicity $this }
+                UNION { ?p ph:hasTransmissibility $this }
+              }
+            }""" ] .
+
+# CP-FND-02: every foundation:QualitativeAssessmentLevelScale must have unique orderInScale values.
+:ScaleValueUniquenessShape a sh:NodeShape ;
+    sh:targetClass foundation:QualitativeAssessmentLevelScale ;
+    sh:message "Scale has two QualitativeAssessmentLevelValue instances sharing the same orderInScale — values must be unique per scale."@en ;
+    sh:sparql [ a sh:SPARQLConstraint ;
+        sh:select """
+            PREFIX foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/>
+            SELECT $this ?v1 ?v2 ?order WHERE {
+              ?v1 foundation:inScale $this ; foundation:orderInScale ?order .
+              ?v2 foundation:inScale $this ; foundation:orderInScale ?order .
+              FILTER (STR(?v1) < STR(?v2))
+            }""" ] .
+
+# CQ registrations (Q- CQs referencing the shapes above)
+cqs:CQ-CONS-N08 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cqs:hasNLText "Does any impact:Impact instance lack a hasImpactIntensity triple?" ;
+    cpa:hasUnitTest "# See :ImpactMustHaveIntensityShape" .
+
+cqs:CQ-CONS-N09 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cqs:hasNLText "Does any hazard:Hazard instance carry a label matching the Sendai scope-exclusion terms?" ;
+    cpa:hasUnitTest "# See :HazardScopeExclusionShape" .
+
+cqs:CQ-CONS-N10 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cqs:hasNLText "Does any ph:PathogenCharacteristic instance lack an associated pathogen (orphan)?" ;
+    cpa:hasUnitTest "# See :PathogenCharacteristicOrphanShape" .
+
+cqs:CQ-CONS-N11 a cqs:NegativeCompetencyQuestion ;
+    cqs:hasPolarity "negative" ; cqs:testKind "shacl" ; cqs:expectedAnswer "violation" ;
+    cqs:hasNLText "Does any scale have two QualitativeAssessmentLevelValue instances sharing an orderInScale?" ;
+    cpa:hasUnitTest "# See :ScaleValueUniquenessShape" .

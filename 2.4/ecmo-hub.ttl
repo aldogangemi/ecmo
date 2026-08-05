@@ -1,0 +1,21 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ecmohub: <http://data.europa.eu/h8v/ecmo/hub/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.europa.eu/h8v/ecmo/hub> a owl:Ontology ;
+    dcterms:creator "Designed by the JRC Team; hub module of ECMO (imports the entire network)" ;
+    dcterms:issued "2026-08-03"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+                              owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
+                                          <http://data.europa.eu/h8v/ecmo/coref> ,                                          <http://data.europa.eu/h8v/ecmo/hip> ,
+                                          <http://data.europa.eu/h8v/ecmo/epipulse> ,
+                                          <http://data.europa.eu/h8v/ecmo/frames> ,
+                                          <http://data.europa.eu/h8v/ecmo/public-health> ,
+                                          <http://data.europa.eu/h8v/ecmo/phsm> ,
+                                          <http://data.europa.eu/h8v/ecmo/property-alignments> ;
+    owl:versionIRI ecmohub:2.4 ;
+    owl:versionInfo "2.4" ;
+    skos:prefLabel "Designed by the JRC Team; hub module of ECMO (imports the entire network"@en .

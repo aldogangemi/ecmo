@@ -1,0 +1,1370 @@
+@prefix phsm:        <http://data.europa.eu/h8v/ecmo/phsm/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO PHSM Module - Public Health (and Social) Measures - v0.1 (ECMO 2.3)
+#
+# A MERGED, provenance-declared taxonomy of public-health MEASURE TYPES for
+# all-hazards EWRS notifications, specialising response:MeasureType. Unifies:
+#   src_WHO_PHSM     : WHO/ECDC PHSM taxonomy, Annex 3, Aug 2024 (non-pharmaceutical)
+#   src_JRC_Biological : JRC 'Incident management - Biological response measures' (xlsx)
+#   src_JRC_EnvChem  : JRC 'Public Health Measures Taxonomy' for environmental/chemical
+#                      EWRS events, Jul 2025 (complete: 6 categories / 35 measures)
+# Overlapping concepts are a SINGLE node declaring every contributing source via
+# phsm:fromSourceTaxonomy (+ per-source skos:notation/altLabel). Enacted measures
+# reuse the ECDC-JRC Response Measures Database parameters (status, implementation,
+# target group, geographic representation) and the WHO 'Settings' dimension.
+#
+# ECMO-as-lens reuse: PublicHealthMeasureType (r)subClassOf response:MeasureType;
+# WHO non-pharmaceutical subset under phsm:PHSMType; enacted measure (r)subClassOf
+# instruments:Measure; target group -> expvuln:PopulationGroupType; jurisdiction ->
+# governance:Jurisdiction; settings -> dul:Place; env/chem Evacuation & Shelter-in-
+# place cross-mapped (skos:relatedMatch) to response:Evacuation / response:ShelterInPlace.
+#
+# D&S: a *type* (PublicHealthMeasureType) is a dul:SocialObject; an *enacted*
+# PublicHealthMeasure is a dul:Action. No individual is both Description and Situation.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/phsm> a owl:Ontology ;
+    dcterms:issued "2026-07-20"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "PHSM / Public Health Measures module of the ECMO network. A merged, provenance-declared taxonomy of public-health response-measure TYPES (WHO/ECDC PHSM + JRC biological + JRC environmental-chemical) specialising response:MeasureType, plus the ECDC-JRC Response Measures Database parametrization of an enacted measure (legal status, implementation scope, target population group, geographic scope, setting). All-hazards: biological, chemical and environmental."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/response> ,
+        <http://data.europa.eu/h8v/ecmo/core/instruments> ,
+        <http://data.europa.eu/h8v/ecmo/core/expvuln> ,
+        <http://data.europa.eu/h8v/ecmo/core/governance> ,
+        <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+        <http://data.europa.eu/h8v/ecmo/core/foundation> ;
+    owl:versionInfo "0.1" ;
+    cpa:hasIntent "Give ECMO a compliant, queryable, provenance-tracked vocabulary for classifying and characterising public health measures (biological, chemical, environmental) enacted in response to health emergencies and notified on EWRS, reusing the response, instruments, expvuln and governance modules."@en ;
+    cpa:scenarios "An authority enacts a measure during a health emergency (e.g. a mandatory national mask mandate on public transport; an evacuation order after a chemical release). Analysts classify it under the merged WHO/JRC taxonomy, record its legal status, implementation scope, target population group, setting and jurisdiction, and know which source taxonomies define the chosen category, so records can be exchanged and compared across the biological and environmental/chemical EWRS streams."@en ;
+    cpa:coversRequirements "CQ-PHSM-P01..P12 (positive), CQ-PHSM-N01..N05 (negative); see ecmo-phsm-cqs.ttl."@en ;
+    cpa:hasConsequences "Every enacted measure is an instruments:Measure classified by exactly one PublicHealthMeasureType. Measure types carry >=1 source-taxonomy provenance; overlapping concepts declare all sources. Pharmaceutical measures are flagged (phsm:isPharmaceutical) and excluded from the WHO PHSM subset. The enacted measure carries the JRC EWRS 'Measure details' layer: hasLifecycleStatus (scheduled/ongoing/completed/suspended) and hasStartDate/hasEndDate, in addition to the ECDC-JRC RMD parameters. All three source taxonomies are fully transcribed."@en ;
+    cpa:hasComponent <http://data.europa.eu/h8v/ecmo/core/response> ,
+        <http://data.europa.eu/h8v/ecmo/core/instruments> ,
+        <http://data.europa.eu/h8v/ecmo/core/expvuln> ,
+        <http://data.europa.eu/h8v/ecmo/core/governance> ;
+    cpa:isSpecializationOf response:MeasureType ;
+    skos:changeNote "v0.1: initial draft merging three source taxonomies (WHO/ECDC PHSM Annex 3 Aug 2024; JRC biological response measures; JRC environmental/chemical EWRS PHM taxonomy Jul 2025) plus ECDC-JRC RMD parameters, aligned to ECMO 2.3."@en ;
+    skos:prefLabel "ECMO PHSM - Public Health (and Social) Measures"@en .
+
+# ---- Provenance: source taxonomies ------------------------------------------
+phsm:SourceTaxonomy a owl:Class ;
+    rdfs:subClassOf skos:ConceptScheme ;
+    rdfs:label "Source Taxonomy"@en ;
+    rdfs:comment "A published taxonomy contributing measure-type concepts to this merged module."@en ;
+    skos:prefLabel "Source Taxonomy"@en .
+
+phsm:fromSourceTaxonomy a owl:AnnotationProperty ;
+    rdfs:label "from source taxonomy"@en ;
+    rdfs:comment "Declares that a measure-type concept originates from (or also appears in) the given source taxonomy. A concept merged from several sources carries several values."@en ;
+    skos:prefLabel "from source taxonomy"@en .
+
+phsm:isPharmaceutical a owl:DatatypeProperty ;
+    rdfs:domain phsm:PublicHealthMeasureType ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "True for measure types that are pharmaceutical countermeasures (e.g. chemoprophylaxis, vaccination), which lie outside the WHO PHSM (non-pharmaceutical) scope."@en ;
+    skos:prefLabel "is pharmaceutical"@en .
+
+phsm:src_WHO_PHSM a phsm:SourceTaxonomy, owl:NamedIndividual ;
+    dcterms:title "WHO/ECDC PHSM taxonomy - Annex 3: Policy categories and subcategories for public health and social measures (v. Aug 2024)"@en ;
+    dcterms:source <https://iris.who.int/> ;
+    skos:prefLabel "WHO/ECDC PHSM taxonomy (Aug 2024)"@en .
+phsm:src_JRC_Biological a phsm:SourceTaxonomy, owl:NamedIndividual ;
+    dcterms:title "JRC 'Incident management - Biological response measures' (ECDC-JRC RMD lineage; Euro Surveill. 2022;27(41):2101190)"@en ;
+    dcterms:source <https://doi.org/10.2807/1560-7917.ES.2022.27.41.2101190> ;
+    skos:prefLabel "JRC Biological response measures"@en .
+phsm:src_JRC_EnvChem a phsm:SourceTaxonomy, owl:NamedIndividual ;
+    dcterms:title "JRC 'Public Health Measures Taxonomy - to support environmental/chemical events notifications on EWRS' (Section 6, v. Jul 2025; 6 categories / 35 measures)"@en ;
+    skos:prefLabel "JRC Environmental/Chemical response measures (EWRS, Jul 2025)"@en .
+
+# ---- Enacted-measure properties (ECDC-JRC RMD parameters) -------------------
+phsm:hasMeasureCategory a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:comment "Relates an enacted measure to the PublicHealthMeasureType that classifies it. Analogue of response:involvesMeasureType; functional (one primary code per RMD record)."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range phsm:PublicHealthMeasureType ;
+    rdfs:subPropertyOf dul:isClassifiedBy ;
+    skos:prefLabel "has measure category"@en, "ha categoria di misura"@it .
+
+phsm:hasLegalStatus a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:comment "RMD 'status': rigour of the legal basis (mandatory, voluntary, not available)."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range phsm:PHSMLegalStatus ;
+    rdfs:subPropertyOf dul:isClassifiedBy ;
+    skos:prefLabel "has legal status"@en, "ha stato giuridico"@it .
+
+phsm:hasImplementationScope a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:comment "RMD 'implementation': whole target population (full) or with exemptions (partial)."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range phsm:ImplementationScope ;
+    rdfs:subPropertyOf dul:isClassifiedBy ;
+    skos:prefLabel "has implementation scope"@en, "ha ambito di attuazione"@it .
+
+phsm:hasGeographicScope a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:comment "RMD 'geographical representation': administrative granularity (national, regional, local)."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range phsm:GeographicScopeLevel ;
+    rdfs:subPropertyOf dul:isClassifiedBy ;
+    skos:prefLabel "has geographic scope"@en, "ha ambito geografico"@it .
+
+phsm:targetsPopulationGroup a owl:ObjectProperty ;
+    rdfs:comment "RMD 'target group': indicative population group the measure is directed towards. Reuses expvuln:PopulationGroupType."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range expvuln:PopulationGroupType ;
+    skos:prefLabel "targets population group"@en, "rivolto al gruppo di popolazione"@it .
+
+phsm:appliesInSetting a owl:ObjectProperty ;
+    rdfs:comment "Physical-environment setting where the measure applies (WHO 'Settings' dimension)."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range phsm:Setting ;
+    rdfs:subPropertyOf dul:hasLocation ;
+    skos:prefLabel "applies in setting"@en, "si applica nel contesto"@it .
+
+phsm:appliesInJurisdiction a owl:ObjectProperty ;
+    rdfs:comment "Administrative territory within which the measure applies. Reuses governance:Jurisdiction; complements phsm:hasGeographicScope."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range governance:Jurisdiction ;
+    rdfs:subPropertyOf dul:hasLocation ;
+    skos:prefLabel "applies in jurisdiction"@en, "si applica nella giurisdizione"@it .
+
+phsm:addressesHazardousEvent a owl:ObjectProperty ;
+    rdfs:comment "Relates a measure to the hazardous event (biological, chemical or environmental) whose transmission/impact it seeks to limit."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range hazard:HazardousEvent ;
+    rdfs:subPropertyOf hazard:protectsAgainst ;
+    skos:prefLabel "addresses hazardous event"@en, "affronta evento pericoloso"@it .
+
+# ---- Measure 'details' layer (JRC EWRS: area/target, dates, current status) --
+phsm:hasLifecycleStatus a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:comment "Current lifecycle status of the enacted measure (JRC EWRS 'Measure details': scheduled, ongoing, completed, suspended). Distinct from phsm:hasLegalStatus, which records the legal rigour."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range phsm:MeasureLifecycleStatus ;
+    rdfs:subPropertyOf dul:isClassifiedBy ;
+    skos:prefLabel "has lifecycle status"@en, "ha stato del ciclo di vita"@it .
+
+phsm:hasStartDate a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:comment "Date on which the measure enters into force (JRC EWRS 'Measure details')."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range xsd:date ;
+    skos:prefLabel "has start date"@en .
+
+phsm:hasEndDate a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:comment "Date on which the measure ceases to apply (JRC EWRS 'Measure details')."@en ;
+    rdfs:domain phsm:PublicHealthMeasure ; rdfs:range xsd:date ;
+    skos:prefLabel "has end date"@en .
+
+# ---- Enacted measure (ECDC-JRC RMD / EWRS record) ---------------------------
+phsm:PublicHealthMeasure a owl:Class ;
+    rdfs:label "Public Health Measure"@en ;
+    rdfs:comment "A public health measure enacted by an authority, organisation or community in response to a health emergency of any hazard type (biological, chemical, environmental). Corresponds to a response-measure / non-pharmaceutical-intervention record in the ECDC-JRC RMD and to a response measure in the JRC EWRS taxonomies. Specialises instruments:Measure (broader than NonStructuralMeasure, because the JRC taxonomy also covers pharmaceutical prophylaxis and clinical-capacity measures)."@en ;
+    rdfs:subClassOf instruments:Measure ,
+        [ a owl:Restriction ; owl:onProperty phsm:hasMeasureCategory ; owl:someValuesFrom phsm:PublicHealthMeasureType ] ;
+    skos:altLabel "Response measure"@en, "Non-pharmaceutical intervention"@en, "NPI"@en ;
+    skos:prefLabel "Public Health Measure"@en, "Misura di sanita pubblica"@it .
+
+phsm:NonPharmaceuticalMeasure a owl:Class ;
+    rdfs:label "Non-pharmaceutical Public Health Measure"@en ;
+    rdfs:comment "The subset of enacted public health measures that are non-pharmaceutical (the WHO PHSM / ECDC-JRC NPI scope). Specialises instruments:NonStructuralMeasure."@en ;
+    rdfs:subClassOf phsm:PublicHealthMeasure , instruments:NonStructuralMeasure ;
+    skos:prefLabel "Non-pharmaceutical Public Health Measure"@en .
+
+# ---- RMD parameter value sets (dul:Concept enumerations) --------------------
+phsm:PHSMLegalStatus a owl:Class ; rdfs:subClassOf dul:Concept ; rdfs:label "PHSM Legal Status"@en ;
+    rdfs:comment "Rigour of the legal basis behind a measure (ECDC-JRC RMD 'status')."@en ;
+    owl:oneOf ( phsm:Mandatory phsm:Voluntary phsm:LegalStatusNotAvailable ) ; skos:prefLabel "PHSM Legal Status"@en .
+phsm:Mandatory a phsm:PHSMLegalStatus, owl:NamedIndividual ; rdfs:label "Mandatory"@en ; skos:prefLabel "Mandatory"@en .
+phsm:Voluntary a phsm:PHSMLegalStatus, owl:NamedIndividual ; rdfs:label "Voluntary"@en ; skos:prefLabel "Voluntary"@en .
+phsm:LegalStatusNotAvailable a phsm:PHSMLegalStatus, owl:NamedIndividual ; rdfs:label "Not available"@en ; skos:prefLabel "Not available"@en .
+
+phsm:ImplementationScope a owl:Class ; rdfs:subClassOf dul:Concept ; rdfs:label "Implementation Scope"@en ;
+    rdfs:comment "Whether a measure affects the whole target population (full) or allows exemptions (partial) - RMD 'implementation'."@en ;
+    owl:oneOf ( phsm:FullImplementation phsm:PartialImplementation ) ; skos:prefLabel "Implementation Scope"@en .
+phsm:FullImplementation a phsm:ImplementationScope, owl:NamedIndividual ; rdfs:label "Full"@en ; skos:prefLabel "Full"@en .
+phsm:PartialImplementation a phsm:ImplementationScope, owl:NamedIndividual ; rdfs:label "Partial"@en ; skos:prefLabel "Partial"@en .
+
+phsm:GeographicScopeLevel a owl:Class ; rdfs:subClassOf dul:Concept ; rdfs:label "Geographic Scope Level"@en ;
+    rdfs:comment "Administrative granularity at which a measure is implemented - RMD 'geographical representation'."@en ;
+    owl:oneOf ( phsm:NationalScope phsm:RegionalScope phsm:LocalScope ) ; skos:prefLabel "Geographic Scope Level"@en .
+phsm:NationalScope a phsm:GeographicScopeLevel, owl:NamedIndividual ; rdfs:label "National"@en ; skos:prefLabel "National"@en .
+phsm:RegionalScope a phsm:GeographicScopeLevel, owl:NamedIndividual ; rdfs:label "Regional"@en ; skos:prefLabel "Regional"@en .
+phsm:LocalScope a phsm:GeographicScopeLevel, owl:NamedIndividual ; rdfs:label "Local"@en ; skos:prefLabel "Local"@en .
+
+phsm:MeasureLifecycleStatus a owl:Class ; rdfs:subClassOf dul:Concept ; rdfs:label "Measure Lifecycle Status"@en ;
+    rdfs:comment "Current operational status of an enacted measure (JRC EWRS 'Measure details')."@en ;
+    owl:oneOf ( phsm:Scheduled phsm:Ongoing phsm:Completed phsm:Suspended ) ; skos:prefLabel "Measure Lifecycle Status"@en .
+phsm:Scheduled a phsm:MeasureLifecycleStatus, owl:NamedIndividual ; rdfs:label "Scheduled"@en ; skos:prefLabel "Scheduled"@en .
+phsm:Ongoing a phsm:MeasureLifecycleStatus, owl:NamedIndividual ; rdfs:label "Ongoing"@en ; skos:prefLabel "Ongoing"@en .
+phsm:Completed a phsm:MeasureLifecycleStatus, owl:NamedIndividual ; rdfs:label "Completed"@en ; skos:prefLabel "Completed"@en .
+phsm:Suspended a phsm:MeasureLifecycleStatus, owl:NamedIndividual ; rdfs:label "Suspended"@en ; skos:prefLabel "Suspended"@en .
+
+# ---- Settings (attributes of the physical environment; enumerated) ----------
+phsm:Setting a owl:Class ; rdfs:subClassOf dul:Place ; rdfs:label "Setting"@en ;
+    rdfs:comment "A physical-environment setting to which a measure applies or where it is implemented (WHO PHSM 'Settings' dimension). Instances are the enumerated setting categories."@en ; skos:prefLabel "Setting"@en .
+phsm:UnspecifiedSetting a phsm:Setting, owl:NamedIndividual ; rdfs:label "Unspecified"@en ; rdfs:comment "Setting not specified, or targeting the general population."@en ; skos:prefLabel "Unspecified"@en .
+phsm:BusinessesAndServices a phsm:Setting, owl:NamedIndividual ; rdfs:label "Businesses and services"@en ; rdfs:comment "Commercial establishments and enterprises (offices, retail, restaurants, gyms, manufacturing); workplaces other than health care facilities."@en ; skos:prefLabel "Businesses and services"@en .
+phsm:Home a phsm:Setting, owl:NamedIndividual ; rdfs:label "Homes"@en ; rdfs:comment "Places of residence of individuals, families or households."@en ; skos:prefLabel "Homes"@en .
+phsm:NursingAndCareHome a phsm:Setting, owl:NamedIndividual ; rdfs:label "Nursing and care homes"@en ; rdfs:comment "Residential facilities providing long-term personal and nursing care."@en ; skos:prefLabel "Nursing and care homes"@en .
+phsm:EducationalSetting a phsm:Setting, owl:NamedIndividual ; rdfs:label "Educational settings"@en ; rdfs:comment "Educational institutions from early day care to higher education."@en ; skos:prefLabel "Educational settings"@en .
+phsm:DomesticPublicTransport a phsm:Setting, owl:NamedIndividual ; rdfs:label "Domestic public transportation"@en ; rdfs:comment "Mass transport settings (buses, trains, trams, boats, ferries) and related infrastructure."@en ; skos:prefLabel "Domestic public transportation"@en .
+phsm:PointOfEntryByLand a phsm:Setting, owl:NamedIndividual ; rdfs:label "Points of entry for transportation by land"@en ; rdfs:comment "Ground-based transport settings and infrastructure (land crossings, roads, railways)."@en ; skos:prefLabel "Points of entry for transportation by land"@en .
+phsm:PointOfEntryByWater a phsm:Setting, owl:NamedIndividual ; rdfs:label "Points of entry for transportation by water"@en ; rdfs:comment "Water-based transport settings (shipping vessels, ferries, cruise ships, ports)."@en ; skos:prefLabel "Points of entry for transportation by water"@en .
+phsm:PointOfEntryByAir a phsm:Setting, owl:NamedIndividual ; rdfs:label "Points of entry for transportation by air"@en ; rdfs:comment "Air-travel and aviation-related settings (airports, airplanes, helicopters)."@en ; skos:prefLabel "Points of entry for transportation by air"@en .
+phsm:HealthCareSettingForGeneralPublic a phsm:Setting, owl:NamedIndividual ; rdfs:label "Health care settings for the general public"@en ; rdfs:comment "Health care facilities accessible to the public; excludes long-term care and measures directed at health care workers."@en ; skos:prefLabel "Health care settings for the general public"@en .
+phsm:LeisureSocialCulturalOrFaithBasedSetting a phsm:Setting, owl:NamedIndividual ; rdfs:label "Leisure, social, cultural or faith-based settings"@en ; rdfs:comment "Facilities for leisure, social, cultural and faith-based activities."@en ; skos:prefLabel "Leisure, social, cultural or faith-based settings"@en .
+phsm:Prison a phsm:Setting, owl:NamedIndividual ; rdfs:label "Prisons"@en ; rdfs:comment "Institutions where a state holds people deprived of their liberty."@en ; skos:prefLabel "Prisons"@en .
+phsm:CampOrSettlementForRefugeesOrIDP a phsm:Setting, owl:NamedIndividual ; rdfs:label "Camps and settlements for refugees or internally displaced persons"@en ; rdfs:comment "Places providing protection and assistance to people forced to flee their homes."@en ; skos:prefLabel "Camps and settlements for refugees or internally displaced persons"@en .
+phsm:InformalSettlementOrSlum a phsm:Setting, owl:NamedIndividual ; rdfs:label "Informal settlements and slums"@en ; rdfs:comment "Residential areas without security of tenure, often lacking basic services and in hazardous locations."@en ; skos:prefLabel "Informal settlements and slums"@en .
+phsm:OutdoorPublicSpace a phsm:Setting, owl:NamedIndividual ; rdfs:label "Outdoor public spaces"@en ; rdfs:comment "Outdoor spaces accessible to the public (beaches, parks, playgrounds)."@en ; skos:prefLabel "Outdoor public spaces"@en .
+phsm:OtherSetting a phsm:Setting, owl:NamedIndividual ; rdfs:label "Other"@en ; rdfs:comment "A setting not covered by the enumerated categories."@en ; skos:prefLabel "Other"@en .
+
+# ---- Measure-type taxonomy roots --------------------------------------------
+phsm:PublicHealthMeasureType a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:subClassOf response:MeasureType ;
+    rdfs:label "Public Health Measure Type"@en ;
+    rdfs:comment "Top of the merged public-health measure-type taxonomy (WHO PHSM + JRC biological + JRC environmental/chemical). Every category and indicator is a subclass of this class and a punned member of response:MeasureType."@en ;
+    skos:prefLabel "Public Health Measure Type"@en .
+
+phsm:PHSMType a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    foundation:frameCluster foundation:F7 ;
+    rdfs:subClassOf phsm:PublicHealthMeasureType ;
+    response:isSpecializationOfMeasureType phsm:PublicHealthMeasureType ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    rdfs:label "PHSM Type (non-pharmaceutical)"@en ;
+    rdfs:comment "The WHO/ECDC PHSM (non-pharmaceutical, public-health-and-social) subset of the measure-type taxonomy. Its subclasses are the five WHO first-level categories."@en ;
+    skos:prefLabel "PHSM Type"@en .
+
+# --- WHO first-level: Active case-finding and contact identification measures ---
+phsm:ActiveCaseFindingAndContactIdentificationMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PHSMType ;
+    response:isSpecializationOfMeasureType phsm:PHSMType ;
+    rdfs:label "Active case-finding and contact identification measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:prefLabel "Active case-finding and contact identification measures"@en .
+phsm:ActiveCaseFinding a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ActiveCaseFindingAndContactIdentificationMeasure ;
+    response:isSpecializationOfMeasureType phsm:ActiveCaseFindingAndContactIdentificationMeasure ;
+    rdfs:label "Active case-finding"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "1" ;
+    skos:notation "bio.CDM.8" ;
+    skos:altLabel "Screening"@en ;
+    skos:prefLabel "Active case-finding"@en .
+phsm:ScreeningForSymptoms a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ActiveCaseFinding ;
+    response:isSpecializationOfMeasureType phsm:ActiveCaseFinding ;
+    rdfs:label "Screening for symptoms"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "1.1" ;
+    skos:prefLabel "Screening for symptoms"@en .
+phsm:TestBasedScreening a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ActiveCaseFinding ;
+    response:isSpecializationOfMeasureType phsm:ActiveCaseFinding ;
+    rdfs:label "Test-based screening"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "1.2" ;
+    skos:prefLabel "Test-based screening"@en .
+phsm:ContactTracing a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ActiveCaseFinding ;
+    response:isSpecializationOfMeasureType phsm:ActiveCaseFinding ;
+    rdfs:label "Contact tracing"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "1.3" ;
+    skos:notation "bio.CDM.2" ;
+    skos:altLabel "Contact tracing"@en ;
+    skos:prefLabel "Contact tracing"@en .
+phsm:CaseSpecificMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ActiveCaseFindingAndContactIdentificationMeasure ;
+    response:isSpecializationOfMeasureType phsm:ActiveCaseFindingAndContactIdentificationMeasure ;
+    rdfs:label "Case-specific measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "2" ;
+    skos:prefLabel "Case-specific measures"@en .
+phsm:Isolation a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:CaseSpecificMeasure ;
+    response:isSpecializationOfMeasureType phsm:CaseSpecificMeasure ;
+    rdfs:label "Isolation"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "2.1" ;
+    skos:notation "bio.CDM.3" ;
+    skos:altLabel "Isolation of patients"@en ;
+    skos:prefLabel "Isolation"@en .
+phsm:ContactSpecificMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ActiveCaseFindingAndContactIdentificationMeasure ;
+    response:isSpecializationOfMeasureType phsm:ActiveCaseFindingAndContactIdentificationMeasure ;
+    rdfs:label "Contact-specific measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "3" ;
+    skos:prefLabel "Contact-specific measures"@en .
+phsm:Quarantine a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ContactSpecificMeasure ;
+    response:isSpecializationOfMeasureType phsm:ContactSpecificMeasure ;
+    rdfs:label "Quarantine"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "3.1" ;
+    skos:notation "bio.CDM.7" ;
+    skos:altLabel "Quarantine"@en ;
+    skos:prefLabel "Quarantine"@en .
+
+# --- WHO first-level: Personal protection measures ---
+phsm:PersonalProtectionMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PHSMType ;
+    response:isSpecializationOfMeasureType phsm:PHSMType ;
+    rdfs:label "Personal protection measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:prefLabel "Personal protection measures"@en .
+phsm:PersonalProtectiveEquipment a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalProtectionMeasure ;
+    response:isSpecializationOfMeasureType phsm:PersonalProtectionMeasure ;
+    rdfs:label "Personal protective equipment"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "4" ;
+    skos:notation "bio.CDM.4" ;
+    skos:altLabel "Personal protective measure / use of PPE"@en ;
+    skos:prefLabel "Personal protective equipment"@en .
+phsm:Masks a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalProtectiveEquipment ;
+    response:isSpecializationOfMeasureType phsm:PersonalProtectiveEquipment ;
+    rdfs:label "Masks"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "4.1" ;
+    skos:prefLabel "Masks"@en .
+phsm:Gloves a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalProtectiveEquipment ;
+    response:isSpecializationOfMeasureType phsm:PersonalProtectiveEquipment ;
+    rdfs:label "Gloves"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "4.2" ;
+    skos:prefLabel "Gloves"@en .
+phsm:FaceShields a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalProtectiveEquipment ;
+    response:isSpecializationOfMeasureType phsm:PersonalProtectiveEquipment ;
+    rdfs:label "Face shields"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "4.3" ;
+    skos:prefLabel "Face shields"@en .
+phsm:BedNets a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalProtectiveEquipment ;
+    response:isSpecializationOfMeasureType phsm:PersonalProtectiveEquipment ;
+    rdfs:label "Bed nets"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "4.4" ;
+    skos:prefLabel "Bed nets"@en .
+phsm:ProtectiveClothing a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalProtectiveEquipment ;
+    response:isSpecializationOfMeasureType phsm:PersonalProtectiveEquipment ;
+    rdfs:label "Long or other protective clothing"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "4.5" ;
+    skos:prefLabel "Long or other protective clothing"@en .
+phsm:BarriersForSaferSex a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalProtectiveEquipment ;
+    response:isSpecializationOfMeasureType phsm:PersonalProtectiveEquipment ;
+    rdfs:label "Barriers for safer sex"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "4.6" ;
+    skos:prefLabel "Barriers for safer sex"@en .
+phsm:Repellents a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalProtectiveEquipment ;
+    response:isSpecializationOfMeasureType phsm:PersonalProtectiveEquipment ;
+    rdfs:label "Repellents"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "4.7" ;
+    skos:prefLabel "Repellents"@en .
+phsm:PersonalHygieneMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalProtectionMeasure ;
+    response:isSpecializationOfMeasureType phsm:PersonalProtectionMeasure ;
+    rdfs:label "Personal hygiene measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "5" ;
+    skos:notation "bio.POP.1" ;
+    skos:altLabel "Reduce contact frequency: hygienic measures"@en ;
+    skos:prefLabel "Personal hygiene measures"@en .
+phsm:HandHygiene a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalHygieneMeasure ;
+    response:isSpecializationOfMeasureType phsm:PersonalHygieneMeasure ;
+    rdfs:label "Hand hygiene"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "5.1" ;
+    skos:prefLabel "Hand hygiene"@en .
+phsm:RespiratoryHygieneAndCoughEtiquette a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalHygieneMeasure ;
+    response:isSpecializationOfMeasureType phsm:PersonalHygieneMeasure ;
+    rdfs:label "Respiratory hygiene and cough etiquette"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "5.2" ;
+    skos:prefLabel "Respiratory hygiene and cough etiquette"@en .
+phsm:FoodSafetyHygieneMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalHygieneMeasure ;
+    response:isSpecializationOfMeasureType phsm:PersonalHygieneMeasure ;
+    rdfs:label "Food safety measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "5.3" ;
+    skos:notation "bio.TRM.5" ;
+    skos:altLabel "Food and feed safety"@en ;
+    skos:prefLabel "Food safety measures"@en .
+phsm:SafeHandlingOfPersonalEquipmentAndSupplies a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalHygieneMeasure ;
+    response:isSpecializationOfMeasureType phsm:PersonalHygieneMeasure ;
+    rdfs:label "Safe handling of personal equipment and supplies"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "5.4" ;
+    skos:prefLabel "Safe handling of personal equipment and supplies"@en .
+phsm:SafeBreastfeedingPractice a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PersonalHygieneMeasure ;
+    response:isSpecializationOfMeasureType phsm:PersonalHygieneMeasure ;
+    rdfs:label "Safe breastfeeding practices"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "5.5" ;
+    skos:prefLabel "Safe breastfeeding practices"@en .
+
+# --- WHO first-level: Environmental measures ---
+phsm:EnvironmentalMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PHSMType ;
+    response:isSpecializationOfMeasureType phsm:PHSMType ;
+    rdfs:label "Environmental measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:prefLabel "Environmental measures"@en .
+phsm:PhysicalInfrastructureMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:EnvironmentalMeasure ;
+    response:isSpecializationOfMeasureType phsm:EnvironmentalMeasure ;
+    rdfs:label "Physical infrastructure"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "6" ;
+    skos:prefLabel "Physical infrastructure"@en .
+phsm:PhysicalBarrier a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PhysicalInfrastructureMeasure ;
+    response:isSpecializationOfMeasureType phsm:PhysicalInfrastructureMeasure ;
+    rdfs:label "Physical barriers (e.g. Plexiglass screens, room dividers)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "6.1" ;
+    skos:prefLabel "Physical barriers (e.g. Plexiglass screens, room dividers)"@en .
+phsm:VectorControl a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:EnvironmentalMeasure ;
+    response:isSpecializationOfMeasureType phsm:EnvironmentalMeasure ;
+    rdfs:label "Vector control"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "7" ;
+    skos:notation "bio.TRM.7" ;
+    skos:altLabel "Vector surveillance and control"@en ;
+    skos:prefLabel "Vector control"@en .
+phsm:BuildingAndHousingModification a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:VectorControl ;
+    response:isSpecializationOfMeasureType phsm:VectorControl ;
+    rdfs:label "Building and housing modifications"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "7.1" ;
+    skos:prefLabel "Building and housing modifications"@en .
+phsm:Spraying a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:VectorControl ;
+    response:isSpecializationOfMeasureType phsm:VectorControl ;
+    rdfs:label "Spraying (indoor residual or outdoor)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "7.2" ;
+    skos:prefLabel "Spraying (indoor residual or outdoor)"@en .
+phsm:ReservoirControl a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:VectorControl ;
+    response:isSpecializationOfMeasureType phsm:VectorControl ;
+    rdfs:label "Reservoir control"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "7.3" ;
+    skos:prefLabel "Reservoir control"@en .
+phsm:WaterAndSanitationSafety a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:EnvironmentalMeasure ;
+    response:isSpecializationOfMeasureType phsm:EnvironmentalMeasure ;
+    rdfs:label "Water and sanitation safety"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "8" ;
+    skos:notation "bio.TRM.8" ;
+    skos:altLabel "Water safety"@en ;
+    skos:prefLabel "Water and sanitation safety"@en .
+phsm:DisinfectingDrinkingWater a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:WaterAndSanitationSafety ;
+    response:isSpecializationOfMeasureType phsm:WaterAndSanitationSafety ;
+    rdfs:label "Disinfecting drinking water"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "8.1" ;
+    skos:prefLabel "Disinfecting drinking water"@en .
+phsm:ModificationOfAccessToSafeDrinkingWater a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:WaterAndSanitationSafety ;
+    response:isSpecializationOfMeasureType phsm:WaterAndSanitationSafety ;
+    rdfs:label "Modification of access to safe drinking water"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "8.2" ;
+    skos:prefLabel "Modification of access to safe drinking water"@en .
+phsm:WastewaterManagement a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:WaterAndSanitationSafety ;
+    response:isSpecializationOfMeasureType phsm:WaterAndSanitationSafety ;
+    rdfs:label "Wastewater management"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "8.3" ;
+    skos:prefLabel "Wastewater management"@en .
+phsm:SolidWasteManagement a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:WaterAndSanitationSafety ;
+    response:isSpecializationOfMeasureType phsm:WaterAndSanitationSafety ;
+    rdfs:label "Solid waste management"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "8.4" ;
+    skos:prefLabel "Solid waste management"@en .
+phsm:SurfaceCleaning a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:EnvironmentalMeasure ;
+    response:isSpecializationOfMeasureType phsm:EnvironmentalMeasure ;
+    rdfs:label "Surface cleaning"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "9" ;
+    skos:notation "bio.TRM.4" ;
+    skos:altLabel "Disinfection, disinfestation and deratting (DDD)"@en ;
+    skos:prefLabel "Surface cleaning"@en .
+phsm:SafeHandlingOfEquipmentAndSupplies a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SurfaceCleaning ;
+    response:isSpecializationOfMeasureType phsm:SurfaceCleaning ;
+    rdfs:label "Safe handling of equipment and supplies"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "9.1" ;
+    skos:prefLabel "Safe handling of equipment and supplies"@en .
+phsm:SurfaceCleaningAndDisinfection a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SurfaceCleaning ;
+    response:isSpecializationOfMeasureType phsm:SurfaceCleaning ;
+    rdfs:label "Surface cleaning and disinfection"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "9.2" ;
+    skos:prefLabel "Surface cleaning and disinfection"@en .
+phsm:SurfaceDecontamination a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SurfaceCleaning ;
+    response:isSpecializationOfMeasureType phsm:SurfaceCleaning ;
+    rdfs:label "Surface decontamination"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "9.3" ;
+    skos:prefLabel "Surface decontamination"@en .
+phsm:IndoorAirQuality a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:EnvironmentalMeasure ;
+    response:isSpecializationOfMeasureType phsm:EnvironmentalMeasure ;
+    rdfs:label "Indoor air quality"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "10" ;
+    skos:notation "bio.TRM.1" ;
+    skos:altLabel "Air safety"@en ;
+    skos:prefLabel "Indoor air quality"@en .
+phsm:Ventilation a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:IndoorAirQuality ;
+    response:isSpecializationOfMeasureType phsm:IndoorAirQuality ;
+    rdfs:label "Ventilation"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "10.1" ;
+    skos:prefLabel "Ventilation"@en .
+phsm:AirFiltering a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:IndoorAirQuality ;
+    response:isSpecializationOfMeasureType phsm:IndoorAirQuality ;
+    rdfs:label "Air filtering"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "10.2" ;
+    skos:prefLabel "Air filtering"@en .
+phsm:HumidityControl a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:IndoorAirQuality ;
+    response:isSpecializationOfMeasureType phsm:IndoorAirQuality ;
+    rdfs:label "Humidity control"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "10.3" ;
+    skos:prefLabel "Humidity control"@en .
+phsm:AnimalHumanInterfaceMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:EnvironmentalMeasure ;
+    response:isSpecializationOfMeasureType phsm:EnvironmentalMeasure ;
+    rdfs:label "Animal-human interface"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "11" ;
+    skos:notation "bio.TRM.2" ;
+    skos:altLabel "Animal/pest surveillance and control"@en ;
+    skos:prefLabel "Animal-human interface"@en .
+phsm:Culling a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:AnimalHumanInterfaceMeasure ;
+    response:isSpecializationOfMeasureType phsm:AnimalHumanInterfaceMeasure ;
+    rdfs:label "Culling"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "11.1" ;
+    skos:prefLabel "Culling"@en .
+phsm:SafeHandlingOfCarrionAndInfectedAnimals a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:AnimalHumanInterfaceMeasure ;
+    response:isSpecializationOfMeasureType phsm:AnimalHumanInterfaceMeasure ;
+    rdfs:label "Safe handling of carrion and infected livestock/animals"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "11.2" ;
+    skos:prefLabel "Safe handling of carrion and infected livestock/animals"@en .
+phsm:RegulationOfAnimalMovementAndProducts a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:AnimalHumanInterfaceMeasure ;
+    response:isSpecializationOfMeasureType phsm:AnimalHumanInterfaceMeasure ;
+    rdfs:label "Regulation of animal movement and products"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "11.3" ;
+    skos:prefLabel "Regulation of animal movement and products"@en .
+phsm:LivestockQuarantine a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:AnimalHumanInterfaceMeasure ;
+    response:isSpecializationOfMeasureType phsm:AnimalHumanInterfaceMeasure ;
+    rdfs:label "Livestock quarantine"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "11.4" ;
+    skos:prefLabel "Livestock quarantine"@en .
+phsm:LivestockIsolation a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:AnimalHumanInterfaceMeasure ;
+    response:isSpecializationOfMeasureType phsm:AnimalHumanInterfaceMeasure ;
+    rdfs:label "Livestock isolation"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "11.5" ;
+    skos:prefLabel "Livestock isolation"@en .
+phsm:RestrictionOfAnimalFarmingFishingHuntingSelling a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:AnimalHumanInterfaceMeasure ;
+    response:isSpecializationOfMeasureType phsm:AnimalHumanInterfaceMeasure ;
+    rdfs:label "Restriction of farming, fishing, hunting and/or selling of animals"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "11.6" ;
+    skos:prefLabel "Restriction of farming, fishing, hunting and/or selling of animals"@en .
+phsm:BloodAndSoHOSafety a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:EnvironmentalMeasure ;
+    response:isSpecializationOfMeasureType phsm:EnvironmentalMeasure ;
+    rdfs:label "Blood and other SoHO safety"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.TRM.3" ;
+    skos:prefLabel "Blood and other SoHO safety"@en .
+
+# --- WHO first-level: Social measures ---
+phsm:SocialMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PHSMType ;
+    response:isSpecializationOfMeasureType phsm:PHSMType ;
+    rdfs:label "Social measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:prefLabel "Social measures"@en .
+phsm:SocialInteractionsAndGatherings a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SocialMeasure ;
+    response:isSpecializationOfMeasureType phsm:SocialMeasure ;
+    rdfs:label "Social interactions and gatherings"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "12" ;
+    skos:prefLabel "Social interactions and gatherings"@en .
+phsm:PhysicalDistancing a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SocialInteractionsAndGatherings ;
+    response:isSpecializationOfMeasureType phsm:SocialInteractionsAndGatherings ;
+    rdfs:label "Physical distancing"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "12.1" ;
+    skos:notation "bio.POP.2" ;
+    skos:altLabel "Reduce contact frequency: social distancing"@en ;
+    skos:prefLabel "Physical distancing"@en .
+phsm:RestrictionOfPrivateGatherings a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SocialInteractionsAndGatherings ;
+    response:isSpecializationOfMeasureType phsm:SocialInteractionsAndGatherings ;
+    rdfs:label "Restrictions or modifications of private gatherings / mass gatherings"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "12.2" ;
+    skos:prefLabel "Restrictions or modifications of private gatherings / mass gatherings"@en .
+phsm:RestrictionOfPublicGatherings a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SocialInteractionsAndGatherings ;
+    response:isSpecializationOfMeasureType phsm:SocialInteractionsAndGatherings ;
+    rdfs:label "Restrictions or modifications of public gatherings / mass gatherings"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "12.3" ;
+    skos:prefLabel "Restrictions or modifications of public gatherings / mass gatherings"@en .
+phsm:DomesticMobility a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SocialMeasure ;
+    response:isSpecializationOfMeasureType phsm:SocialMeasure ;
+    rdfs:label "Domestic mobility"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "13" ;
+    skos:prefLabel "Domestic mobility"@en .
+phsm:StayAtHomeOrderOrCurfew a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:DomesticMobility ;
+    response:isSpecializationOfMeasureType phsm:DomesticMobility ;
+    rdfs:label "Stay-at-home order or curfew"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "13.1" ;
+    skos:prefLabel "Stay-at-home order or curfew"@en .
+phsm:RestrictionOnPublicTransport a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:DomesticMobility ;
+    response:isSpecializationOfMeasureType phsm:DomesticMobility ;
+    rdfs:label "Restrictions on public transport"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "13.2" ;
+    skos:prefLabel "Restrictions on public transport"@en .
+phsm:RestrictionOnMovements a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:DomesticMobility ;
+    response:isSpecializationOfMeasureType phsm:DomesticMobility ;
+    rdfs:label "Restrictions on movements"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "13.3" ;
+    skos:prefLabel "Restrictions on movements"@en .
+phsm:DomesticEntryRestriction a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:DomesticMobility ;
+    response:isSpecializationOfMeasureType phsm:DomesticMobility ;
+    rdfs:label "Entry restrictions (districts, zones, settlements)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "13.4" ;
+    skos:prefLabel "Entry restrictions (districts, zones, settlements)"@en .
+phsm:DomesticExitRestriction a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:DomesticMobility ;
+    response:isSpecializationOfMeasureType phsm:DomesticMobility ;
+    rdfs:label "Exit restrictions (districts, zones, settlements)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "13.5" ;
+    skos:prefLabel "Exit restrictions (districts, zones, settlements)"@en .
+phsm:ModificationToActivitiesAndServices a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SocialMeasure ;
+    response:isSpecializationOfMeasureType phsm:SocialMeasure ;
+    rdfs:label "Modifications to activities and services"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "14" ;
+    skos:prefLabel "Modifications to activities and services"@en .
+phsm:ModificationToAccess a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ModificationToActivitiesAndServices ;
+    response:isSpecializationOfMeasureType phsm:ModificationToActivitiesAndServices ;
+    rdfs:label "Modifications to access (e.g. closures of schools or businesses)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "14.1" ;
+    skos:prefLabel "Modifications to access (e.g. closures of schools or businesses)"@en .
+phsm:ModificationToTypesOfActivities a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ModificationToActivitiesAndServices ;
+    response:isSpecializationOfMeasureType phsm:ModificationToActivitiesAndServices ;
+    rdfs:label "Modifications to types of activities (e.g. distance learning, teleworking)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "14.2" ;
+    skos:prefLabel "Modifications to types of activities (e.g. distance learning, teleworking)"@en .
+phsm:SafeBurialPractice a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ModificationToActivitiesAndServices ;
+    response:isSpecializationOfMeasureType phsm:ModificationToActivitiesAndServices ;
+    rdfs:label "Safe burial practices"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "14.3" ;
+    skos:prefLabel "Safe burial practices"@en .
+
+# --- WHO first-level: International travel and trade measures ---
+phsm:InternationalTravelAndTradeMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PHSMType ;
+    response:isSpecializationOfMeasureType phsm:PHSMType ;
+    rdfs:label "International travel and trade measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.TRA.4" ;
+    skos:altLabel "Travel/trade restrictions"@en ;
+    skos:prefLabel "International travel and trade measures"@en .
+phsm:TradeMeasureForImportedGoods a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalTravelAndTradeMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalTravelAndTradeMeasure ;
+    rdfs:label "Trade measures for imported goods"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "15" ;
+    skos:prefLabel "Trade measures for imported goods"@en .
+phsm:ImportRestriction a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TradeMeasureForImportedGoods ;
+    response:isSpecializationOfMeasureType phsm:TradeMeasureForImportedGoods ;
+    rdfs:label "Restriction (imported goods)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "15.1" ;
+    skos:prefLabel "Restriction (imported goods)"@en .
+phsm:ImportBan a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TradeMeasureForImportedGoods ;
+    response:isSpecializationOfMeasureType phsm:TradeMeasureForImportedGoods ;
+    rdfs:label "Ban (imported goods)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "15.2" ;
+    skos:prefLabel "Ban (imported goods)"@en .
+phsm:ImportInspection a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TradeMeasureForImportedGoods ;
+    response:isSpecializationOfMeasureType phsm:TradeMeasureForImportedGoods ;
+    rdfs:label "Inspection (imported goods)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "15.3" ;
+    skos:prefLabel "Inspection (imported goods)"@en .
+phsm:TradeMeasureForExportedGoods a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalTravelAndTradeMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalTravelAndTradeMeasure ;
+    rdfs:label "Trade measures for exported goods"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "16" ;
+    skos:prefLabel "Trade measures for exported goods"@en .
+phsm:ExportRestriction a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TradeMeasureForExportedGoods ;
+    response:isSpecializationOfMeasureType phsm:TradeMeasureForExportedGoods ;
+    rdfs:label "Restriction (exported goods)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "16.1" ;
+    skos:prefLabel "Restriction (exported goods)"@en .
+phsm:ExportBan a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TradeMeasureForExportedGoods ;
+    response:isSpecializationOfMeasureType phsm:TradeMeasureForExportedGoods ;
+    rdfs:label "Ban (exported goods)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "16.2" ;
+    skos:prefLabel "Ban (exported goods)"@en .
+phsm:ExportInspection a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TradeMeasureForExportedGoods ;
+    response:isSpecializationOfMeasureType phsm:TradeMeasureForExportedGoods ;
+    rdfs:label "Inspection (exported goods)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "16.3" ;
+    skos:prefLabel "Inspection (exported goods)"@en .
+phsm:TravelRelatedScreeningOrTesting a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalTravelAndTradeMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalTravelAndTradeMeasure ;
+    rdfs:label "Travel related screening or testing"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "17" ;
+    skos:prefLabel "Travel related screening or testing"@en .
+phsm:TravelScreeningForSymptoms a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TravelRelatedScreeningOrTesting ;
+    response:isSpecializationOfMeasureType phsm:TravelRelatedScreeningOrTesting ;
+    rdfs:label "Exit or entry screening for symptoms"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "17.1" ;
+    skos:prefLabel "Exit or entry screening for symptoms"@en .
+phsm:TravelScreeningForVaccinationOrImmunity a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TravelRelatedScreeningOrTesting ;
+    response:isSpecializationOfMeasureType phsm:TravelRelatedScreeningOrTesting ;
+    rdfs:label "Exit or entry screening for vaccination or immunity"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "17.2" ;
+    skos:prefLabel "Exit or entry screening for vaccination or immunity"@en .
+phsm:TravelScreeningForTravelOrContactHistory a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TravelRelatedScreeningOrTesting ;
+    response:isSpecializationOfMeasureType phsm:TravelRelatedScreeningOrTesting ;
+    rdfs:label "Exit or entry screening for travel or contact history"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "17.3" ;
+    skos:prefLabel "Exit or entry screening for travel or contact history"@en .
+phsm:TravelTestingForInfection a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TravelRelatedScreeningOrTesting ;
+    response:isSpecializationOfMeasureType phsm:TravelRelatedScreeningOrTesting ;
+    rdfs:label "Exit or entry testing for infection"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "17.4" ;
+    skos:prefLabel "Exit or entry testing for infection"@en .
+phsm:InternationalBorderMeasure a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalTravelAndTradeMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalTravelAndTradeMeasure ;
+    rdfs:label "International border measures"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "18" ;
+    skos:prefLabel "International border measures"@en .
+phsm:BanOnEntry a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalBorderMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalBorderMeasure ;
+    rdfs:label "Ban on entry"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "18.1" ;
+    skos:prefLabel "Ban on entry"@en .
+phsm:BanOnExit a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalBorderMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalBorderMeasure ;
+    rdfs:label "Ban on exit"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "18.2" ;
+    skos:prefLabel "Ban on exit"@en .
+phsm:InternationalEntryRestriction a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalBorderMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalBorderMeasure ;
+    rdfs:label "Entry restriction"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "18.3" ;
+    skos:prefLabel "Entry restriction"@en .
+phsm:InternationalExitRestriction a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalBorderMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalBorderMeasure ;
+    rdfs:label "Exit restriction"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "18.4" ;
+    skos:prefLabel "Exit restriction"@en .
+phsm:QuarantineUponArrival a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalTravelAndTradeMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalTravelAndTradeMeasure ;
+    rdfs:label "Quarantine upon arrival"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "19" ;
+    skos:prefLabel "Quarantine upon arrival"@en .
+phsm:HomeQuarantineOnArrival a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:QuarantineUponArrival ;
+    response:isSpecializationOfMeasureType phsm:QuarantineUponArrival ;
+    rdfs:label "Home quarantine"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "19.1" ;
+    skos:prefLabel "Home quarantine"@en .
+phsm:InstitutionalQuarantineOnArrival a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:QuarantineUponArrival ;
+    response:isSpecializationOfMeasureType phsm:QuarantineUponArrival ;
+    rdfs:label "Hotel / non-health-care-facility / institutional quarantine"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "19.2" ;
+    skos:prefLabel "Hotel / non-health-care-facility / institutional quarantine"@en .
+phsm:HealthCareFacilityQuarantineOnArrival a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:QuarantineUponArrival ;
+    response:isSpecializationOfMeasureType phsm:QuarantineUponArrival ;
+    rdfs:label "Health care facility quarantine"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "19.3" ;
+    skos:prefLabel "Health care facility quarantine"@en .
+phsm:TravelAdviceOrWarning a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalTravelAndTradeMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalTravelAndTradeMeasure ;
+    rdfs:label "Travel advice or warning"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "20" ;
+    skos:prefLabel "Travel advice or warning"@en .
+phsm:TravelAdvice a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TravelAdviceOrWarning ;
+    response:isSpecializationOfMeasureType phsm:TravelAdviceOrWarning ;
+    rdfs:label "Travel advice"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "20.1" ;
+    skos:notation "bio.TRA.3" ;
+    skos:altLabel "Travel advice"@en ;
+    skos:prefLabel "Travel advice"@en .
+phsm:TravelWarning a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TravelAdviceOrWarning ;
+    response:isSpecializationOfMeasureType phsm:TravelAdviceOrWarning ;
+    rdfs:label "Travel warning"@en ;
+    phsm:fromSourceTaxonomy phsm:src_WHO_PHSM ;
+    skos:notation "20.2" ;
+    skos:prefLabel "Travel warning"@en .
+phsm:GoodsQuarantine a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalTravelAndTradeMeasure ;
+    response:isSpecializationOfMeasureType phsm:InternationalTravelAndTradeMeasure ;
+    rdfs:label "Quarantine of goods"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.TRM.6" ;
+    skos:prefLabel "Quarantine of goods"@en .
+phsm:CaseReportingAboardConveyances a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TravelRelatedScreeningOrTesting ;
+    response:isSpecializationOfMeasureType phsm:TravelRelatedScreeningOrTesting ;
+    rdfs:label "Case-reporting aboard conveyances"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.TRA.1" ;
+    skos:prefLabel "Case-reporting aboard conveyances"@en .
+phsm:SanitaryControlAndSurveillance a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:TravelRelatedScreeningOrTesting ;
+    response:isSpecializationOfMeasureType phsm:TravelRelatedScreeningOrTesting ;
+    rdfs:label "Sanitary control and surveillance"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.TRA.2" ;
+    skos:prefLabel "Sanitary control and surveillance"@en .
+
+# --- New first-level: General incident management and communication measures ---
+phsm:GeneralIncidentManagementAndCommunication a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PublicHealthMeasureType ;
+    response:isSpecializationOfMeasureType phsm:PublicHealthMeasureType ;
+    rdfs:label "General incident management and communication measures"@en ;
+    rdfs:comment "JRC-biological 'General' category: system activation, communication, surveillance and clinical-capacity measures. No WHO/ECDC PHSM equivalent (PHSM is strictly non-pharmaceutical and community-facing)."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:prefLabel "General incident management and communication measures"@en .
+phsm:ActivateIncidentEmergencyManagementSystem a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:GeneralIncidentManagementAndCommunication ;
+    response:isSpecializationOfMeasureType phsm:GeneralIncidentManagementAndCommunication ;
+    rdfs:label "Activate incident / emergency management system"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.GEN.1" ;
+    skos:prefLabel "Activate incident / emergency management system"@en .
+phsm:CommunicationToHealthcareServices a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:GeneralIncidentManagementAndCommunication ;
+    response:isSpecializationOfMeasureType phsm:GeneralIncidentManagementAndCommunication ;
+    rdfs:label "Communication to healthcare services"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.GEN.2" ;
+    skos:prefLabel "Communication to healthcare services"@en .
+phsm:CommunicationToThePublic a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:GeneralIncidentManagementAndCommunication ;
+    response:isSpecializationOfMeasureType phsm:GeneralIncidentManagementAndCommunication ;
+    rdfs:label "Communication to the public"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.GEN.3" ;
+    skos:prefLabel "Communication to the public"@en .
+phsm:EnhancedSurveillanceOrInvestigation a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:GeneralIncidentManagementAndCommunication ;
+    response:isSpecializationOfMeasureType phsm:GeneralIncidentManagementAndCommunication ;
+    rdfs:label "Enhanced surveillance or investigation"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.GEN.4" ;
+    skos:prefLabel "Enhanced surveillance or investigation"@en .
+phsm:EnsuringDiagnosticCapabilityAndCapacity a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:GeneralIncidentManagementAndCommunication ;
+    response:isSpecializationOfMeasureType phsm:GeneralIncidentManagementAndCommunication ;
+    rdfs:label "Ensuring diagnostic capability and capacity"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.GEN.5" ;
+    skos:prefLabel "Ensuring diagnostic capability and capacity"@en .
+phsm:EnsuringTreatmentCapabilityAndCapacity a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:GeneralIncidentManagementAndCommunication ;
+    response:isSpecializationOfMeasureType phsm:GeneralIncidentManagementAndCommunication ;
+    rdfs:label "Ensuring treatment capability and capacity"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.GEN.6" ;
+    skos:prefLabel "Ensuring treatment capability and capacity"@en .
+phsm:IntersectoralCommunication a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:GeneralIncidentManagementAndCommunication ;
+    response:isSpecializationOfMeasureType phsm:GeneralIncidentManagementAndCommunication ;
+    rdfs:label "Intersectoral communication"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.GEN.7" ;
+    skos:prefLabel "Intersectoral communication"@en .
+
+# --- New first-level: Medical countermeasure and prophylaxis measures ---
+phsm:MedicalCountermeasureAndProphylaxis a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PublicHealthMeasureType ;
+    response:isSpecializationOfMeasureType phsm:PublicHealthMeasureType ;
+    rdfs:label "Medical countermeasure and prophylaxis measures"@en ;
+    rdfs:comment "PHARMACEUTICAL measures from the JRC-biological taxonomy. These fall OUTSIDE the WHO PHSM scope (which is non-pharmaceutical). Aligned with the ECMO Medical Countermeasures (mcmc) branch; retained here so an EWRS record can carry any JRC response-measure code."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:prefLabel "Medical countermeasure and prophylaxis measures"@en .
+phsm:Chemoprophylaxis a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalCountermeasureAndProphylaxis ;
+    response:isSpecializationOfMeasureType phsm:MedicalCountermeasureAndProphylaxis ;
+    rdfs:label "Chemoprophylaxis"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.CDM.1" ;
+    phsm:isPharmaceutical true ;
+    skos:prefLabel "Chemoprophylaxis"@en .
+phsm:PostExposureChemoprophylaxis a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalCountermeasureAndProphylaxis ;
+    response:isSpecializationOfMeasureType phsm:MedicalCountermeasureAndProphylaxis ;
+    rdfs:label "Post-exposure chemoprophylaxis"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.CDM.5" ;
+    phsm:isPharmaceutical true ;
+    skos:prefLabel "Post-exposure chemoprophylaxis"@en .
+phsm:PostExposureVaccination a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalCountermeasureAndProphylaxis ;
+    response:isSpecializationOfMeasureType phsm:MedicalCountermeasureAndProphylaxis ;
+    rdfs:label "Post-exposure vaccination"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.CDM.6" ;
+    phsm:isPharmaceutical true ;
+    skos:prefLabel "Post-exposure vaccination"@en .
+phsm:SpecificProphylaxisAvailability a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalCountermeasureAndProphylaxis ;
+    response:isSpecializationOfMeasureType phsm:MedicalCountermeasureAndProphylaxis ;
+    rdfs:label "Specific prophylaxis availability"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_Biological ;
+    skos:notation "bio.POP.4" ;
+    phsm:isPharmaceutical true ;
+    skos:prefLabel "Specific prophylaxis availability"@en .
+
+# --- New first-level: Source control and containment ---
+phsm:SourceControlAndContainment a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PublicHealthMeasureType ;
+    response:isSpecializationOfMeasureType phsm:PublicHealthMeasureType ;
+    rdfs:label "Source control and containment"@en ;
+    rdfs:comment "JRC environmental/chemical taxonomy (EWRS, Jul 2025): measures acting on the hazard source to stop or slow release/dispersion."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:prefLabel "Source control and containment"@en .
+phsm:StoppingReleaseOfHazardousMaterials a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SourceControlAndContainment ;
+    response:isSpecializationOfMeasureType phsm:SourceControlAndContainment ;
+    rdfs:label "Stopping the release of hazardous materials"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.SCC.1" ;
+    skos:prefLabel "Stopping the release of hazardous materials"@en .
+phsm:ContainmentNeutralizationOrRemovalOfSource a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SourceControlAndContainment ;
+    response:isSpecializationOfMeasureType phsm:SourceControlAndContainment ;
+    rdfs:label "Containment, neutralization, or removal of the source (or secondary sources)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.SCC.2" ;
+    skos:prefLabel "Containment, neutralization, or removal of the source (or secondary sources)"@en .
+phsm:InstallationOfBarriersOrAbsorbents a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:SourceControlAndContainment ;
+    response:isSpecializationOfMeasureType phsm:SourceControlAndContainment ;
+    rdfs:label "Installation of barriers or absorbents to slow or block dispersion"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.SCC.3" ;
+    skos:prefLabel "Installation of barriers or absorbents to slow or block dispersion"@en .
+
+# --- New first-level: Exposure limitation for humans or ecosystem ---
+phsm:ExposureLimitationForHumansOrEcosystem a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PublicHealthMeasureType ;
+    response:isSpecializationOfMeasureType phsm:PublicHealthMeasureType ;
+    rdfs:label "Exposure limitation for humans or ecosystem"@en ;
+    rdfs:comment "JRC environmental/chemical taxonomy (EWRS, Jul 2025): protective actions limiting exposure of humans or the ecosystem to a released hazard."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:prefLabel "Exposure limitation for humans or ecosystem"@en .
+phsm:RecallOfContaminatedConsumerGoods a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Recall of contaminated consumer goods"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.1" ;
+    skos:prefLabel "Recall of contaminated consumer goods"@en .
+phsm:RecallOfContaminatedFoodItems a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Recall of contaminated food items"@en ;
+    rdfs:comment "Overlaps the RASFF module's food-safety control measures."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.2" ;
+    skos:prefLabel "Recall of contaminated food items"@en .
+phsm:EvacuationOrder a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Evacuation orders"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.3" ;
+    skos:relatedMatch response:Evacuation ;
+    skos:prefLabel "Evacuation orders"@en .
+phsm:ShelterInPlaceRecommendation a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Shelter-in-place recommendations"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.4" ;
+    skos:relatedMatch response:ShelterInPlace ;
+    skos:prefLabel "Shelter-in-place recommendations"@en .
+phsm:ClosureOfRoadsPublicSpacesOrRestrictedAreas a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Closure of roads, public spaces, or restricted areas (incl. NOTAM / NAVTEX)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.5" ;
+    skos:altLabel "Air traffic restriction (NOTAM) or Navigational warning (NAVTEX)"@en ;
+    skos:prefLabel "Closure of roads, public spaces, or restricted areas (incl. NOTAM / NAVTEX)"@en .
+phsm:AdvisoryToAvoidContaminatedWaterOrFood a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Advisories to avoid contaminated water, food, gardening, fishing or hunting"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.6" ;
+    skos:prefLabel "Advisories to avoid contaminated water, food, gardening, fishing or hunting"@en .
+phsm:DistributionOfPersonalProtectiveEquipment a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Distribution of personal protective equipment (PPE)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.7" ;
+    skos:relatedMatch phsm:PersonalProtectiveEquipment ;
+    skos:prefLabel "Distribution of personal protective equipment (PPE)"@en .
+phsm:DecontaminationOfIndividuals a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Decontamination of individuals"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.8" ;
+    skos:prefLabel "Decontamination of individuals"@en .
+phsm:DecontaminationOfAnimals a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Decontamination of animals (e.g. oil spills)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.9" ;
+    skos:prefLabel "Decontamination of animals (e.g. oil spills)"@en .
+phsm:DecontaminationOfPlacesBuildingsVehiclesObjects a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:ExposureLimitationForHumansOrEcosystem ;
+    response:isSpecializationOfMeasureType phsm:ExposureLimitationForHumansOrEcosystem ;
+    rdfs:label "Decontamination of places, buildings, vehicles and objects"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.EXL.10" ;
+    skos:prefLabel "Decontamination of places, buildings, vehicles and objects"@en .
+
+# --- New first-level: Investigation and environmental monitoring ---
+phsm:InvestigationAndEnvironmentalMonitoring a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PublicHealthMeasureType ;
+    response:isSpecializationOfMeasureType phsm:PublicHealthMeasureType ;
+    rdfs:label "Investigation and environmental monitoring"@en ;
+    rdfs:comment "JRC environmental/chemical taxonomy (EWRS, Jul 2025): investigative, regulatory and environmental-monitoring measures."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:prefLabel "Investigation and environmental monitoring"@en .
+phsm:LegalInvestigationsAndRegulatoryEnforcement a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InvestigationAndEnvironmentalMonitoring ;
+    response:isSpecializationOfMeasureType phsm:InvestigationAndEnvironmentalMonitoring ;
+    rdfs:label "Legal investigations and regulatory enforcement"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.INV.1" ;
+    skos:prefLabel "Legal investigations and regulatory enforcement"@en .
+phsm:DeploymentOfIncidentOrOutbreakInvestigationTeams a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InvestigationAndEnvironmentalMonitoring ;
+    response:isSpecializationOfMeasureType phsm:InvestigationAndEnvironmentalMonitoring ;
+    rdfs:label "Deployment of incident or outbreak investigation teams"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.INV.2" ;
+    skos:prefLabel "Deployment of incident or outbreak investigation teams"@en .
+phsm:EnvironmentalSamplingToIdentifyOrConfirmHazards a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InvestigationAndEnvironmentalMonitoring ;
+    response:isSpecializationOfMeasureType phsm:InvestigationAndEnvironmentalMonitoring ;
+    rdfs:label "Environmental sampling to identify / confirm hazards"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.INV.3" ;
+    skos:prefLabel "Environmental sampling to identify / confirm hazards"@en .
+phsm:MonitoringOfAirWaterAndSoil a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InvestigationAndEnvironmentalMonitoring ;
+    response:isSpecializationOfMeasureType phsm:InvestigationAndEnvironmentalMonitoring ;
+    rdfs:label "Monitoring of air, water and soil to assess contamination extent"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.INV.4" ;
+    skos:prefLabel "Monitoring of air, water and soil to assess contamination extent"@en .
+phsm:BiomonitoringOfHumansOrEcosystems a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InvestigationAndEnvironmentalMonitoring ;
+    response:isSpecializationOfMeasureType phsm:InvestigationAndEnvironmentalMonitoring ;
+    rdfs:label "Biomonitoring of humans or ecosystems"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.INV.5" ;
+    skos:prefLabel "Biomonitoring of humans or ecosystems"@en .
+phsm:LongTermHealthSurveillanceCohort a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InvestigationAndEnvironmentalMonitoring ;
+    response:isSpecializationOfMeasureType phsm:InvestigationAndEnvironmentalMonitoring ;
+    rdfs:label "Establishment of long-term health surveillance cohorts"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.INV.6" ;
+    skos:prefLabel "Establishment of long-term health surveillance cohorts"@en .
+
+# --- New first-level: Medical response ---
+phsm:MedicalResponse a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PublicHealthMeasureType ;
+    response:isSpecializationOfMeasureType phsm:PublicHealthMeasureType ;
+    rdfs:label "Medical response"@en ;
+    rdfs:comment "JRC environmental/chemical taxonomy (EWRS, Jul 2025): clinical and toxicological response to affected individuals. Overlaps the ECMO Medical Countermeasures (mcmc) branch; 'antidotes and specific toxicological treatments' is pharmaceutical."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:prefLabel "Medical response"@en .
+phsm:AmbulatoryConsultation a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalResponse ;
+    response:isSpecializationOfMeasureType phsm:MedicalResponse ;
+    rdfs:label "Provision of ambulatory consultations"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.MED.1" ;
+    skos:prefLabel "Provision of ambulatory consultations"@en .
+phsm:HospitalizationOfAffectedIndividuals a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalResponse ;
+    response:isSpecializationOfMeasureType phsm:MedicalResponse ;
+    rdfs:label "Hospitalization for affected individuals"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.MED.2" ;
+    skos:prefLabel "Hospitalization for affected individuals"@en .
+phsm:AdministrationOfAntidotesAndToxicologicalTreatment a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalResponse ;
+    response:isSpecializationOfMeasureType phsm:MedicalResponse ;
+    rdfs:label "Administration of antidotes and specific toxicological treatments"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.MED.3" ;
+    phsm:isPharmaceutical true ;
+    skos:prefLabel "Administration of antidotes and specific toxicological treatments"@en .
+phsm:PsychologicalFirstAid a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalResponse ;
+    response:isSpecializationOfMeasureType phsm:MedicalResponse ;
+    rdfs:label "Provision of Psychological First Aid (PFA)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.MED.4" ;
+    skos:prefLabel "Provision of Psychological First Aid (PFA)"@en .
+phsm:ManagementAndIdentificationOfDeceased a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalResponse ;
+    response:isSpecializationOfMeasureType phsm:MedicalResponse ;
+    rdfs:label "Management and identification of deceased individuals"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.MED.5" ;
+    skos:prefLabel "Management and identification of deceased individuals"@en .
+phsm:RapidBiomonitoringProgramForExposedPeople a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalResponse ;
+    response:isSpecializationOfMeasureType phsm:MedicalResponse ;
+    rdfs:label "Rapid implementation of a biomonitoring program for exposed people"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.MED.6" ;
+    skos:closeMatch phsm:BiomonitoringOfHumansOrEcosystems ;
+    skos:prefLabel "Rapid implementation of a biomonitoring program for exposed people"@en .
+phsm:HealthMonitoringAndClinicalFollowUp a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:MedicalResponse ;
+    response:isSpecializationOfMeasureType phsm:MedicalResponse ;
+    rdfs:label "Health monitoring and clinical follow-up of exposed populations"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.MED.7" ;
+    skos:prefLabel "Health monitoring and clinical follow-up of exposed populations"@en .
+
+# --- New first-level: International coordination and support ---
+phsm:InternationalCoordinationAndSupport a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PublicHealthMeasureType ;
+    response:isSpecializationOfMeasureType phsm:PublicHealthMeasureType ;
+    rdfs:label "International coordination and support"@en ;
+    rdfs:comment "JRC environmental/chemical taxonomy (EWRS, Jul 2025): cross-border notification, coordination and assistance-request measures. Aligns with the ECMO EWRS and CECIS/UCPM source modules."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:prefLabel "International coordination and support"@en .
+phsm:NotificationOfEarlyWarningSystems a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalCoordinationAndSupport ;
+    response:isSpecializationOfMeasureType phsm:InternationalCoordinationAndSupport ;
+    rdfs:label "Notification of early warning systems (e.g. EWRS, IHR)"@en ;
+    rdfs:comment "Aligns with the ECMO EWRS module (ecmo-ewrs)."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.ICS.1" ;
+    skos:prefLabel "Notification of early warning systems (e.g. EWRS, IHR)"@en .
+phsm:CrossBorderInformationSharing a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalCoordinationAndSupport ;
+    response:isSpecializationOfMeasureType phsm:InternationalCoordinationAndSupport ;
+    rdfs:label "Cross-border information sharing and collaboration"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.ICS.2" ;
+    skos:prefLabel "Cross-border information sharing and collaboration"@en .
+phsm:ActivationOfTreatiesOrEmergencyPlans a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalCoordinationAndSupport ;
+    response:isSpecializationOfMeasureType phsm:InternationalCoordinationAndSupport ;
+    rdfs:label "Activation of treaties, bilateral or multinational emergency plans"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.ICS.3" ;
+    skos:prefLabel "Activation of treaties, bilateral or multinational emergency plans"@en .
+phsm:RequestOfUCPMActivation a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalCoordinationAndSupport ;
+    response:isSpecializationOfMeasureType phsm:InternationalCoordinationAndSupport ;
+    rdfs:label "Request of UCPM activation"@en ;
+    rdfs:comment "Aligns with the ECMO CECIS / Union Civil Protection Mechanism module (ecmo-cecis)."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.ICS.4" ;
+    skos:prefLabel "Request of UCPM activation"@en .
+phsm:RequestForInternationalAssistance a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:InternationalCoordinationAndSupport ;
+    response:isSpecializationOfMeasureType phsm:InternationalCoordinationAndSupport ;
+    rdfs:label "Request for other international assistance or specialized resources"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.ICS.5" ;
+    skos:prefLabel "Request for other international assistance or specialized resources"@en .
+
+# --- New first-level: Communication and information ---
+phsm:CommunicationAndInformation a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:PublicHealthMeasureType ;
+    response:isSpecializationOfMeasureType phsm:PublicHealthMeasureType ;
+    rdfs:label "Communication and information"@en ;
+    rdfs:comment "JRC environmental/chemical taxonomy (EWRS, Jul 2025): risk-communication and public-information measures. Cross-branch closeMatch to the JRC-biological 'General' communication measures."@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:prefLabel "Communication and information"@en .
+phsm:PublicCommunicationOnRisksAndInstructions a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:CommunicationAndInformation ;
+    response:isSpecializationOfMeasureType phsm:CommunicationAndInformation ;
+    rdfs:label "Public communication on risks, protective measures, restriction of access, clean-up measures or other instructions"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.CIN.1" ;
+    skos:closeMatch phsm:CommunicationToThePublic ;
+    skos:prefLabel "Public communication on risks, protective measures, restriction of access, clean-up measures or other instructions"@en .
+phsm:CommunicationToProfessionals a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:CommunicationAndInformation ;
+    response:isSpecializationOfMeasureType phsm:CommunicationAndInformation ;
+    rdfs:label "Communication to professionals (healthcare providers, emergency services)"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.CIN.2" ;
+    skos:closeMatch phsm:CommunicationToHealthcareServices ;
+    skos:prefLabel "Communication to professionals (healthcare providers, emergency services)"@en .
+phsm:AddressingMisinformationAndPanic a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:CommunicationAndInformation ;
+    response:isSpecializationOfMeasureType phsm:CommunicationAndInformation ;
+    rdfs:label "Addressing misinformation and panic through official updates or denials"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.CIN.3" ;
+    skos:prefLabel "Addressing misinformation and panic through official updates or denials"@en .
+phsm:ActivationOfEmergencyHotlinesOrPlatforms a owl:Class, owl:NamedIndividual, response:MeasureType ;
+    rdfs:subClassOf phsm:CommunicationAndInformation ;
+    response:isSpecializationOfMeasureType phsm:CommunicationAndInformation ;
+    rdfs:label "Activation of emergency hotlines or online information platforms"@en ;
+    phsm:fromSourceTaxonomy phsm:src_JRC_EnvChem ;
+    skos:notation "env.CIN.4" ;
+    skos:prefLabel "Activation of emergency hotlines or online information platforms"@en .

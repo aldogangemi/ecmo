@@ -1,0 +1,322 @@
+@prefix hip:         <http://data.europa.eu/h8v/ecmo/hip/> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix capacity:    <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO HIP Module — Hazard Information Profiles — v0.3 (ECMO 2.3)   2026-07-09
+#
+# Rebased from the standalone HIP v2.0 (http://purl.org/ecmo/hip#), which was
+# authored against w3id.org/drr/sendai + the legacy Framester URI. This module
+# is aligned to the ECMO 2.3 network:
+#   - every former drr: reference now points at the ECMO core modules;
+#   - fschema: uses the ECMO Framester URI (w3id.org/framester/schema/);
+#   - the ~13 classes HIP re-declared (Hazard, HazardousEvent, the hazard
+#     taxonomy, Exposure/Vulnerability/Risk/Impact/HumanImpact/…/Emergency) are
+#     NOT restated here — they are REUSED from hazard:/expvuln:/impact:/risk:/
+#     disaster:;
+#   - the three category clashes flagged in hip-ECMO2.3-adaptation.md are fixed:
+#       (a) HazardInformationProfile is a Description specialisation of
+#           hazard:Hazard (NOT a dul:Quality) — ContextualQuality is reserved
+#           for the genuine qualities (HazardProperty and subtypes);
+#       (b) Exposure/Vulnerability are reused as ECMO Situations (no Quality
+#           retyping);
+#       (c) the "context has X" shortcuts use dul:hasSetting (Entity→Situation),
+#           never dul:hasQuality.
+#
+# Novel contribution retained: HazardInformationProfile + per-hazard Profiles,
+# HIPContext, ContextualQuality/HazardProperty, InfrastructureImpact,
+# RiskAssessmentMethod.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/hip> a owl:Ontology ;
+    dcterms:issued "2026-07-09"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:source <https://www.undrr.org/hips> ;
+    rdfs:comment "HIP (Hazard Information Profiles) module of the ECMO ontology network. Adds contextualised hazard profiling on top of the ECMO hazard/expvuln/impact/risk modules: a HazardInformationProfile is a hazard description contextualised for a HIPContext (geographic area, community, jurisdiction, critical infrastructure), quantitatively characterised by frame-relative HazardProperty qualities (Likelihood, Magnitude, Severity, Uncertainty). Also adds InfrastructureImpact and RiskAssessmentMethod."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+                <http://data.europa.eu/h8v/ecmo/core/expvuln> ,
+                <http://data.europa.eu/h8v/ecmo/core/impact> ,
+                <http://data.europa.eu/h8v/ecmo/core/risk> ,
+                <http://data.europa.eu/h8v/ecmo/core/disaster> ,
+                <http://data.europa.eu/h8v/ecmo/core/governance> ,
+                <http://data.europa.eu/h8v/ecmo/core/capacity> ,
+                <http://data.europa.eu/h8v/ecmo/core/foundation> ;
+    owl:versionInfo "0.3" ;
+    skos:changeNote "v0.3: Rebased standalone HIP v2.0 onto ECMO 2.3. Removed the shadow hazard taxonomy and the equivalentClass shells for Hazard/HazardousEvent/Exposure/Vulnerability/Risk/Impact/HumanImpact/EnvironmentalImpact/EconomicImpact/Emergency (now reused from ECMO). Fixed the ContextualQuality retyping of Exposure/Vulnerability/Hazard and the dul:hasQuality context-shortcuts (now dul:hasSetting), so the module passes the ECMO 2.3 consistency SHACL shapes. Remapped all property alignments to risk:/hazard:/expvuln:/foundation:. Linked RiskAssessmentMethod to governance:RiskAssessment (a dul:Process since 2026-07-08) via dul:isSatisfiedBy."@en ;
+    skos:prefLabel "ECMO HIP — Hazard Information Profiles Module"@en .
+
+# =============================================================================
+# 1. ContextualQuality — a dul:Quality interpreted relative to a Description frame
+# =============================================================================
+
+hip:ContextualQuality a owl:Class ;
+    rdfs:label "Contextual Quality"@en ;
+    rdfs:comment "A dul:Quality whose value or meaning is only defined relative to a dul:Description frame (linked via hip:qualityFrame). Covers the frame-relative hazard-characterisation qualities. Applies to HazardProperty and its subtypes only — NOT to Exposure/Vulnerability/Hazard, which are Situations/Dispositions in ECMO 2.3."@en ;
+    rdfs:subClassOf dul:Quality ;
+    skos:prefLabel "Contextual Quality"@en .
+
+hip:qualityFrame a owl:ObjectProperty ;
+    rdfs:label "quality frame"@en ;
+    rdfs:comment "Links a hip:ContextualQuality to the dul:Description that frames its interpretation (e.g. a hazard:Hazard or a HazardInformationProfile). SubPropertyOf dul:isDescribedBy."@en ;
+    rdfs:domain hip:ContextualQuality ;
+    rdfs:range dul:Description ;
+    rdfs:subPropertyOf dul:isDescribedBy .
+
+# =============================================================================
+# 2. HazardProperty — quantitative hazard-characterisation qualities
+#    (frame-relative; complements ECMO's datatype + observation layer)
+# =============================================================================
+
+hip:HazardProperty a owl:Class ;
+    rdfs:label "Hazard Property"@en ;
+    rdfs:comment "A hip:ContextualQuality characterising a measurable dimension of a hazard:Hazard or hazard:HazardousEvent, meaningful only relative to the hazard description frame (via hip:qualityFrame). Complements ECMO's datatype properties (hazard:hasMagnitude, hasProbabilityValue, hasSeverityLevel) and its reified observation Situations (hazard:MagnitudeObservation, IntensityObservation, SeverityAssessment): HazardProperty is the quality the event bears; the observation is the situation that records it."@en ;
+    rdfs:subClassOf hip:ContextualQuality ,
+        [ a owl:Restriction ; owl:onProperty hip:qualityFrame ; owl:someValuesFrom hazard:Hazard ] ;
+    skos:prefLabel "Hazard Property"@en .
+
+hip:Likelihood a owl:Class ;
+    rdfs:label "Likelihood"@en ;
+    rdfs:comment "The probability or relative frequency of occurrence of a hazardous event within a defined time period and spatial unit. See also the datatype shortcut hazard:hasProbabilityValue."@en ;
+    rdfs:subClassOf hip:HazardProperty ;
+    rdfs:seeAlso hazard:hasProbabilityValue ;
+    skos:prefLabel "Likelihood"@en .
+
+hip:Magnitude a owl:Class ;
+    rdfs:label "Magnitude"@en ;
+    rdfs:comment "The physical size or force of a hazardous event on an appropriate scale (Richter, Saffir-Simpson, …). The quality counterpart of the datatype hazard:hasMagnitude and the situation hazard:MagnitudeObservation."@en ;
+    rdfs:subClassOf hip:HazardProperty ;
+    rdfs:seeAlso hazard:MagnitudeObservation ;
+    skos:prefLabel "Magnitude"@en .
+
+hip:Severity a owl:Class ;
+    rdfs:label "Severity"@en ;
+    rdfs:comment "The degree of harm or disruption a hazardous event causes. The quality counterpart of the datatype hazard:hasSeverityLevel and the situation hazard:SeverityAssessment."@en ;
+    rdfs:subClassOf hip:HazardProperty ;
+    rdfs:seeAlso hazard:SeverityAssessment ;
+    skos:prefLabel "Severity"@en .
+
+hip:Uncertainty a owl:Class ;
+    rdfs:label "Uncertainty"@en ;
+    rdfs:comment "The degree of imprecision or incomplete knowledge in the assessment of a hazard property. See also the datatype shortcut hazard:hasConfidenceLevel."@en ;
+    rdfs:subClassOf hip:HazardProperty ;
+    rdfs:seeAlso hazard:hasConfidenceLevel ;
+    skos:prefLabel "Uncertainty"@en .
+
+hip:hasHazardProperty a owl:ObjectProperty ;
+    rdfs:label "has hazard property"@en ;
+    rdfs:comment "Relates a hazard:Hazard or hazard:HazardousEvent to a HazardProperty quality that characterises it. SubPropertyOf dul:hasQuality."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( hazard:Hazard hazard:HazardousEvent ) ] ;
+    rdfs:range hip:HazardProperty ;
+    rdfs:subPropertyOf dul:hasQuality .
+
+hip:hasLikelihood  a owl:ObjectProperty ; rdfs:label "has likelihood"@en  ; rdfs:range hip:Likelihood  ; rdfs:subPropertyOf hip:hasHazardProperty .
+hip:hasMagnitude   a owl:ObjectProperty ; rdfs:label "has magnitude"@en   ; rdfs:range hip:Magnitude   ; rdfs:subPropertyOf hip:hasHazardProperty .
+hip:hasSeverity    a owl:ObjectProperty ; rdfs:label "has severity"@en    ; rdfs:range hip:Severity    ; rdfs:subPropertyOf hip:hasHazardProperty .
+hip:hasUncertainty a owl:ObjectProperty ; rdfs:label "has uncertainty"@en ; rdfs:range hip:Uncertainty ; rdfs:subPropertyOf hip:hasHazardProperty .
+
+# =============================================================================
+# 3. HIPContext — the bearer/spatial context for profiles and assessments
+# =============================================================================
+
+hip:HIPContext a owl:Class ;
+    rdfs:label "HIP Context"@en ;
+    rdfs:comment "An entity — geographic area, community, jurisdiction or critical infrastructure — that serves as the bearer (spatial/social context) for HazardInformationProfiles and contextualised risk assessments. SubClassOf expvuln:ExposedElement: a HIPContext is always an element that can be exposed to hazards."@en ;
+    rdfs:subClassOf expvuln:ExposedElement ;
+    skos:prefLabel "HIP Context"@en .
+
+hip:GeographicArea a owl:Class ;
+    rdfs:label "Geographic Area"@en ;
+    rdfs:comment "A HIPContext that is a delimited geographic region (watershed, municipality, administrative district, coastline, mountain range) for which hazard profiles and risk assessments are computed."@en ;
+    rdfs:subClassOf hip:HIPContext , dul:Place ;
+    skos:prefLabel "Geographic Area"@en .
+
+# =============================================================================
+# 4. HazardInformationProfile — the central concept
+#    A Description specialisation of hazard:Hazard, contextualised for a HIPContext.
+# =============================================================================
+
+hip:HazardInformationProfile a owl:Class ;
+    rdfs:label "Hazard Information Profile"@en ;
+    rdfs:comment "A hazard:Hazard that has been contextualised for a specific hip:HIPContext. It answers: 'What does this hazard type look like in this territory?' Being a specialisation of hazard:Hazard it inherits the Description + ContextualDisposition typing and the hazard manifestation machinery; the HIPContext framing is added via hip:concernsContext, and quantitative characteristics are attached as HazardProperty qualities via hip:hasHazardProperty."@en ;
+    rdfs:subClassOf hazard:Hazard ,
+        [ a owl:Restriction ; owl:onProperty hip:concernsContext ; owl:someValuesFrom hip:HIPContext ] ;
+    skos:prefLabel "Hazard Information Profile"@en .
+
+hip:concernsContext a owl:ObjectProperty ;
+    rdfs:label "concerns context"@en ;
+    rdfs:comment "Links a HazardInformationProfile to the HIPContext for which it has been contextualised. SubPropertyOf dul:isAbout: the profile is about the context. Inverse of hip:hasProfile."@en ;
+    rdfs:range hip:HIPContext ;
+    rdfs:subPropertyOf dul:describes ;
+    owl:inverseOf hip:hasProfile .
+
+hip:hasProfile a owl:ObjectProperty ;
+    rdfs:label "has profile"@en ;
+    rdfs:comment "Links a HIPContext to a HazardInformationProfile computed or assessed for it. Inverse of hip:concernsContext."@en ;
+    rdfs:domain hip:HIPContext ;
+    rdfs:range hip:HazardInformationProfile .
+
+# Per-hazard profiles — frame-level classification via fschema:subsumedUnder
+# (the ECMO punning wall: no rdfs:subClassOf to the hazard-category anchors).
+hip:BiologicalHazardProfile a owl:Class ;
+    rdfs:label "Biological Hazard Profile"@en ; rdfs:subClassOf hip:HazardInformationProfile ;
+    fschema:subsumedUnder hazard:BiologicalHazard ; skos:prefLabel "Biological Hazard Profile"@en .
+hip:ChemicalHazardProfile a owl:Class ;
+    rdfs:label "Chemical Hazard Profile"@en ; rdfs:subClassOf hip:HazardInformationProfile ;
+    fschema:subsumedUnder hazard:ChemicalHazard ; skos:prefLabel "Chemical Hazard Profile"@en .
+hip:GeologicalHazardProfile a owl:Class ;
+    rdfs:label "Geological Hazard Profile"@en ; rdfs:subClassOf hip:HazardInformationProfile ;
+    fschema:subsumedUnder hazard:GeologicalHazard ; skos:prefLabel "Geological Hazard Profile"@en .
+hip:HydrometeorologicalHazardProfile a owl:Class ;
+    rdfs:label "Hydrometeorological Hazard Profile"@en ; rdfs:subClassOf hip:HazardInformationProfile ;
+    fschema:subsumedUnder hazard:HydrometeorologicalHazard ; skos:prefLabel "Hydrometeorological Hazard Profile"@en .
+hip:NuclearHazardProfile a owl:Class ;
+    rdfs:label "Nuclear Hazard Profile"@en ; rdfs:subClassOf hip:HazardInformationProfile ;
+    fschema:subsumedUnder hazard:NuclearHazard ; skos:prefLabel "Nuclear Hazard Profile"@en .
+hip:RadiologicalHazardProfile a owl:Class ;
+    rdfs:label "Radiological Hazard Profile"@en ; rdfs:subClassOf hip:HazardInformationProfile ;
+    fschema:subsumedUnder hazard:RadiologicalHazard ; skos:prefLabel "Radiological Hazard Profile"@en .
+hip:TechnologicalHazardProfile a owl:Class ;
+    rdfs:label "Technological Hazard Profile"@en ; rdfs:subClassOf hip:HazardInformationProfile ;
+    fschema:subsumedUnder hazard:TechnologicalHazard ; skos:prefLabel "Technological Hazard Profile"@en .
+
+# =============================================================================
+# 5. InfrastructureImpact — new impact subtype (infrastructure continuity)
+# =============================================================================
+
+hip:InfrastructureImpact a owl:Class ;
+    rdfs:label "Infrastructure Impact"@en ;
+    rdfs:comment "The impact of a hazardous event on critical infrastructure — transport, energy, water, communications and health systems. A HIP extension of impact:Impact motivated by the operational focus of emergency management on infrastructure continuity and service disruption."@en ;
+    rdfs:subClassOf impact:Impact ;
+    skos:prefLabel "Infrastructure Impact"@en .
+
+# =============================================================================
+# 6. RiskAssessmentMethod — the Description that a RiskAssessment Process satisfies
+# =============================================================================
+
+hip:RiskAssessmentMethod a owl:Class ;
+    rdfs:label "Risk Assessment Method"@en ;
+    rdfs:comment "A dul:Method (⊑ dul:Description) prescribing a systematic procedure for evaluating disaster risk. In ECMO 2.3 governance:RiskAssessment is a dul:Process (the assessment activity, since 2026-07-08); a RiskAssessmentMethod is the Description that Process satisfies."@en ;
+    rdfs:subClassOf dul:Method ;
+    skos:prefLabel "Risk Assessment Method"@en .
+
+# The assessment activity satisfies its method (replaces the old skos:closeMatch).
+governance:RiskAssessment rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty dul:satisfies ; owl:someValuesFrom hip:RiskAssessmentMethod ] .
+
+hip:assessedBy a owl:ObjectProperty ;
+    rdfs:label "assessed by"@en ;
+    rdfs:comment "Links a risk:Risk to the RiskAssessmentMethod used to evaluate it. SubPropertyOf dul:isDescribedBy."@en ;
+    rdfs:domain risk:Risk ;
+    rdfs:range hip:RiskAssessmentMethod ;
+    rdfs:subPropertyOf dul:isDescribedBy .
+
+# =============================================================================
+# 7. Property alignments — rebased to ECMO 2.3 (was drr:/dul:)
+# =============================================================================
+
+# --- Risk determinants (→ risk:) --------------------------------------------
+hip:emergesFrom a owl:ObjectProperty ;
+    rdfs:label "emerges from"@en ;
+    rdfs:comment "Relates a risk:Risk to the hazard:Hazard from which it emerges as a contextualised danger. SubPropertyOf risk:hasHazardDeterminant."@en ;
+    rdfs:domain risk:Risk ; rdfs:range hazard:Hazard ; rdfs:subPropertyOf risk:hasHazardDeterminant .
+
+hip:involvesExposure a owl:ObjectProperty ;
+    rdfs:label "involves exposure"@en ;
+    rdfs:comment "Relates a risk:Risk to the expvuln:Exposure condition that is one of its constitutive determinants. SubPropertyOf risk:hasExposureDeterminant."@en ;
+    rdfs:domain risk:Risk ; rdfs:range expvuln:Exposure ; rdfs:subPropertyOf risk:hasExposureDeterminant .
+
+hip:accountsForVulnerability a owl:ObjectProperty ;
+    rdfs:label "accounts for vulnerability"@en ;
+    rdfs:comment "Relates a risk:Risk to the expvuln:Vulnerability condition it incorporates as a determinant. SubPropertyOf risk:hasVulnerabilityDeterminant."@en ;
+    rdfs:domain risk:Risk ; rdfs:range expvuln:Vulnerability ; rdfs:subPropertyOf risk:hasVulnerabilityDeterminant .
+
+# --- Hazard / exposure / manifestation (→ hazard:, expvuln:) -----------------
+hip:manifestsAs a owl:ObjectProperty ;
+    rdfs:label "manifests as"@en ;
+    rdfs:comment "Relates a hazard:Hazard (or HazardInformationProfile) to a hazard:HazardousEvent that is one of its physical manifestations. SubPropertyOf hazard:hasManifestationEvent (⊑ dul:isSatisfiedBy)."@en ;
+    rdfs:domain hazard:Hazard ; rdfs:range hazard:HazardousEvent ; rdfs:subPropertyOf hazard:hasManifestationEvent .
+
+hip:affectsExposure a owl:ObjectProperty ;
+    rdfs:label "affects exposure"@en ;
+    rdfs:comment "Relates a hazard:HazardousEvent to an expvuln:Exposure situation it modifies. SubPropertyOf hazard:hasExposureContext."@en ;
+    rdfs:domain hazard:HazardousEvent ; rdfs:range expvuln:Exposure ; rdfs:subPropertyOf hazard:hasExposureContext .
+
+hip:dueToHazard a owl:ObjectProperty ;
+    rdfs:label "due to hazard"@en ;
+    rdfs:comment "Relates an expvuln:Exposure situation to the hazard:Hazard that contextualises it. SubPropertyOf expvuln:isExposedTo."@en ;
+    rdfs:domain expvuln:Exposure ; rdfs:range hazard:Hazard ; rdfs:subPropertyOf expvuln:isExposedTo .
+
+# --- Risk → event / impact (shared-setting reading, → dul:sameSettingAs) -----
+# (Not sub-propertied under hazard:hasImpact: its domain is HazardousEvent, and
+#  forcing Hazard/Exposure/Risk domains under it would entail Event typing and
+#  trip the D&S / Event-vs-Description shapes. dul:sameSettingAs is the safe super.)
+hip:considersEvent a owl:ObjectProperty ;
+    rdfs:label "considers event"@en ;
+    rdfs:comment "Relates a risk:Risk to the hazard:HazardousEvent scenario it is assessed against. SubPropertyOf foundation:includesEvent."@en ;
+    rdfs:domain risk:Risk ; rdfs:range hazard:HazardousEvent ; rdfs:subPropertyOf foundation:includesEvent .
+
+hip:mayRealize a owl:ObjectProperty ;
+    rdfs:label "may realize"@en ;
+    rdfs:comment "Relates a risk:Risk to an impact:Impact its realisation may produce. Risk and Impact share the disaster setting. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain risk:Risk ; rdfs:range impact:Impact ; rdfs:subPropertyOf dul:sameSettingAs .
+
+hip:resultsInImpact a owl:ObjectProperty ;
+    rdfs:label "results in impact"@en ;
+    rdfs:comment "Relates an expvuln:Exposure situation to an impact:Impact that results from it when a hazardous event occurs. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain expvuln:Exposure ; rdfs:range impact:Impact ; rdfs:subPropertyOf dul:sameSettingAs .
+
+hip:triggersEmergency a owl:ObjectProperty ;
+    rdfs:label "triggers emergency"@en ;
+    rdfs:comment "Relates an impact:Impact to the disaster:Emergency it triggers when it exceeds coping capacity. Both are Event+Situation and share the disaster setting. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain impact:Impact ; rdfs:range disaster:Emergency ; rdfs:subPropertyOf dul:sameSettingAs .
+
+hip:precedes a owl:ObjectProperty ;
+    rdfs:label "precedes"@en ;
+    rdfs:comment "Relates a hazard:HazardousEvent (or other dul:Event) to a subsequent event in a cascade or compound-hazard sequence. SubPropertyOf dul:precedes."@en ;
+    rdfs:domain dul:Event ; rdfs:range dul:Event ; rdfs:subPropertyOf dul:precedes .
+
+# =============================================================================
+# 8. Context binary shortcuts — Entity→Situation via dul:hasSetting (fixed §4)
+#    (never dul:hasQuality: ranges are Situations/Events/Descriptions.)
+# =============================================================================
+
+hip:hasContextualExposure a owl:ObjectProperty ;
+    rdfs:label "has contextual exposure"@en ;
+    rdfs:comment "Links a hip:HIPContext to the expvuln:Exposure situation relevant to it under a hazard assessment. SubPropertyOf dul:hasSetting."@en ;
+    rdfs:domain hip:HIPContext ; rdfs:range expvuln:Exposure ; rdfs:subPropertyOf dul:hasSetting .
+
+hip:hasContextualVulnerability a owl:ObjectProperty ;
+    rdfs:label "has contextual vulnerability"@en ;
+    rdfs:comment "Links a hip:HIPContext to the expvuln:Vulnerability situation characterising its susceptibility. SubPropertyOf dul:hasSetting."@en ;
+    rdfs:domain hip:HIPContext ; rdfs:range expvuln:Vulnerability ; rdfs:subPropertyOf dul:hasSetting .
+
+hip:hasContextualImpact a owl:ObjectProperty ;
+    rdfs:label "has contextual impact"@en ;
+    rdfs:comment "Links a hip:HIPContext to an impact:Impact it has suffered or may suffer. SubPropertyOf dul:hasSetting (Impact viewed as the Situation the context is in)."@en ;
+    rdfs:domain hip:HIPContext ; rdfs:range impact:Impact ; rdfs:subPropertyOf dul:hasSetting .
+
+hip:hasContextualCapacity a owl:ObjectProperty ;
+    rdfs:label "has contextual capacity"@en ;
+    rdfs:comment "Links a hip:HIPContext to the capacity:Capacity stock relevant to it for disaster risk management. Left without a DUL super: Capacity is a dul:Entity (not a Situation), so neither hasSetting nor hasQuality applies cleanly; candidate dul:hasPart if the context physically holds the capacity."@en ;
+    rdfs:domain hip:HIPContext ; rdfs:range capacity:Capacity .
+
+hip:hasContextualRisk a owl:ObjectProperty ;
+    rdfs:label "has contextual risk"@en ;
+    rdfs:comment "Links a hip:HIPContext to the risk:Risk assessed for it. Left without a DUL super: risk:Risk is a Description/ContextualDisposition, not a Situation or Quality, so the generic dul relations do not apply cleanly. The risk's determinants (hazard/exposure/vulnerability/capacity) carry the aligned relations."@en ;
+    rdfs:domain hip:HIPContext ; rdfs:range risk:Risk .

@@ -1,0 +1,190 @@
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix cqs:         <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:          <http://www.w3.org/ns/shacl#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix time:        <http://www.w3.org/2006/time#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO Data-Level Coreference Pattern (EVENT-COREF-1) — v0.1
+#
+# Solves the problem the schema-alignment layer cannot solve on its own:
+# multiple local Situations (typed via the agency-local ontologies and their
+# alignment to ECMO) all concern one world-occurrence, with classifications
+# that evolve over time and per-agency claims that may refine or correct
+# each other. Defines the Occurrence anchor, reified Classification
+# Situations, the supersession chain with refinement vs correction
+# sub-properties, and the optional Hub layer (HubAssessment + MergePolicy +
+# ConflictReport) for adjudicated consolidation.
+#
+# Schema-level cross-stakeholder Description integration is OUT OF SCOPE: it
+# is handled by the alignment module (each agency-local class -> ECMO core
+# class). This pattern operates on the ABox layer only.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/coref> a owl:Ontology ;
+    dcterms:creator    "ECMO design team" ;
+    dcterms:issued     "2026-06-03"^^xsd:date ;
+    dcterms:license    <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment       "Data-level coreference pattern for ECMO: how to associate multiple agency-local Situations that concern a single world-occurrence whose hazard classification evolves over time."@en ;
+    cpa:hasIntent      "Provide an ABox-level coreference mechanism that (i) anchors heterogeneous agency-local Situations to a single world-occurrence without owl:sameAs collapsing them, (ii) reifies hazard classification as a time-stamped Situation that can be refined or corrected over time, (iii) supports adjudicated consolidation via an optional Hub layer with reified conflict reports and merge policies."@en ;
+    cpa:scenarios      "Scenario A — Hantavirus outbreak aboard MV Hondius. A first signal on 02 May 2026 reports an outbreak of unknown etiology. On 03-06 May the etiology is narrowed to Hantaviridae. On 08 May PCR identifies Andes hantavirus. Six EU systems (EWS, ARGUS, ECRC/UCPM, ATHINA, IPCR, ECMP) emit local records at different points. All concern one Occurrence; the classification refines monotonically through the Hantaviridae taxonomy."@en ;
+    cpa:coversRequirements "CQ-COREF-P01..P09 plus CQ-COREF-N01..N04 (in this file). Pattern-specific Q+ exercise occurrence-anchored queries, time-bounded classification retrieval, supersession-chain walking and Hub aggregation. Q- guard against owl:sameAs leakage, against simultaneous conflicting classifications at the same epistemic instant, against refinedBy violating fschema:subsumedUnder, and against orphan local situations."@en ;
+    cpa:hasConsequences "Local situations remain typed under their agency-local class (via the alignment module). The Occurrence anchor adds one shared reference. Classification evolution is captured without retraction. Conflicts are reified, not erased. owl:sameAs is never asserted between local situations: coreference is computed via shared concernsOccurrence target. Backward compatibility: existing foundation:Signal/EventValidation/RiskAssessmentReport scaffolding is reused without change."@en ;
+    cpa:hasComponent   ecmocore:foundation, ecmocore:hazard, ecmocore:disaster,
+                       ecmocore:governance,
+                       <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cpa:relatedCPs     <http://www.ontologydesignpatterns.org/cp/owl/descriptionandsituation.owl> ,
+                       <http://www.w3.org/ns/prov#> ,
+                       <http://www.w3.org/2006/time#> ;
+    cpa:extractedFrom  <http://data.europa.eu/h8v/ecmo/core> ;
+    owl:imports        <http://data.europa.eu/h8v/ecmo/core> ;
+    owl:versionInfo    "0.1" ;
+    skos:prefLabel     "ECMO Data-Level Coreference Pattern"@en .
+
+# =============================================================================
+# Vocabulary stubs — classes
+# =============================================================================
+
+coref:Occurrence a owl:Class ;
+    rdfs:subClassOf dul:Situation ;
+    rdfs:comment "A minimal-commitment world-occurrence anchor. Carries only the spatio-temporal kernel that all agencies are presumed to agree on (location, opening time, and optionally a closing time). Does not carry hazard typing, severity, impacts or any claim that is subject to inter-agency disagreement. All such claims live on linked Situations (HazardClassificationSituation, StakeholderSituation, etc.) via concernsOccurrence."@en ;
+    skos:editorialNote "An Occurrence is a Situation, not an Event, because it is the referent of multiple agency-local situations rather than a happening in its own right. Local situations may type themselves as dul:Event under alignment; the Occurrence does not."@en ;
+    skos:prefLabel "Occurrence (world-event anchor)"@en .
+
+coref:HazardClassificationSituation a owl:Class ;
+    rdfs:subClassOf dul:Situation ;
+    rdfs:comment "A reified hazard typing assertion holding over a specified epistemic interval. classifiesAs points to the Hazard individual asserted to hold; foundation:hasTemporalValidity bounds when the assertion was held to be true; supersededBy chains to the next classification (with refinedBy / correctedBy sub-properties capturing whether the change is taxonomic refinement or belief retraction)."@en ;
+    skos:prefLabel "Hazard Classification Situation"@en .
+
+coref:StakeholderAssessment a owl:Class ;
+    rdfs:subClassOf foundation:Assessment ;
+    rdfs:comment "A per-stakeholder assessment used at the Hub layer when adjudicated consolidation is performed. Optional at the data layer: agency-local class typings already function as descriptions via the alignment module. Reach for StakeholderAssessment only when explicit merge bookkeeping is needed."@en ;
+    skos:prefLabel "Stakeholder Assessment"@en .
+
+coref:HubAssessment a owl:Class ;
+    rdfs:subClassOf coref:StakeholderAssessment ;
+    rdfs:comment "A consolidated, hub-curated description that aggregates a set of StakeholderAssessments (or directly a set of local situations) and applies an explicit MergePolicy to resolve conflicts among them. The HubAssessment is itself attributable (prov:wasAttributedTo) and revisable."@en ;
+    skos:prefLabel "Hub Assessment"@en .
+
+coref:MergePolicy a owl:Class ;
+    rdfs:subClassOf dul:Description ;
+    rdfs:comment "A reified policy describing how a HubAssessment selected among conflicting per-agency claims (e.g. latest-wins, highest-confidence-wins, manual-adjudication, source-priority-list). Policies are first-class so the merge is auditable and replaceable."@en ;
+    skos:prefLabel "Merge Policy"@en .
+
+coref:ConflictReport a owl:Class ;
+    rdfs:subClassOf dul:InformationObject ;
+    rdfs:comment "A reified record of disagreement between two or more Situations or Descriptions about the same property of the same Occurrence. Carries the conflicting parties, the property in dispute, the values asserted by each, and (optionally) the resolution chosen by an enclosing HubAssessment."@en ;
+    skos:prefLabel "Conflict Report"@en .
+
+# =============================================================================
+# Vocabulary stubs — properties
+# =============================================================================
+
+coref:concernsOccurrence a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range  coref:Occurrence ;
+    rdfs:subPropertyOf dul:isSettingFor ;
+    rdfs:comment "Links any local Situation (an agency record, a classification situation, an impact situation, etc.) to the single Occurrence it is founded on. Functional on the local-situation side: each local situation is founded on at most one Occurrence. Coreference between two local situations is *computed* via shared target, never asserted via owl:sameAs."@en ;
+    skos:prefLabel "concerns occurrence"@en .
+
+coref:isConcernedBy a owl:ObjectProperty ;
+    owl:inverseOf coref:concernsOccurrence ;
+    skos:prefLabel "is concerned by"@en .
+
+coref:sameOccurrenceAs a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range  dul:Situation ;
+    rdfs:subPropertyOf prov:alternateOf ;
+    rdfs:comment "Soft equivalence: two records concern the same world-occurrence under different perspectives. Symmetric, NOT transitive at the OWL level (we deliberately exclude transitivity so that mis-asserted pairs do not propagate through the graph). Weaker than owl:sameAs: does not entail identity of properties. Use when an Occurrence anchor cannot yet be minted; otherwise prefer pointing both situations at a shared coref:Occurrence."@en ;
+    skos:editorialNote "Do NOT declare owl:TransitiveProperty on sameOccurrenceAs. A SHACL shape can flag long sameOccurrenceAs chains as candidates for promotion to a shared concernsOccurrence target."@en ;
+    skos:prefLabel "same occurrence as"@en .
+
+coref:classifiesAs a owl:ObjectProperty ;
+    rdfs:domain coref:HazardClassificationSituation ;
+    rdfs:range  hazard:Hazard ;
+    rdfs:comment "Points from a reified classification situation to the Hazard individual asserted to hold at the corresponding epistemic interval. Use Hazard individuals (e.g. ph:Hantaviridae, ph:AndesVirus), not classes — taxonomic relations among them are carried by fschema:subsumedUnder."@en ;
+    skos:prefLabel "classifies as"@en .
+
+coref:supersededBy a owl:ObjectProperty, owl:AsymmetricProperty, owl:IrreflexiveProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range  dul:Situation ;
+    rdfs:subPropertyOf prov:wasInvalidatedBy ;
+    rdfs:comment "The later situation invalidates the earlier within the epistemic chain concerning the same Occurrence. Asymmetric and irreflexive. NOT declared transitive at OWL level: we want the audit chain to be walkable step by step; transitive closure is left to query time (SPARQL property paths)."@en ;
+    skos:prefLabel "superseded by"@en .
+
+coref:supersedes a owl:ObjectProperty ;
+    owl:inverseOf coref:supersededBy ;
+    skos:prefLabel "supersedes"@en .
+
+coref:refinedBy a owl:ObjectProperty ;
+    rdfs:subPropertyOf coref:supersededBy ;
+    rdfs:comment "Taxonomic refinement: the later classification is a more specific Hazard individual subsumed (via fschema:subsumedUnder) under the earlier one. Entailments from the earlier classification REMAIN valid; the later simply tightens the bound. Example: a classification asserting ph:Hantaviridae is refinedBy a classification asserting ph:AndesVirus."@en ;
+    skos:editorialNote "A SHACL shape (see coref:RefinementMustBeTaxonomicShape below) enforces that the later classifiesAs target is fschema:subsumedUnder the earlier."@en ;
+    skos:prefLabel "refined by"@en .
+
+coref:refines a owl:ObjectProperty ;
+    owl:inverseOf coref:refinedBy ;
+    rdfs:subPropertyOf coref:supersedes ;
+    skos:prefLabel "refines"@en .
+
+coref:correctedBy a owl:ObjectProperty ;
+    rdfs:subPropertyOf coref:supersededBy ;
+    rdfs:comment "Belief retraction: the later classification replaces a wrong earlier one. Entailments from the earlier classification are NOT preserved; downstream reasoners should treat the earlier as retracted (but it remains in the graph for audit). Example: a classification asserting ph:LassaVirus is correctedBy a classification asserting ph:AndesVirus."@en ;
+    skos:prefLabel "corrected by"@en .
+
+coref:corrects a owl:ObjectProperty ;
+    owl:inverseOf coref:correctedBy ;
+    rdfs:subPropertyOf coref:supersedes ;
+    skos:prefLabel "corrects"@en .
+
+coref:aggregatesAssessment a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:domain coref:HubAssessment ;
+    rdfs:range  [ owl:unionOf ( dul:Situation coref:StakeholderAssessment ) ] ;
+    rdfs:comment "From a HubAssessment to one of the StakeholderAssessments it consolidates. Transitive so a hierarchy of hubs (regional -> national -> EU-level) walks cleanly via property paths."@en ;
+    skos:prefLabel "aggregates assessment"@en .
+
+coref:appliesMergePolicy a owl:ObjectProperty ;
+    rdfs:domain coref:HubAssessment ;
+    rdfs:range  coref:MergePolicy ;
+    rdfs:comment "Links a HubAssessment to the MergePolicy that governed its consolidation choices. Multiple policies can be applied if the merge proceeded in stages."@en ;
+    skos:prefLabel "applies merge policy"@en .
+
+coref:hostsAssessment a owl:ObjectProperty ;
+    rdfs:domain coref:Occurrence ;
+    rdfs:range  coref:HubAssessment ;
+    rdfs:comment "Convenience reverse-direction shortcut from an Occurrence to the HubAssessment(s) currently maintaining a consolidated view of it."@en ;
+    skos:prefLabel "hosts assessment"@en .
+
+coref:conflictsWith a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range  dul:Situation ;
+    rdfs:comment "Symmetric: marks two co-occurrence-anchored situations as known to disagree on at least one property. The disagreement detail is reified by an associated ConflictReport via hasConflictReport."@en ;
+    skos:prefLabel "conflicts with"@en .
+
+coref:hasConflictReport a owl:ObjectProperty ;
+    rdfs:range coref:ConflictReport ;
+    rdfs:comment "From a Situation (or a HubAssessment) to a reified ConflictReport detailing a disagreement it is party to or has adjudicated."@en ;
+    skos:prefLabel "has conflict report"@en .
+
+coref:disputedProperty a owl:ObjectProperty ;
+    rdfs:domain coref:ConflictReport ;
+    rdfs:comment "Points to the (punned) property the parties to the conflict disagree about (e.g. hazard:isManifestationOf, hazard:hasSeverityLevel)."@en ;
+    skos:prefLabel "disputed property"@en .
+
+
+

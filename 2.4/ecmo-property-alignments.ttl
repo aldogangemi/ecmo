@@ -1,0 +1,651 @@
+@prefix bio:         <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix capacity:    <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix coref:       <http://data.europa.eu/h8v/ecmo/coref/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix drivers:     <http://data.europa.eu/h8v/ecmo/core/drivers/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix time:        <http://www.w3.org/2006/time#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+@prefix hera:       <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix phsm:       <http://data.europa.eu/h8v/ecmo/phsm/> .
+
+# =============================================================================
+# ECMO Property Alignments to DUL/d0 — version v2
+#
+# This file groups ECMO
+# object properties by their intended DUL super-property, following his hints:
+#
+#  - when eventualities or situations are involved: dul:sameSettingAs
+#  - when there are pure events involved:           dul:coparticipatesWith
+#  - other frequent alignments:                     dul:hasParticipant, dul:hasPart
+#
+# I add four more super-properties that emerge from the ECMO relation
+# neighbourhood:
+#
+#  - dul:hasComponent          (Description-side conceptual mereology)
+#  - dul:satisfies             (Situation → Description, D&S linkage)
+#  - dul:isClassifiedBy        (any → Concept, classification)
+#  - dul:isAbout               (InformationObject → Entity, aboutness)
+#  - dul:hasLocation           (Place attachment)
+#
+# Nine super-properties total. Each ECMO property below sits under one
+# (occasionally more) of them.
+#
+#
+# NOTHING IN THIS FILE OVERRIDES v2.2 — every triple below is an additive
+# rdfs:subPropertyOf. Existing usage remains valid; the alignments give
+# reasoners a route to DUL-level entailments.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/property-alignments> a owl:Ontology ;
+    dcterms:issued "2026-06-08"^^xsd:date ;
+    rdfs:comment "Proposed DUL/d0 property alignments for ECMO 2.2. Additive rdfs:subPropertyOf only; no domain/range changes."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core> ;
+    owl:versionInfo "0.1-proposal" ;
+    skos:prefLabel "ECMO → DUL property alignments (proposal)"@en .
+
+# =============================================================================
+# Group A — dul:sameSettingAs
+# Symmetric. "Two eventualities that share a spatiotemporal / causal setting."
+# ECMO's asymmetric relations sit UNDER this when the two endpoints jointly
+# constitute the same setting (a disaster event and its impacts share the
+# setting of the disaster).
+# Sub-propertying an asymmetric property under a symmetric super-property is
+# safe: the sub-property remains asymmetric; only the super-property gets
+# entailed (in both directions, correctly).
+# =============================================================================
+
+hazard:hasImpact              rdfs:subPropertyOf dul:sameSettingAs .
+    # A HazardousEvent and its Impact share the disaster setting.
+
+disaster:causesDamage         rdfs:subPropertyOf dul:sameSettingAs .
+disaster:causesEconomicLoss   rdfs:subPropertyOf dul:sameSettingAs .
+disaster:hasHumanImpact       rdfs:subPropertyOf dul:sameSettingAs .
+disaster:hasEnvironmentalImpact rdfs:subPropertyOf dul:sameSettingAs .
+    # All four are Event → Impact/Loss/Damage; endpoints share the disaster setting.
+
+disaster:hasVulnerabilityContext rdfs:subPropertyOf dul:sameSettingAs .
+    # Disaster Situation and Vulnerability Situation share the disaster context.
+
+# =============================================================================
+# Group B — dul:coparticipatesWith
+# Symmetric. "Two situations involving a shared participant, potentially at
+# different points." ECMO's causal chains between events sit here — trigger
+# and triggered share at least the affected population/asset as participant.
+# =============================================================================
+
+hazard:triggers               rdfs:subPropertyOf dul:sameSettingAs .
+disaster:isTriggeredBy        rdfs:subPropertyOf dul:sameSettingAs .
+    # Trigger and triggered share participants (place, population, sometimes agents).
+
+hazard:hasCascadingEffect     rdfs:subPropertyOf dul:sameSettingAs .
+    # Same reasoning as triggers.
+
+# =============================================================================
+# Group C — dul:hasParticipant / dul:isParticipantIn
+# The Event/Situation → Object relations for "who/what is involved". Not
+# symmetric; direction preserved.
+# =============================================================================
+
+expvuln:exposesElement        rdfs:subPropertyOf dul:isSettingFor .
+    # Exposure Situation has the ExposedElement as its participant.
+
+hazard:affectsPopulation      rdfs:subPropertyOf dul:isSettingFor .
+    # A HazardousEvent has the AffectedPopulation as its participant.
+
+response:involvesEmergencyService rdfs:subPropertyOf dul:isSettingFor .
+    # Response Action has the EmergencyService as its participant.
+
+response:involvesCapacity     rdfs:subPropertyOf dul:isSettingFor .
+    # An Intervention takes the (Coping) Capacity as a participant it needs.
+
+response:requiresCapacity     rdfs:subPropertyOf dul:isSettingFor .
+    # An Intervention requires a Capacity as a participant.
+
+governance:involvesStakeholder rdfs:subPropertyOf dul:isSettingFor .
+governance:involvesCivilSociety rdfs:subPropertyOf dul:isSettingFor .
+governance:involvesCommunity   rdfs:subPropertyOf dul:isSettingFor .
+governance:involvesSector      rdfs:subPropertyOf dul:isSettingFor .
+    # Governance situations have stakeholders/civil society/community/sector as participants.
+
+# =============================================================================
+# Group D — dul:hasPart (Object-side mereology)
+# Physical / social parthood: the ECMO 'includes*' properties on the STOCK
+# branch of Capacity, and on the Instrument compositional structures.
+# =============================================================================
+
+capacity:includesResource      rdfs:subPropertyOf dul:hasPart .
+capacity:includesInstitution   rdfs:subPropertyOf dul:hasPart .
+capacity:includesKnowledge     rdfs:subPropertyOf dul:hasPart .
+    # StockCapacity has these as physical/social/informational parts.
+
+instruments:hasEWSComponent    rdfs:subPropertyOf dul:hasComponent .
+    # An EWS has its four component sub-systems as parts.
+
+# =============================================================================
+# Group E — dul:hasComponent (Description-side conceptual mereology)
+# The 'four determinants' family — Risk description has Hazard/Exposure/
+# Vulnerability/Capacity as CONCEPTUAL components (frame roles), not physical
+# parts. hasComponent (in DUL) sits under hasPart but is intensional.
+# =============================================================================
+
+risk:hasHazardDeterminant       rdfs:subPropertyOf dul:hasComponent .
+risk:hasExposureDeterminant     rdfs:subPropertyOf dul:hasComponent .
+risk:hasVulnerabilityDeterminant rdfs:subPropertyOf dul:hasComponent .
+risk:hasCapacityDeterminant     rdfs:subPropertyOf dul:hasComponent .
+    # Risk description is compositionally made up of these four determinant roles.
+
+#foundation:includesEvent        rdfs:subPropertyOf dul:hasComponent .
+    # Already subPropertyOf dul:includesEvent per ECMO 2.2; this extends it to hasComponent
+    # so that the MultiHazardContext / Compound-event pattern inherits mereology.
+
+# =============================================================================
+# Group F — dul:satisfies (Situation → Description; D&S linkage)
+# The canonical D&S move: a Situation satisfies the Description that frames it.
+# ECMO already has these correctly under dul:satisfies in v2.2; listed here for
+# completeness of the alignment ledger.
+# =============================================================================
+
+hazard:isManifestationOf       rdfs:subPropertyOf dul:satisfies .
+    # Already declared in ECMO 2.2; kept for the ledger.
+disaster:realizesRisk          rdfs:subPropertyOf dul:satisfies .
+    # Already declared in ECMO 2.2.
+risk:materializesAs            rdfs:subPropertyOf dul:isSatisfiedBy .
+    # Formerly declared in ECMO 2.2 as sub of both isSatisfiedBy and isQualityOf.
+
+# =============================================================================
+# Group G — dul:isClassifiedBy (Entity → Concept)
+# The "classified by a type" family: hazard category, disaster onset/scale/
+# frequency, impact type, vulnerability dimension.
+# =============================================================================
+
+hazard:hasHazardCategory       rdfs:subPropertyOf dul:isClassifiedBy .
+disaster:hasOnsetType          rdfs:subPropertyOf dul:isClassifiedBy .
+disaster:hasScaleType          rdfs:subPropertyOf dul:isClassifiedBy .
+disaster:hasFrequencyType      rdfs:subPropertyOf dul:isClassifiedBy .
+disaster:hasAffectednessType   rdfs:subPropertyOf dul:isClassifiedBy .
+impact:hasImpactType           rdfs:subPropertyOf dul:isClassifiedBy .
+impact:hasImpactIntensity      rdfs:subPropertyOf dul:isClassifiedBy .
+expvuln:hasVulnerabilityDimension rdfs:subPropertyOf dul:isClassifiedBy .
+expvuln:hasAssetDomain         rdfs:subPropertyOf dul:isClassifiedBy .
+expvuln:hasInfrastructureSector rdfs:subPropertyOf dul:isClassifiedBy .
+response:involvesMeasureType   rdfs:subPropertyOf dul:isClassifiedBy .
+    # All are Entity → Concept classifications.
+
+# =============================================================================
+# Group H — dul:isAbout (InformationObject → Entity)
+# The RiskAssessment / assessment-report / analysis family. These reify
+# knowledge-about-something.
+# =============================================================================
+
+governance:analysesHazard         rdfs:subPropertyOf dul:isAbout .
+governance:evaluatesExposure      rdfs:subPropertyOf dul:isAbout .
+governance:evaluatesVulnerability rdfs:subPropertyOf dul:isAbout .
+governance:evaluatesCopingCapacity rdfs:subPropertyOf dul:isAbout .
+    # A RiskAssessment (Description/InformationObject) is *about* each of these.
+
+foundation:isReportFor           rdfs:subPropertyOf dul:isAbout .
+    # RiskAssessmentReport is about the HazardousEvent it covers.
+
+foundation:recommendsMeasure     rdfs:subPropertyOf dul:isAbout .
+    # A report is about the measures it recommends (weaker reading; open to revision).
+
+foundation:hasQualitativeAssessment rdfs:subPropertyOf dul:isAbout .
+    # An Entity has an assessment that is about it — the reverse could equally hold.
+
+# =============================================================================
+# Group I — dul:hasLocation, dul:hasTimeInterval (spatiotemporal attachment)
+# DUL provides both. ECMO already has foundation:hasLocation that could be
+# a subProperty of dul:hasLocation directly; not sure v2.2 declares that.
+# =============================================================================
+
+foundation:hasLocation           rdfs:subPropertyOf dul:hasLocation .
+    # DUL provides dul:hasLocation; use it directly.
+
+# AG correction (Q-PA-1): temporal properties use DUL's own bindings.
+# dul:hasTimeInterval connects to intervals as entities (Regions).
+# dul:hasIntervalDate connects intervals to xsd:dateTime.
+
+disaster:hasTemporalExtent       rdfs:subPropertyOf dul:hasTimeInterval .
+    # HazardousEvent → TimeInterval entity.
+foundation:hasTemporalValidity   rdfs:subPropertyOf dul:hasTimeInterval .
+    # Situation (assessment / classification / signal) → TimeInterval entity.
+
+# For datatype properties that carry xsd:dateTime directly on a TimeInterval,
+# use dul:hasIntervalDate. ECMO 2.2 does not currently have any such property
+# on TimeInterval instances directly (it uses time:inXSDDate via OWL-Time),
+# so no direct alignment triples added here. If future ECMO stubs introduce
+# an ECMO-native dateTime binding on intervals, it should be:
+#     :hasIntervalDateTime rdfs:subPropertyOf dul:hasIntervalDate .
+
+# =============================================================================
+# Group J — COREF pattern → PROV + DUL
+# Most are already declared correctly in coref-pattern.ttl. Listing for the
+# ledger.
+# =============================================================================
+
+coref:concernsOccurrence         rdfs:subPropertyOf prov:specializationOf .
+    # Already in COREF pattern v0.1.
+
+coref:sameOccurrenceAs           rdfs:subPropertyOf prov:alternateOf .
+    # Already in COREF pattern v0.1.
+
+coref:supersededBy               rdfs:subPropertyOf prov:wasInvalidatedBy .
+    # Already in COREF pattern v0.1.
+
+# NEW proposal: coref:concernsOccurrence could also be a fschema:frameFor
+# projection — the local situation is a frame-occurrence of the Occurrence
+# frame.
+# coref:concernsOccurrence rdfs:subPropertyOf fschema:frameFor .
+
+# =============================================================================
+# Group K — foundation:isComplementaryTo (symmetric)
+# Symmetric ECMO relation between Capacity's Ability branch and Vulnerability.
+# AG: dul:coparticipatesWith as a natural home for such pairs, but
+# isComplementaryTo is stronger than mere coparticipation — it's the
+# DRR "capacity offsets vulnerability" balance. Two options:
+#
+#  Option i:  isComplementaryTo rdfs:subPropertyOf dul:coparticipatesWith .
+#  Option ii: keep isComplementaryTo unaligned to DUL; document the
+#             semantics narratively. This is the safer default.
+#
+foundation:isComplementaryTo rdfs:subPropertyOf dul:sameSettingAs .
+# =============================================================================
+
+# =============================================================================
+# Group L — Framester binding on the coref: pattern
+# When (c) proceeds, the coref:HazardClassificationSituation → coref:Occurrence
+# link is a natural fschema:frameFor. Not asserting here — will land in the
+# frame-model TTL once the frame model is validated.
+# =============================================================================
+
+# =============================================================================
+# Notes for revision pass
+#
+#  - Groups A/B/C/D/E/F/G/H are the load-bearing sections; corrections here
+#    ripple through the audits.
+#  - Group I (hasTemporalExtent / hasTemporalValidity) uses dul:hasSetting as
+#    a hedge because DUL doesn't provide a direct object-property for
+#    "has time interval". Alternatives: leave unaligned, or introduce
+#    a foundation-level dul:hasTimeInterval stub.
+#  - I did NOT propose subPropertyOf into dul:hasQuality. Several candidates
+#    (foundation:hasLevel, expvuln:hasVulnerabilityDimension when viewed as
+#    the value of a Quality) could go there, but the Q/Value axis in ECMO
+#    is already carried by the QualitativeAssessment scale-value pattern
+#    which is Framester-style. Keeping this section OUT rather than proposing
+#    tentative alignments.
+# =============================================================================
+
+# =============================================================================
+# v2.3 CP-CORE-27..33 — Causal-aboutness alignments.
+# Distinct semantic reading from Group H (assessments/reports) so under the
+# DUL's sameSettingAs for now. CP-CORE-27 and CP-CORE-31 use dul:hasParticipant
+# (they're participation-in-a-situation relations, not aboutness).
+# =============================================================================
+
+impact:affects                    rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-27: Impact Situation has the affected element as participant.
+expvuln:isExposedTo               rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-28: Exposure Situation is in the sameSettingAs the Hazard type it faces.
+expvuln:increasesSusceptibilityTo rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-29: Vulnerability Situation is in the sameSettingAs the Hazard it worsens exposure to.
+response:lessensImpactOf          rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-30: Response is in the sameSettingAs the Hazard it lessens.
+response:meetsNeedsOf             rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-31: Response has the affected population as participant.
+instruments:reducesImpactOf       rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-32: Measure is in the sameSettingAs the Hazard it reduces.
+instruments:forecastsEvent        rdfs:subPropertyOf dul:sameSettingAs .
+    # CP-CORE-33: Warning is in the sameSettingAs the HazardousEvent it forecasts.
+
+
+# =============================================================================
+# v2.3 task (d) — CP-PH-02: align ph:producesToxin
+# =============================================================================
+ph:producesToxin rdfs:subPropertyOf dul:sameSettingAs .
+    # Pathogen and its produced Toxin share the biological setting where production occurs.
+    
+    
+# =============================================================================
+# 2.4: ECMO Property Alignments to DUL/d0: EXTENDED (full) set of property Alignments
+#
+# Source of truth: ecmo-property-alignments-v0.4.2-audit.csv, column C (dul_super),
+# as revised by the reviewer. Additive axioms only
+# (rdfs:subPropertyOf, plus one owl:equivalentProperty as directed).
+#
+# DEPENDENCY: this file references the assessment-semantics redesign now in the
+# updated foundation module — foundation:Assessment, foundation:assesses, and
+# foundation:isAssessedBy — which are NOT declared here. The DUL alignment of foundation:assesses/isAssessedBy is governed by the
+# foundation module.
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# dul:isClassifiedBy  (21)
+# ---------------------------------------------------------------------------
+bio:hasOrganismRole                                rdfs:subPropertyOf dul:isClassifiedBy .
+bio:hasRank                                        rdfs:subPropertyOf dul:isClassifiedBy .
+capacity:hasCapacityDomain                         rdfs:subPropertyOf dul:isClassifiedBy .
+expvuln:hasExposedElementType                      rdfs:subPropertyOf dul:isClassifiedBy .
+foundation:hasAssessmentDomain                     rdfs:subPropertyOf dul:isClassifiedBy .
+foundation:hasLevel                                rdfs:subPropertyOf dul:isClassifiedBy .
+hazard:hasHazardOrigin                             rdfs:subPropertyOf dul:isClassifiedBy .
+hazard:usesScale                                   rdfs:subPropertyOf dul:isClassifiedBy .
+impact:hasEconomicScopeType                        rdfs:subPropertyOf dul:isClassifiedBy .
+instruments:hasComponentFunction                   rdfs:subPropertyOf dul:isClassifiedBy .
+instruments:hasTransferMechanism                   rdfs:subPropertyOf dul:isClassifiedBy .
+risk:hasRiskIntensityProfile                       rdfs:subPropertyOf dul:isClassifiedBy .
+coref:classifiesAs                                 rdfs:subPropertyOf dul:isClassifiedBy .
+hera:hasAssessmentCriterion                        rdfs:subPropertyOf dul:isClassifiedBy .
+hera:hasPotentialFutureTreatmentAvailabilityLevel  rdfs:subPropertyOf dul:isClassifiedBy .
+hera:hasPriorityLevel                              rdfs:subPropertyOf dul:isClassifiedBy .
+hera:hasTreatabilityLevel                          rdfs:subPropertyOf dul:isClassifiedBy .
+phsm:targetsPopulationGroup                        rdfs:subPropertyOf dul:isClassifiedBy .
+ph:hasHealthConditionCategory                      rdfs:subPropertyOf dul:isClassifiedBy .
+ph:hasRouteOfTransmission                          rdfs:subPropertyOf dul:isClassifiedBy .
+
+# ---------------------------------------------------------------------------
+# dul:classifies  (5)
+# ---------------------------------------------------------------------------
+bio:isRankOf           rdfs:subPropertyOf dul:classifies .
+expvuln:isDimensionOf  rdfs:subPropertyOf dul:classifies .
+foundation:isLevelOf   rdfs:subPropertyOf dul:classifies .
+hazard:isScaleUsedBy   rdfs:subPropertyOf dul:classifies .
+impact:isIntensityOf   rdfs:subPropertyOf dul:classifies .
+
+# ---------------------------------------------------------------------------
+# dul:isSettingFor  (9)
+# ---------------------------------------------------------------------------
+capacity:developsCapacityOf           rdfs:subPropertyOf dul:isSettingFor .
+expvuln:hasExposedElement             rdfs:subPropertyOf dul:isSettingFor .
+hazard:hasAffectedAsset               rdfs:subPropertyOf dul:isSettingFor .
+hazard:involvesHazard                 rdfs:subPropertyOf dul:isSettingFor .
+instruments:disseminatesWarningTo     rdfs:subPropertyOf dul:isSettingFor .
+instruments:fromParty                 rdfs:subPropertyOf dul:isSettingFor .
+instruments:providesEssentialService  rdfs:subPropertyOf dul:isSettingFor .
+instruments:toParty                   rdfs:subPropertyOf dul:isSettingFor .
+instruments:upgradesStructure         rdfs:subPropertyOf dul:isSettingFor .
+
+# ---------------------------------------------------------------------------
+# dul:hasSetting  (11)
+# ---------------------------------------------------------------------------
+capacity:hasCapacityDevelopment  rdfs:subPropertyOf dul:hasSetting .
+expvuln:isExposedElementIn       rdfs:subPropertyOf dul:hasSetting .
+expvuln:isExposedIn              rdfs:subPropertyOf dul:hasSetting .
+hazard:isAffectedAssetOf         rdfs:subPropertyOf dul:hasSetting .
+hazard:isAffectedBy              rdfs:subPropertyOf dul:hasSetting .
+hazard:isInvolvedInContext       rdfs:subPropertyOf dul:hasSetting .
+instruments:isProvidedBy         rdfs:subPropertyOf dul:hasSetting .
+instruments:receivesWarningFrom  rdfs:subPropertyOf dul:hasSetting .
+response:isInvolvedInResponse    rdfs:subPropertyOf dul:hasSetting .
+coref:hostsAssessment            rdfs:subPropertyOf dul:hasSetting .
+coref:isConcernedBy              rdfs:subPropertyOf dul:hasSetting .
+
+# ---------------------------------------------------------------------------
+# dul:sameSettingAs  (83)
+# ---------------------------------------------------------------------------
+capacity:hasResistanceFrom                 rdfs:subPropertyOf dul:sameSettingAs .
+capacity:isManagedBy                       rdfs:subPropertyOf dul:sameSettingAs .
+capacity:isPreservedBy                     rdfs:subPropertyOf dul:sameSettingAs .
+capacity:isStrengthenedBy                  rdfs:subPropertyOf dul:sameSettingAs .
+capacity:managesAdversity                  rdfs:subPropertyOf dul:sameSettingAs .
+capacity:preservesFunction                 rdfs:subPropertyOf dul:sameSettingAs .
+capacity:resistsEffectsOf                  rdfs:subPropertyOf dul:sameSettingAs .
+capacity:strengthensResilience             rdfs:subPropertyOf dul:sameSettingAs .
+disaster:exceedsCapacityOf                 rdfs:subPropertyOf dul:sameSettingAs .
+disaster:isDamageCausedBy                  rdfs:subPropertyOf dul:sameSettingAs .
+disaster:isEconomicLossCausedBy            rdfs:subPropertyOf dul:sameSettingAs .
+disaster:isEnvironmentalImpactOf           rdfs:subPropertyOf dul:sameSettingAs .
+disaster:isExceededBy                      rdfs:subPropertyOf dul:sameSettingAs .
+disaster:isHumanImpactOf                   rdfs:subPropertyOf dul:sameSettingAs .
+disaster:isPreparedForBy                   rdfs:subPropertyOf dul:sameSettingAs .
+disaster:isVulnerabilityContextOf          rdfs:subPropertyOf dul:sameSettingAs .
+disaster:preparesFor                       rdfs:subPropertyOf dul:sameSettingAs .
+disaster:producesLoss                      rdfs:subPropertyOf dul:sameSettingAs .
+drivers:drivesRisk                         rdfs:subPropertyOf dul:sameSettingAs .
+drivers:hasCapacityReducedBy               rdfs:subPropertyOf dul:sameSettingAs .
+drivers:hasExposureIncreasedBy             rdfs:subPropertyOf dul:sameSettingAs .
+drivers:hasVulnerabilityIncreasedBy        rdfs:subPropertyOf dul:sameSettingAs .
+drivers:increasesExposure                  rdfs:subPropertyOf dul:sameSettingAs .
+drivers:increasesVulnerability             rdfs:subPropertyOf dul:sameSettingAs .
+drivers:isCompoundedBy                     rdfs:subPropertyOf dul:sameSettingAs .
+drivers:isDrivenBy                         rdfs:subPropertyOf dul:sameSettingAs .
+drivers:operatesThrough                    rdfs:subPropertyOf dul:sameSettingAs .
+drivers:reducesCapacity                    rdfs:subPropertyOf dul:sameSettingAs .
+expvuln:exposesTo                          rdfs:subPropertyOf dul:sameSettingAs .
+expvuln:hasSusceptibilityFrom              rdfs:subPropertyOf dul:sameSettingAs .
+foundation:assesses						   rdfs:subPropertyOf dul:sameSettingAs .
+foundation:generatesSignal				   rdfs:subPropertyOf dul:sameSettingAs .
+foundation:isEvolvedAs                     rdfs:subPropertyOf dul:sameSettingAs .
+foundation:coordinatesDRR                  rdfs:subPropertyOf dul:sameSettingAs .
+foundation:hasPolicyObjective              rdfs:subPropertyOf dul:sameSettingAs .
+governance:managesResidualRisk             rdfs:subPropertyOf dul:sameSettingAs .
+governance:preventsNewRisk                 rdfs:subPropertyOf dul:sameSettingAs .
+governance:reducesExistingRisk             rdfs:subPropertyOf dul:sameSettingAs .
+governance:respondsTo                      rdfs:subPropertyOf dul:sameSettingAs .
+governance:usesTraditionalKnowledge        rdfs:subPropertyOf dul:sameSettingAs .
+hazard:hasExposureContext                  rdfs:subPropertyOf dul:sameSettingAs .
+governance:hasObservationSource            rdfs:subPropertyOf dul:sameSettingAs .
+hazard:involvesIntervention                rdfs:subPropertyOf dul:sameSettingAs .
+hazard:isCascadingEffectOf                 rdfs:subPropertyOf dul:sameSettingAs .
+hazard:isExposureContextOf                 rdfs:subPropertyOf dul:sameSettingAs .
+hazard:isImpactOf                          rdfs:subPropertyOf dul:sameSettingAs .
+hazard:isInterventionFor                   rdfs:subPropertyOf dul:sameSettingAs .
+hazard:isProtectedAgainstBy                rdfs:subPropertyOf dul:sameSettingAs .
+hazard:protectsAgainst                     rdfs:subPropertyOf dul:sameSettingAs .
+impact:resultsFrom                         rdfs:subPropertyOf dul:sameSettingAs .
+instruments:enablesPreparedness            rdfs:subPropertyOf dul:sameSettingAs .
+instruments:hasFinancialRiskTransferredBy  rdfs:subPropertyOf dul:sameSettingAs .
+instruments:hasImpactReducedBy             rdfs:subPropertyOf dul:sameSettingAs .
+instruments:hasWarning                     rdfs:subPropertyOf dul:sameSettingAs .
+instruments:increasesResistanceTo          rdfs:subPropertyOf dul:sameSettingAs .
+instruments:isEnabledBy                    rdfs:subPropertyOf dul:sameSettingAs .
+instruments:isForecastBy                   rdfs:subPropertyOf dul:sameSettingAs .
+instruments:isMonitoredBy                  rdfs:subPropertyOf dul:sameSettingAs .
+instruments:isProtectedBy                  rdfs:subPropertyOf dul:sameSettingAs .
+instruments:monitorsHazard                 rdfs:subPropertyOf dul:sameSettingAs .
+instruments:protects                       rdfs:subPropertyOf dul:sameSettingAs .
+instruments:transfersFinancialRisk         rdfs:subPropertyOf dul:sameSettingAs .
+response:alignsWithPrinciple               rdfs:subPropertyOf dul:sameSettingAs .
+response:anticipates                       rdfs:subPropertyOf dul:sameSettingAs .
+response:avoidsRiskOf                      rdfs:subPropertyOf dul:sameSettingAs .
+response:buildsCapacityFor                 rdfs:subPropertyOf dul:sameSettingAs .
+response:enablesTimely                     rdfs:subPropertyOf dul:sameSettingAs .
+response:hasCapacityBuiltBy                rdfs:subPropertyOf dul:sameSettingAs .
+response:hasImpactLessenedBy               rdfs:subPropertyOf dul:sameSettingAs .
+response:hasNeedsMetBy                     rdfs:subPropertyOf dul:sameSettingAs .
+response:inDRMPhase                        rdfs:subPropertyOf dul:sameSettingAs .
+response:integratesDRR        			   rdfs:subPropertyOf dul:sameSettingAs .
+response:isAnticipatedBy                   rdfs:subPropertyOf dul:sameSettingAs .
+response:isAvoidedBy                       rdfs:subPropertyOf dul:sameSettingAs .
+response:linksToEWS                        rdfs:subPropertyOf dul:sameSettingAs .
+response:rebuildsInfrastructureAfter       rdfs:subPropertyOf dul:sameSettingAs .
+response:reliesOnPreparedness              rdfs:subPropertyOf dul:sameSettingAs .
+response:restoresAssetsAfter               rdfs:subPropertyOf dul:sameSettingAs .
+response:restoresBasicServicesAfter        rdfs:subPropertyOf dul:sameSettingAs .
+risk:leavesResidualRisk                    rdfs:subPropertyOf dul:sameSettingAs .
+risk:remainsAfter                          rdfs:subPropertyOf dul:sameSettingAs .
+coref:sameOccurrenceAs                     rdfs:subPropertyOf dul:sameSettingAs .
+ph:hasCausativeAgent                       rdfs:subPropertyOf dul:sameSettingAs .
+ph:hasOutcome                              rdfs:subPropertyOf dul:sameSettingAs .
+ph:hasSignOrSymptom                        rdfs:subPropertyOf dul:sameSettingAs .
+ph:hasSusceptibleHost                      rdfs:subPropertyOf dul:sameSettingAs .
+ph:hasVector                               rdfs:subPropertyOf dul:sameSettingAs .
+ph:isCausativeAgentOf                      rdfs:subPropertyOf dul:sameSettingAs .
+ph:isOutcomeOf                             rdfs:subPropertyOf dul:sameSettingAs .
+ph:isProducedBy                            rdfs:subPropertyOf dul:sameSettingAs .
+ph:isSignOrSymptomOf                       rdfs:subPropertyOf dul:sameSettingAs .
+ph:isSusceptibleHostOf                     rdfs:subPropertyOf dul:sameSettingAs .
+ph:isVectorOf                              rdfs:subPropertyOf dul:sameSettingAs .
+
+# ---------------------------------------------------------------------------
+# dul:hasPart  (1)
+# ---------------------------------------------------------------------------
+capacity:includesCollectiveAttribute  rdfs:subPropertyOf dul:hasPart .
+
+# ---------------------------------------------------------------------------
+# dul:isPartOf  (4)
+# ---------------------------------------------------------------------------
+capacity:isCollectiveAttributeOf  rdfs:subPropertyOf dul:isPartOf .
+capacity:isKnowledgeOf            rdfs:subPropertyOf dul:isPartOf .
+capacity:isResourceOf             rdfs:subPropertyOf dul:isPartOf .
+governance:isSubPhaseOf           rdfs:subPropertyOf dul:isPartOf .
+
+# ---------------------------------------------------------------------------
+# dul:hasComponent  (6)
+# ---------------------------------------------------------------------------
+governance:hasInstitutionalFramework   rdfs:subPropertyOf dul:hasComponent .
+governance:hasLegalFramework           rdfs:subPropertyOf dul:hasComponent .
+governance:hasPolicyFramework          rdfs:subPropertyOf dul:hasComponent .
+response:includesShelterInPlaceOption  rdfs:subPropertyOf dul:hasComponent .
+coref:aggregatesAssessment             rdfs:subPropertyOf dul:hasComponent .
+ph:hasActiveIngredient                 rdfs:subPropertyOf dul:hasComponent .
+
+# ---------------------------------------------------------------------------
+# dul:isComponentOf  (5)
+# ---------------------------------------------------------------------------
+instruments:isComponentOf          rdfs:subPropertyOf dul:isComponentOf .
+risk:isCapacityDeterminantOf       rdfs:subPropertyOf dul:isComponentOf .
+risk:isExposureDeterminantOf       rdfs:subPropertyOf dul:isComponentOf .
+risk:isHazardDeterminantOf         rdfs:subPropertyOf dul:isComponentOf .
+risk:isVulnerabilityDeterminantOf  rdfs:subPropertyOf dul:isComponentOf .
+
+# ---------------------------------------------------------------------------
+# dul:isAbout  (9)
+# ---------------------------------------------------------------------------
+foundation:isQualitativeAssessmentOf  rdfs:subPropertyOf dul:isAbout .
+foundation:pertainsToEvent            rdfs:subPropertyOf dul:isAbout .
+governance:informsAbout               rdfs:subPropertyOf dul:isAbout .
+impact:recordsLoss                    rdfs:subPropertyOf dul:isAbout .
+instruments:isWarningOf               rdfs:subPropertyOf dul:isAbout .
+instruments:recordsDamageData         rdfs:subPropertyOf dul:isAbout .
+instruments:recordsImpactData         rdfs:subPropertyOf dul:isAbout .
+instruments:recordsLossFrom           rdfs:subPropertyOf dul:isAbout .
+coref:disputedProperty                rdfs:subPropertyOf dul:isAbout .
+
+# ---------------------------------------------------------------------------
+# dul:isReferenceOf  (13)
+# ---------------------------------------------------------------------------
+foundation:hasRiskAssessmentReport        rdfs:subPropertyOf dul:isReferenceOf .
+foundation:hasSignal                      rdfs:subPropertyOf dul:isReferenceOf .
+foundation:isConfirmedBy                  rdfs:subPropertyOf dul:isReferenceOf .
+foundation:isRecommendedBy                rdfs:subPropertyOf dul:isReferenceOf .
+foundation:isValidatedBy                  rdfs:subPropertyOf dul:isReferenceOf .
+hazard:hasIntensityObservation            rdfs:subPropertyOf dul:isReferenceOf .
+hazard:hasMagnitudeObservation            rdfs:subPropertyOf dul:isReferenceOf .
+hazard:hasSeverityAssessment              rdfs:subPropertyOf dul:isReferenceOf .
+impact:isRecordedIn                       rdfs:subPropertyOf dul:isReferenceOf .
+risk:isAssessedBy                         rdfs:subPropertyOf dul:isReferenceOf .
+coref:hasConflictReport                   rdfs:subPropertyOf dul:isReferenceOf .
+hera:hasBacterialPriorityGroupAssessment  rdfs:subPropertyOf dul:isReferenceOf .
+hera:hasFungalPriorityGroupAssessment     rdfs:subPropertyOf dul:isReferenceOf .
+
+# ---------------------------------------------------------------------------
+# dul:isSatisfiedBy  (1)
+# ---------------------------------------------------------------------------
+disaster:isRealizedAs  rdfs:subPropertyOf dul:isSatisfiedBy .
+
+# ---------------------------------------------------------------------------
+# dul:isDescribedBy  (6)
+# ---------------------------------------------------------------------------
+governance:appliesStrategy    rdfs:subPropertyOf dul:isDescribedBy .
+governance:implementsPlan     rdfs:subPropertyOf dul:isDescribedBy .
+response:isTaskOf             rdfs:subPropertyOf dul:isDescribedBy .
+coref:appliesMergePolicy      rdfs:subPropertyOf dul:isDescribedBy .
+
+# ---------------------------------------------------------------------------
+# dul:describes  (4)
+# ---------------------------------------------------------------------------
+governance:guides                  rdfs:subPropertyOf dul:describes .
+governance:implementedBy           rdfs:subPropertyOf dul:describes .
+instruments:regulatesConstruction  rdfs:subPropertyOf dul:describes .
+ph:isRouteOfTransmissionOf         rdfs:subPropertyOf dul:describes .   # REVISED (was dul:classifies)
+
+# ---------------------------------------------------------------------------
+# dul:isMemberOf  (4)
+# ---------------------------------------------------------------------------
+bio:belongsTo            rdfs:subPropertyOf dul:isMemberOf .
+foundation:inScale       rdfs:subPropertyOf dul:isMemberOf .
+foundation:isMaxValueOf  rdfs:subPropertyOf dul:isMemberOf .
+foundation:isMinValueOf  rdfs:subPropertyOf dul:isMemberOf .
+
+# ---------------------------------------------------------------------------
+# dul:hasMember  (3)
+# ---------------------------------------------------------------------------
+foundation:hasMaxValue    rdfs:subPropertyOf dul:hasMember .
+foundation:hasMinValue    rdfs:subPropertyOf dul:hasMember .
+foundation:hasScaleValue  rdfs:subPropertyOf dul:hasMember .
+
+# ---------------------------------------------------------------------------
+# dul:hasLocation  (1)
+# ---------------------------------------------------------------------------
+governance:inJurisdiction  rdfs:subPropertyOf dul:hasLocation .
+
+# ---------------------------------------------------------------------------
+# dul:isLocationOf  (1)
+# ---------------------------------------------------------------------------
+foundation:isLocationOf  rdfs:subPropertyOf dul:isLocationOf .
+
+# ---------------------------------------------------------------------------
+# dul:isTimeIntervalOf  (2)
+# ---------------------------------------------------------------------------
+disaster:isTemporalExtentOf      rdfs:subPropertyOf dul:isTimeIntervalOf .
+foundation:isTemporalValidityOf  rdfs:subPropertyOf dul:isTimeIntervalOf .
+
+# ---------------------------------------------------------------------------
+# dul:directlyPrecedes  (2)
+# ---------------------------------------------------------------------------
+foundation:nextValue    rdfs:subPropertyOf dul:directlyPrecedes .
+response:precedesPhase  rdfs:subPropertyOf dul:directlyPrecedes .
+response:isGeneralizationOfMeasureType rdfs:subPropertyOf dul:directlyPrecedes .
+
+# ---------------------------------------------------------------------------
+# dul:directlyFollows  (1)
+# ---------------------------------------------------------------------------
+foundation:previousValue  rdfs:subPropertyOf dul:directlyFollows .
+
+# ---------------------------------------------------------------------------
+# dul:hasQuality  (5)
+# ---------------------------------------------------------------------------
+ph:hasCaseFatalityRate  rdfs:subPropertyOf dul:hasQuality .
+ph:hasIncubationPeriod  rdfs:subPropertyOf dul:hasQuality .
+ph:hasInfectiousness    rdfs:subPropertyOf dul:hasQuality .
+ph:hasToxicity          rdfs:subPropertyOf dul:hasQuality .
+ph:hasTransmissibility  rdfs:subPropertyOf dul:hasQuality .
+
+# ---------------------------------------------------------------------------
+# ECMO super-property foundation:assesses  (assessment/observation → assessed entity; from foundation redesign)  (9)
+# ---------------------------------------------------------------------------
+capacity:assessesCapacityOf      rdfs:subPropertyOf foundation:assesses .   # REVISED (was dul:isAbout)
+capacity:assessesExceedanceBy    rdfs:subPropertyOf foundation:assesses .   # REVISED (was dul:isAbout)
+disaster:assessesExceedanceOf    rdfs:subPropertyOf foundation:assesses .   # REVISED (was dul:isAbout)
+foundation:confirmsEvent         rdfs:subPropertyOf foundation:assesses .   # REVISED (was dul:isAbout)
+foundation:validatesSignal       rdfs:subPropertyOf foundation:assesses .   # REVISED (was dul:isAbout)
+hazard:isIntensityObservationOf  rdfs:subPropertyOf foundation:assesses .   # REVISED (was dul:isAbout)
+hazard:isMagnitudeObservationOf  rdfs:subPropertyOf foundation:assesses .   # REVISED (was dul:isAbout)
+hazard:isSeverityAssessmentOf    rdfs:subPropertyOf foundation:assesses .   # REVISED (was dul:isAbout)
+risk:assessesRisk                rdfs:subPropertyOf foundation:assesses .   # REVISED (was dul:isAbout)
+
+# ---------------------------------------------------------------------------
+# ECMO super-property foundation:isAssessedBy  (entity → its assessment; from foundation redesign)  (3)
+# ---------------------------------------------------------------------------
+capacity:hasCapacityAssessment            rdfs:subPropertyOf foundation:isAssessedBy .   # REVISED (was dul:isReferenceOf)
+disaster:hasCapacityExceedanceAssessment  rdfs:subPropertyOf foundation:isAssessedBy .   # REVISED (was dul:isReferenceOf)
+foundation:isQualitativelyAssessedBy      rdfs:subPropertyOf foundation:isAssessedBy .   # REVISED (was dul:isAbout)
+foundation:isQualitativelyAssessedBy      owl:equivalentProperty foundation:hasQualitativeAssessment .   # reviewer directive
+
+

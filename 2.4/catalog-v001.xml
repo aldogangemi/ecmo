@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <!-- External foundational ontologies: force resolution from the Web (overrides any local copy in the folder). d0 owl:imports DUL. -->
+    <uri id="ECMO-2.4 external (web)" name="http://www.ontologydesignpatterns.org/ont/d0.owl" uri="http://www.ontologydesignpatterns.org/ont/d0.owl"/>
+    <uri id="ECMO-2.4 external (web)" name="http://www.ontologydesignpatterns.org/ont/dul/DUL.owl" uri="http://www.ontologydesignpatterns.org/ont/dul/DUL.owl"/>
+    <!-- ECMO 2.4 modules (this release) -->
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core" uri="ecmo-core.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/foundation" uri="ecmo-foundation.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/hazard" uri="ecmo-hazard.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/disaster" uri="ecmo-disaster.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/impact" uri="ecmo-impact.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/risk" uri="ecmo-risk.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/expvuln" uri="ecmo-expvuln.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/drivers" uri="ecmo-drivers.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/capacity" uri="ecmo-capacity.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/response" uri="ecmo-response.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/governance" uri="ecmo-governance.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/core/instruments" uri="ecmo-instruments.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/bio" uri="ecmo-bio.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/coref" uri="ecmo-coreference-pattern.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/epipulse" uri="ecmo-epipulse.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/hera" uri="ecmo-hera.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/hip" uri="ecmo-hip.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/hub" uri="ecmo-hub.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/phsm" uri="ecmo-phsm.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/property-alignments" uri="ecmo-property-alignments.ttl"/>
+    <uri id="ECMO-2.4 map" name="http://data.europa.eu/h8v/ecmo/public-health" uri="ecmo-ph.ttl"/>
+    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public"/>
+</catalog>

@@ -110,7 +110,7 @@ agency:HERA   a prov:Organization ; skos:prefLabel "EU Health Emergency Prepared
         a time:Interval ;
         time:hasBeginning [ time:inXSDDate "2026-05-02"^^xsd:date ]
     ] ;
-    hazard:hasCausativeAgent ph:AndesOrthohantavirus ;
+    ph:hasCausativeAgent ph:AndesOrthohantavirus ;
     foundation:hasJustification "Hazardous event manifesting the BiologicalHazard typing; final causative agent set after PCR confirmation on 08 May (per Cls_t2_andesvirus). Earlier classifications remain in the graph via the refinedBy chain on the Occurrence."@en .
 
 # -----------------------------------------------------------------------------
@@ -313,7 +313,7 @@ ph:AndesOrthohantavirus
     foundation:hasLevel hera:NotAvailable_Vaccines .
 
 :Prio_Andes a hera:PathogenPrioritisation ;
-    foundation:hasLevel hera:VeryHigh_Priority ;
+    foundation:hasLevel hera:High_PathogenPrioritisation ;
     foundation:hasJustification "High pathogenicity AND high transmissibility AND no MCM AND high cross-border threat = top priority cluster."@en .
 
 :HantavirusPulmonarySyndrome a ph:InfectiousDiseaseOrSyndrome ;

@@ -44,12 +44,13 @@
 # =============================================================================
 
 <http://data.europa.eu/h8v/ecmo/shapes> a owl:Ontology ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/cqs> ;
     dcterms:issued "2026-06-08"^^xsd:date ;
     rdfs:comment "ECMO consistency shapes v0.2: DARKSIDE negative trail, Framester-native for Family III."@en ;
     owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
                 <http://data.europa.eu/h8v/ecmo/coref> ,
                 <http://data.europa.eu/h8v/ecmo/property-alignments> ;
-    owl:versionInfo "0.2" ;
+    owl:versionInfo "0.3.0" ;
     skos:prefLabel "ECMO Consistency Shapes (DARKSIDE, Framester-native)"@en .
 
 # -----------------------------------------------------------------------------

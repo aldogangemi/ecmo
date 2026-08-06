@@ -6,12 +6,16 @@
 @prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:          <http://www.w3.org/ns/shacl#> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
 
-<http://data.europa.eu/h8v/ecmo/phsm/cqs> a owl:Ontology ;
+<http://data.europa.eu/h8v/ecmo/coref/cqs> a owl:Ontology ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/coref> , <http://data.europa.eu/h8v/ecmo/cqs> ;
     dcterms:issued "2026-07-20"^^xsd:date ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment "Competency Questions (Q+ and Q-) for the ECMO coreference module. Each CQ is a cqs:CompetencyQuestion with an executable cpa:hasUnitTest (SPARQL or SHACL). Prefixes phsm:, response:, expvuln:, governance:, dul:, skos:, rdfs: are assumed bound."@en ;
-    owl:versionInfo "0.1" ;
+    owl:versionInfo "0.3.0" ;
     skos:prefLabel "ECMO PHSM CQ Catalogue v0.1"@en .
 
 

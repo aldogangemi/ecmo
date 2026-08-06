@@ -116,8 +116,8 @@ agency:NadiraMoH a prov:Organization, governance:Institution ; skos:prefLabel "N
         a time:Interval ;
         time:hasBeginning [ time:inXSDDate "2026-04-15"^^xsd:date ]
     ] ;
-    hazard:hasCausativeAgent ph:ZaireEbolavirus ;
-    hazard:hasHazardCategory foundation:Biological ;
+    ph:hasCausativeAgent ph:ZaireEbolavirus ;
+    hazard:hasHazardCategory hazard:BiologicalTarget ;
     hazard:affectsPopulation :CampAkele_AffectedPopulation, :DirectlyAffected_CampAkele, :IndirectlyAffected_CampAkele ;
     hazard:hasIntensityObservation :EbolaIntensity ;
     hazard:hasMagnitudeObservation :EbolaMagnitude ;
@@ -416,7 +416,7 @@ ph:ZaireEbolavirus
     foundation:hasJustification "rVSV-ZEBOV (Ervebo) approved and stockpiled; ring vaccination feasible."@en .
 
 :Prio_Ebola a hera:PathogenPrioritisation ;
-    foundation:hasLevel hera:VeryHigh_Priority ;
+    foundation:hasLevel hera:Highest_PathogenPrioritisation ;
     foundation:hasJustification "High pathogenicity + high transmissibility + high cross-border threat + only limited therapeutics ⇒ top-tier priority."@en .
 
 ph:EbolaVirusDisease a ph:InfectiousDiseaseOrSyndrome ;
@@ -654,7 +654,7 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
     governance:inJurisdiction :NadiraJurisdiction ;
     disaster:hasTemporalExtent [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-05"^^xsd:date ] ] ;
     hazard:isManifestationOf hazard:BiologicalHazard ;
-    hazard:hasCausativeAgent ph:ZaireEbolavirus ;
+    ph:hasCausativeAgent ph:ZaireEbolavirus ;
     hazard:affectsPopulation :DirectlyAffected_CampAkele, :IndirectlyAffected_CampAkele ;
     hazard:hasImpact :EVD_HumanImpact ;
     disaster:hasHumanImpact :EVD_HumanImpact ;
@@ -1048,7 +1048,7 @@ drivers:WeakGovernance              drivers:drivesRisk :NadiraEVDRisk ;
 
 # HERA priority level asserted directly (CQ-HERA-P01 expects the property-chain result;
 # without OWL-RL reasoners materialising property chains, this triple is needed).
-ph:ZaireEbolavirus hera:hasPriorityLevel hera:VeryHigh_Priority .
+ph:ZaireEbolavirus hera:hasPriorityLevel hera:Highest_PathogenPrioritisation .
 
 # Bump EU cross-border threat to VeryHigh so CQ-HERA-P05 returns the pathogen.
 :CB_Ebola foundation:hasLevel hera:VeryHigh_EUCrossBorderThreatPotential .
@@ -1060,7 +1060,7 @@ ph:ZaireEbolavirus hera:hasPriorityLevel hera:VeryHigh_Priority .
 # Self-typing on the BiologicalHazard punned individual + category linkage,
 # so CQ-IMP-P06 (env impact × hazard category) and CQ-X-P07 (Pathogen + BiologicalHazard) match.
 hazard:BiologicalHazard a hazard:BiologicalHazard ;
-    hazard:hasHazardCategory foundation:Biological .
+    hazard:hasHazardCategory hazard:BiologicalTarget .
 
 # Also add disaster location overlap with jurisdiction so CQ-X-P09 (disasters in jurisdiction) matches.
 :EbolaOutbreakEvent foundation:hasLocation :NadiraJurisdiction .

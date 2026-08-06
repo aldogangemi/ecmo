@@ -15,10 +15,10 @@
 <http://data.europa.eu/h8v/ecmo/cqs> a owl:Ontology ;
     dcterms:issued "2026-05-06"^^xsd:date ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
-    rdfs:comment "Competency Questions catalogue (Q+ and Q-) for the ECMO 2.2 ontology network. Each CQ is a cqs:CompetencyQuestion individual annotated with cpa:hasUnitTest. SPARQL skeletons assume the ECMO module prefixes (capacity:, disaster:, drivers:, expvuln:, governance:, hazard:, impact:, instruments:, response:, risk:) plus dul: and bio:. Prepare runtime by binding these prefixes."@en ;
+    rdfs:comment "Competency Questions catalogue (Q+ and Q-) for the ECMO 0.3.0 ontology network. Each CQ is a cqs:CompetencyQuestion individual annotated with cpa:hasUnitTest. SPARQL skeletons assume the ECMO module prefixes (capacity:, disaster:, drivers:, expvuln:, governance:, hazard:, impact:, instruments:, response:, risk:) plus dul: and bio:. Prepare runtime by binding these prefixes."@en ;
     owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
                 <http://data.europa.eu/h8v/ecmo/coref> ;
-    owl:versionInfo "0.1" ;
+    owl:versionInfo "0.3.0" ;
     skos:prefLabel "ECMO CQ Catalogue v0.1"@en .
 
 # -- Vocabulary stubs ---------------------------------------------------------
@@ -317,7 +317,7 @@ cqs:CQ-RISK-N04 a cqs:NegativeCompetencyQuestion ;
     cqs:expectedAnswer "non_empty" ;
     cpa:hasUnitTest """# Compare counts via owl:equivalentClass alias; mismatch indicates a defect.
 SELECT (COUNT(?r1) AS ?n1) (COUNT(?r2) AS ?n2) WHERE {
-  { ?r1 a risk:Risk } UNION { ?r2 a risk:DisasterRisk }
+  { ?r1 a risk:Risk } UNION { ?r2 a risk:Risk }
 }""" .
 
 # =============================================================================
@@ -1232,7 +1232,7 @@ cqs:CQ-PH-P03 a cqs:CompetencyQuestion ;
     cqs:testKind "sparql_select" ; cqs:expectedAnswer "non_empty" ;
     cpa:hasUnitTest """SELECT ?p ?t ?event WHERE {
   ?p ph:producesToxin ?t .
-  OPTIONAL { ?event a hazard:BiologicalEvent ; hazard:hasCausativeAgent ?t . }
+  OPTIONAL { ?event a hazard:BiologicalEvent ; ph:hasCausativeAgent ?t . }
 }""" .
 
 cqs:CQ-PH-P04 a cqs:CompetencyQuestion ;
@@ -1540,7 +1540,7 @@ cqs:CQ-X-P07 a cqs:CompetencyQuestion ;
     cpa:hasUnitTest """SELECT ?p ?prio ?bh ?event ?gov WHERE {
   ?p a ph:Pathogen ; hera:hasPriorityLevel ?prio .
   ?bh a hazard:BiologicalHazard . ?event hazard:isManifestationOf ?bh ;
-       hazard:hasCausativeAgent ?p .
+       ph:hasCausativeAgent ?p .
   OPTIONAL { ?gov a governance:RiskGovernance ; governance:analysesHazard ?bh . }
 }""" .
 
@@ -1603,7 +1603,7 @@ cqs:CQ-X-N05 a cqs:NegativeCompetencyQuestion ;
     cqs:testKind "sparql_select" ; cqs:expectedAnswer "empty" ;
     cpa:hasUnitTest """SELECT ?p ?event WHERE {
   ?p hera:hasPriorityLevel ?prio . FILTER(?prio = hera:High_Pathogenicity)
-  ?event hazard:hasCausativeAgent ?p ; hazard:hasSeverityAssessment ?sev .
+  ?event ph:hasCausativeAgent ?p ; hazard:hasSeverityAssessment ?sev .
   ?sev foundation:hasLevel ?lv . FILTER(STRSTARTS(STR(?lv), "Low"))
 }""" .
 

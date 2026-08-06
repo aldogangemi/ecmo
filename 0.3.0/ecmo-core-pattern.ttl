@@ -7,6 +7,7 @@
 @prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
 @prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
 @prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
 @prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
 @prefix hera:        <http://data.europa.eu/h8v/ecmo/hera/> .
 @prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
@@ -23,18 +24,22 @@
 
 # =============================================================================
 # ECMO-CORE Main Pattern — Content Pattern
-# Annotated with cpannotationschema.
+# Annotated with cpannotationschema. Updated 2026-08-05 to the ECMO 2.4 semantics
+# (full DOLCE/d0 alignment, D&S discipline, fschema:subsumedUnder convention,
+# assessment redesign). See the per-anchor editorial note below.
 # =============================================================================
 
 <http://data.europa.eu/h8v/ecmo/main-pattern> a owl:Ontology ;
     dcterms:creator "ECMO design team" ;
     dcterms:issued  "2026-05-06"^^xsd:date ;
+    dcterms:modified "2026-08-05"^^xsd:date ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
-    rdfs:comment    "Unifying core pattern for the ECMO 2.3 ontology network. Synthesises the 12 anchor concepts (Hazard, HazardousEvent, Exposure, Vulnerability, Capacity, Risk, RiskAssessment, Impact, Response, Instrument, Pathogen, InfectiousDisease) into one coherent micro-pattern. Substantiates indirect connections via existing intermediaries (BiologicalHazard, AffectedPopulation, ExposedElement, HumanImpact, EarlyWarningSystem, MeasureType) plus two newly introduced relations (mp:manifestsCondition, mp:hasMeasureType). The index.html diagram (v0.3) overlays two integration layers on this pattern: COREF (foundation:Signal, coref:Occurrence, coref:HubAssessment) and HIP (hip:HazardInformationProfile contextualised to a hip:HIPContext via concernsContext). mp:RiskAssessment owl:equivalentClass governance:RiskAssessment, a dul:Process as of 2026-07-08."@en ;
+    rdfs:comment    "Unifying core pattern for the ECMO 2.4 ontology network. Synthesises the 12 anchor concepts (Hazard, HazardousEvent, Exposure, Vulnerability, Capacity, Risk, RiskAssessment, Impact, Response, Instrument, Pathogen, InfectiousDisease) into one coherent micro-pattern. Substantiates indirect connections via existing intermediaries (BiologicalHazard, AffectedPopulation, ExposedElement, HumanImpact, EarlyWarningSystem, MeasureType) plus two relations still contributed by this pattern (mp:manifestsCondition, mp:hasMeasureType). The index.html diagram overlays two integration layers on this pattern: COREF (foundation:Signal, coref:Occurrence, coref:HubAssessment) and HIP (hip:HazardInformationProfile contextualised to a hip:HIPContext via concernsContext). mp:RiskAssessment owl:equivalentClass governance:RiskAssessment, which in the 2.4 assessment redesign is a subclass of foundation:Assessment (≡ dul:Process ⊔ dul:InformationEntity)."@en ;
+    skos:editorialNote "0.3.0 semantics of the anchors, inherited through the owl:equivalentClass re-exports below (no axioms are added to the anchors here): Hazard = dul:Description + dul:ContextualDisposition; HazardousEvent = dul:Event + dul:Situation, which dul:satisfies the Hazard frame via hazard:isManifestationOf; Risk = dul:Description + dul:ContextualDisposition (a Situation realizes it via disaster:realizesRisk); Exposure and Vulnerability = dul:Situation; Impact and HumanImpact = dul:Event + dul:Situation; Response/Intervention = dul:Action + dul:Situation; RiskAssessment ⊑ foundation:Assessment (≡ dul:Process ⊔ dul:InformationEntity). Hazard sub-types (incl. BiologicalHazard) and the disease/pathogen classes attach to the Hazard/BiologicalHazard frames through fschema:subsumedUnder, not rdfs:subClassOf, to preserve the boundary dul:Description ⊓ dul:Situation = ∅. This pattern only re-exports the anchors and adds two relations that do not cross that boundary."@en ;
     cpa:hasIntent       "Provide a single integrative view that explains how the ECMO modules cohere around the Risk relational hub and the Hazard / HazardousEvent (D&S) coupling. Used as the landing diagram in index.html and as the architectural map for downstream knowledge-graph consumers."@en ;
-    cpa:scenarios       "Scenario A — A user sees a HazardousEvent reported in a Signal validated by an EventValidation; the pattern lets them retrieve the realised Risk, its four determinants, the affected population, the impacts, and the measures the response references. Scenario B — A public-health analyst seeking to align a Pathogen prioritised by HERA with the BiologicalHazard event class and the InfectiousDisease that may manifest in HumanImpact."@en ;
+    cpa:scenarios       "Scenario A — A user sees a HazardousEvent reported in a Signal validated by an EventValidation; the pattern lets them retrieve the realised Risk, its four determinants, the affected population, the impacts, and the measures the response references. Scenario B — A public-health analyst seeking to align a Pathogen prioritised by HERA with the BiologicalHazard frame and the InfectiousDisease that may manifest in HumanImpact."@en ;
     cpa:coversRequirements "CQ-RISK-P01 — four determinants of Risk; CQ-HAZ-P01 — HazardousEvent isManifestationOf Hazard; CQ-EXV-P01/P04 — Exposure / Vulnerability wiring; CQ-CAP-P06 — Capacity↔Vulnerability complementarity; CQ-DIS-P05 — disaster's human/environmental/economic consequences; CQ-RES-P02/P03 — Response measure-type and capacity dependencies; CQ-INS-P01 — EarlyWarningSystem forecastsEvent; CQ-PH-P01/P03 — Pathogen ↔ InfectiousDisease ↔ BiologicalHazard; CQ-X-P01/P03/P07 — end-to-end traversals."@en ;
-    cpa:hasConsequences "Provides one place to enforce the D&S boundary. Surfaces two coverage gaps that the per-module ontology did not encode: (i) HumanImpact has no direct link to the HealthCondition it instantiates; (ii) Instrument has no inverse of involvesMeasureType. Both are added by this pattern as narrow extensions (mp:manifestsCondition, mp:hasMeasureType) and should be migrated into the affected modules in v2.3."@en ;
+    cpa:hasConsequences "Provides one place to enforce the D&S boundary. Surfaces two coverage gaps that the per-module ontology did not encode: (i) HumanImpact has no direct link to the HealthCondition it instantiates; (ii) Instrument has no classifier mirroring response:involvesMeasureType. Both remain narrow extensions contributed by this pattern (mp:manifestsCondition, mp:hasMeasureType) and are still proposed for migration into the affected modules (not yet migrated as of 2.4). 2.4 realignment: mp:manifestsCondition moved from dul:isClassifiedBy to dul:sameSettingAs, because ph:HealthCondition is now a dul:Situation, not a dul:Concept."@en ;
     cpa:hasComponent    ecmocore:foundation, ecmocore:hazard, ecmocore:risk, ecmocore:disaster,
                         ecmocore:expvuln, ecmocore:capacity, ecmocore:governance, ecmocore:response,
                         ecmocore:instruments, ecmocore:impact,
@@ -46,60 +51,65 @@
                         <http://www.ontologydesignpatterns.org/cp/owl/participation.owl> ;
     cpa:extractedFrom   <http://data.europa.eu/h8v/ecmo/core> ;
     owl:imports         <http://data.europa.eu/h8v/ecmo/core> ;
-    owl:versionInfo     "0.1" ;
+    owl:versionInfo     "0.3.0" ;
     skos:prefLabel      "ECMO-CORE Main Pattern"@en .
 
 # -----------------------------------------------------------------------------
-# Anchor classes — re-exported for convenience; no axiomatic redefinition
+# Anchor classes — re-exported for convenience; no axiomatic redefinition.
+# Each inherits its current 2.4 DOLCE/d0 typing from the module class it equals
+# (see the ontology-level editorial note above).
 # -----------------------------------------------------------------------------
 
-mp:Hazard            owl:equivalentClass hazard:Hazard            ; skos:prefLabel "Hazard (anchor)"@en .
-mp:HazardousEvent    owl:equivalentClass hazard:HazardousEvent    ; skos:prefLabel "HazardousEvent / HazardousSituation (anchor)"@en .
-mp:Risk              owl:equivalentClass risk:Risk                ; skos:prefLabel "Risk (anchor)"@en .
-mp:Exposure          owl:equivalentClass expvuln:Exposure         ; skos:prefLabel "Exposure (anchor)"@en .
-mp:Vulnerability     owl:equivalentClass expvuln:Vulnerability    ; skos:prefLabel "Vulnerability (anchor)"@en .
+mp:Hazard            owl:equivalentClass hazard:Hazard            ; skos:prefLabel "Hazard (anchor; dul:Description + dul:ContextualDisposition)"@en .
+mp:HazardousEvent    owl:equivalentClass hazard:HazardousEvent    ; skos:prefLabel "HazardousEvent (anchor; dul:Event + dul:Situation)"@en .
+mp:Risk              owl:equivalentClass risk:Risk                ; skos:prefLabel "Risk (anchor; dul:Description + dul:ContextualDisposition)"@en .
+mp:Exposure          owl:equivalentClass expvuln:Exposure         ; skos:prefLabel "Exposure (anchor; dul:Situation)"@en .
+mp:Vulnerability     owl:equivalentClass expvuln:Vulnerability    ; skos:prefLabel "Vulnerability (anchor; dul:Situation)"@en .
 mp:Capacity          owl:equivalentClass capacity:Capacity        ; skos:prefLabel "Capacity (anchor)"@en .
-mp:Impact            owl:equivalentClass impact:Impact            ; skos:prefLabel "Impact (anchor)"@en .
+mp:Impact            owl:equivalentClass impact:Impact            ; skos:prefLabel "Impact (anchor; dul:Event + dul:Situation)"@en .
 mp:HumanImpact       owl:equivalentClass impact:HumanImpact       ; skos:prefLabel "HumanImpact (anchor)"@en .
-mp:Response          owl:equivalentClass response:Intervention    ; skos:prefLabel "Response/Intervention (anchor)"@en .
+mp:Response          owl:equivalentClass response:Intervention    ; skos:prefLabel "Response/Intervention (anchor; dul:Action + dul:Situation)"@en .
 mp:Instrument        owl:equivalentClass instruments:Measure      ; skos:prefLabel "Instrument (=Measure) (anchor)"@en .
-mp:RiskAssessment    owl:equivalentClass governance:RiskAssessment ; skos:prefLabel "RiskAssessment (anchor)"@en .
+mp:RiskAssessment    owl:equivalentClass governance:RiskAssessment ; skos:prefLabel "RiskAssessment (anchor; foundation:Assessment ≡ dul:Process ⊔ dul:InformationEntity)"@en .
 mp:Pathogen          owl:equivalentClass ph:Pathogen              ; skos:prefLabel "Pathogen (anchor)"@en .
 mp:InfectiousDisease owl:equivalentClass ph:InfectiousDisease     ; skos:prefLabel "InfectiousDisease (anchor)"@en .
 
 # Substantiating intermediaries
-mp:BiologicalHazard      owl:equivalentClass hazard:BiologicalHazard ; skos:prefLabel "BiologicalHazard (intermediary)"@en .
+mp:BiologicalHazard      owl:equivalentClass hazard:BiologicalHazard ; skos:prefLabel "BiologicalHazard (intermediary; fschema:subsumedUnder Hazard)"@en .
 mp:AffectedPopulation    owl:equivalentClass disaster:AffectedPopulation ; skos:prefLabel "AffectedPopulation (intermediary)"@en .
 mp:ExposedElement        owl:equivalentClass expvuln:ExposedElement ; skos:prefLabel "ExposedElement (intermediary)"@en .
 mp:EarlyWarningSystem    owl:equivalentClass instruments:EarlyWarningSystem ; skos:prefLabel "EarlyWarningSystem (intermediary)"@en .
-mp:MeasureType           owl:equivalentClass response:MeasureType ; skos:prefLabel "MeasureType (intermediary)"@en .
-mp:HealthCondition       owl:equivalentClass ph:HealthCondition ; skos:prefLabel "HealthCondition (bridge)"@en .
+mp:MeasureType           owl:equivalentClass response:MeasureType ; skos:prefLabel "MeasureType (intermediary; dul:Concept classifier)"@en .
+mp:HealthCondition       owl:equivalentClass ph:HealthCondition ; skos:prefLabel "HealthCondition (bridge; dul:Situation)"@en .
 
 # -----------------------------------------------------------------------------
-# Two relations introduced by this pattern (proposed for v2.3 integration)
+# Two relations still contributed by this pattern (proposed for module migration)
 # -----------------------------------------------------------------------------
 
 mp:manifestsCondition a owl:ObjectProperty ;
     rdfs:domain impact:HumanImpact ;
     rdfs:range  ph:HealthCondition ;
-    rdfs:subPropertyOf dul:isClassifiedBy ;
-    rdfs:comment "Relates a HumanImpact to the health condition (e.g. an infectious disease) that the impact instantiates in the affected population. Introduced by the Main Pattern to substantiate the indirect path from biological events to InfectiousDisease as a consequence."@en ;
-    skos:editorialNote "Proposed for integration into ecmo-impact (or ecmo-public-health) in v2.3. Decision needed: subPropertyOf dul:isClassifiedBy (current default) vs dul:hasComponent."@en ;
+    rdfs:subPropertyOf dul:sameSettingAs ;
+    rdfs:comment "Relates a HumanImpact to the HealthCondition (e.g. an infectious disease) that co-occurs in / is instantiated by the impact in the affected population. Introduced by the Main Pattern to substantiate the indirect path from biological events to InfectiousDisease as a consequence."@en ;
+    skos:editorialNote "2.4 realignment: in the current semantics ph:HealthCondition is a dul:Situation (not a dul:Concept), so the v0.1 alignment rdfs:subPropertyOf dul:isClassifiedBy (range dul:Concept) was a category error. Both endpoints are eventualities sharing the disaster/health setting (HumanImpact ⊑ Impact = dul:Event + dul:Situation; HealthCondition ⊑ dul:Situation), so this is realigned to dul:sameSettingAs — symmetric, domain/range dul:Entity, consistency-safe, consistent with impact:affects. Still proposed for migration into ecmo-impact (or ecmo-public-health)."@en ;
     skos:prefLabel "manifests condition"@en .
 
 mp:isConditionManifestedBy a owl:ObjectProperty ;
     owl:inverseOf mp:manifestsCondition ;
+    rdfs:comment "Inverse of mp:manifestsCondition; also falls under dul:sameSettingAs, which is symmetric."@en ;
     skos:prefLabel "is condition manifested by"@en .
 
 mp:hasMeasureType a owl:ObjectProperty ;
     rdfs:domain instruments:Measure ;
     rdfs:range  response:MeasureType ;
-    rdfs:comment "Classifies a specific Instrument (Measure) by the MeasureType it implements. Inverse of the response-side response:involvesMeasureType. Introduced by the Main Pattern so that Instrument and Response can be matched on a shared MeasureType without coupling F7 and F8 directly."@en ;
-    skos:editorialNote "Proposed for integration into ecmo-instruments in v2.3."@en ;
+    rdfs:subPropertyOf dul:isClassifiedBy ;
+    rdfs:comment "Classifies a specific Instrument (Measure) by the MeasureType it implements. Parallel to the response-side response:involvesMeasureType (both classify by a shared response:MeasureType, a dul:Concept), so that Instrument and Response can be matched on MeasureType without coupling F7 and F8 directly."@en ;
+    skos:editorialNote "2.4 update: aligned to dul:isClassifiedBy to match response:involvesMeasureType, since response:MeasureType is a dul:Concept-typed classifier. This is a parallel classification, NOT an inverse of involvesMeasureType (the v0.1 comment's 'inverse' wording was incorrect). Still proposed for migration into ecmo-instruments."@en ;
     skos:prefLabel "has measure type"@en .
 
 mp:isMeasureTypeOf a owl:ObjectProperty ;
     owl:inverseOf mp:hasMeasureType ;
+    rdfs:subPropertyOf dul:classifies ;
     skos:prefLabel "is measure type of"@en .
 
 # -----------------------------------------------------------------------------
@@ -128,7 +138,7 @@ SELECT ?signal ?event ?impact ?onset ?scale WHERE {
 SELECT ?p ?prio ?bh ?event ?gov WHERE {
   ?p a ph:Pathogen ; hera:hasPriorityLevel ?prio .
   ?bh a hazard:BiologicalHazard . ?event hazard:isManifestationOf ?bh ;
-       hazard:hasCausativeAgent ?p .
+       ph:hasCausativeAgent ?p .
   OPTIONAL { ?gov a governance:RiskGovernance ; governance:analysesHazard ?bh . }
 }""", """
 # Pattern-specific — InfectiousDisease as a HumanImpact via mp:manifestsCondition

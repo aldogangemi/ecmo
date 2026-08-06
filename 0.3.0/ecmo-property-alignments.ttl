@@ -5,6 +5,7 @@
 @prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
 @prefix drivers:     <http://data.europa.eu/h8v/ecmo/core/drivers/> .
 @prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix epipulse:    <https://epipulse.ecdc.europa.eu/ns#> .
 @prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
 @prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
 @prefix fschema:     <https://w3id.org/framester/schema/> .
@@ -372,6 +373,7 @@ impact:isIntensityOf   rdfs:subPropertyOf dul:classifies .
 # ---------------------------------------------------------------------------
 capacity:developsCapacityOf           rdfs:subPropertyOf dul:isSettingFor .
 expvuln:hasExposedElement             rdfs:subPropertyOf dul:isSettingFor .
+governance:hasPolicyObjective		  rdfs:subPropertyOf dul:isSettingFor .
 hazard:hasAffectedAsset               rdfs:subPropertyOf dul:isSettingFor .
 hazard:involvesHazard                 rdfs:subPropertyOf dul:isSettingFor .
 instruments:disseminatesWarningTo     rdfs:subPropertyOf dul:isSettingFor .
@@ -386,6 +388,7 @@ instruments:upgradesStructure         rdfs:subPropertyOf dul:isSettingFor .
 capacity:hasCapacityDevelopment  rdfs:subPropertyOf dul:hasSetting .
 expvuln:isExposedElementIn       rdfs:subPropertyOf dul:hasSetting .
 expvuln:isExposedIn              rdfs:subPropertyOf dul:hasSetting .
+governance:coordinatesDRR		 rdfs:subPropertyOf dul:hasSetting .
 hazard:isAffectedAssetOf         rdfs:subPropertyOf dul:hasSetting .
 hazard:isAffectedBy              rdfs:subPropertyOf dul:hasSetting .
 hazard:isInvolvedInContext       rdfs:subPropertyOf dul:hasSetting .
@@ -426,10 +429,14 @@ drivers:isCompoundedBy                     rdfs:subPropertyOf dul:sameSettingAs 
 drivers:isDrivenBy                         rdfs:subPropertyOf dul:sameSettingAs .
 drivers:operatesThrough                    rdfs:subPropertyOf dul:sameSettingAs .
 drivers:reducesCapacity                    rdfs:subPropertyOf dul:sameSettingAs .
+epipulse:causesDisorder					   rdfs:subPropertyOf dul:sameSettingAs .
 expvuln:exposesTo                          rdfs:subPropertyOf dul:sameSettingAs .
 expvuln:hasSusceptibilityFrom              rdfs:subPropertyOf dul:sameSettingAs .
 foundation:assesses						   rdfs:subPropertyOf dul:sameSettingAs .
+foundation:isAssessedBy					   rdfs:subPropertyOf dul:sameSettingAs .
 foundation:generatesSignal				   rdfs:subPropertyOf dul:sameSettingAs .
+foundation:isSignalFrom				       rdfs:subPropertyOf dul:sameSettingAs .
+foundation:usesLevelScale				   rdfs:subPropertyOf dul:sameSettingAs .
 foundation:isEvolvedAs                     rdfs:subPropertyOf dul:sameSettingAs .
 foundation:coordinatesDRR                  rdfs:subPropertyOf dul:sameSettingAs .
 foundation:hasPolicyObjective              rdfs:subPropertyOf dul:sameSettingAs .
@@ -440,6 +447,8 @@ governance:respondsTo                      rdfs:subPropertyOf dul:sameSettingAs 
 governance:usesTraditionalKnowledge        rdfs:subPropertyOf dul:sameSettingAs .
 hazard:hasExposureContext                  rdfs:subPropertyOf dul:sameSettingAs .
 governance:hasObservationSource            rdfs:subPropertyOf dul:sameSettingAs .
+hazard:hasObservationSource                rdfs:subPropertyOf dul:sameSettingAs .
+hazard:isSourceOf                		   rdfs:subPropertyOf dul:sameSettingAs .
 hazard:involvesIntervention                rdfs:subPropertyOf dul:sameSettingAs .
 hazard:isCascadingEffectOf                 rdfs:subPropertyOf dul:sameSettingAs .
 hazard:isExposureContextOf                 rdfs:subPropertyOf dul:sameSettingAs .
@@ -612,6 +621,7 @@ foundation:isTemporalValidityOf  rdfs:subPropertyOf dul:isTimeIntervalOf .
 foundation:nextValue    rdfs:subPropertyOf dul:directlyPrecedes .
 response:precedesPhase  rdfs:subPropertyOf dul:directlyPrecedes .
 response:isGeneralizationOfMeasureType rdfs:subPropertyOf dul:directlyPrecedes .
+response:isSpecializationOfMeasureType rdfs:subPropertyOf dul:directlyFollows .
 
 # ---------------------------------------------------------------------------
 # dul:directlyFollows  (1)

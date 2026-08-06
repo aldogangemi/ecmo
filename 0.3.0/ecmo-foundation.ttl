@@ -50,8 +50,8 @@ foundation:assesses a owl:ObjectProperty ;
         "valuta"@it .
 
 foundation:isAssessedBy a owl:ObjectProperty ;
-    owl:inverseOf foundation:isAssessedBy ;
-    owl:propertyChainAxiom ( dul:isSettingFor dul:isAbout ) ;
+    owl:inverseOf foundation:assesses ;
+    owl:propertyChainAxiom ( dul:isReferenceOf dul:hasSetting ) ;
     skos:prefLabel "is assessed by"@en,
         "valutato da"@it .
 

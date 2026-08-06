@@ -1,0 +1,141 @@
+@prefix mcmc:        <http://data.europa.eu/h8v/ecmo/mcmc/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO MCMC Module — Medical Countermeasures — v0.2 (ECMO 0.3.0)
+#
+# Rebased from MCMC v1.0 (purl.org/ecmo/mcmc#). Reuse decisions:
+#   - core:HazardPotential     -> mcmc:CBRN_Threat ⊑ hazard:Hazard
+#   - core:ExposureSimulation   -> mcmc:ExposureScenario ⊑ expvuln:Exposure
+#   - core:CountermeasureSituation -> mcmc:MedicalCountermeasure ⊑ dul:Object
+#   - dul:Collection (TargetPopulation) -> foundation:Population
+#   - CBRN agent subtypes -> fschema:subsumedUnder the matching hazard:*Hazard
+#   - manifestsAsCBRNEvent -> ⊑ hazard:hasManifestationEvent
+# Complements HERA (medical-countermeasure availability scales).
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/mcmc> a owl:Ontology ;
+    dcterms:issued "2026-07-09"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "MCMC (Medical Countermeasures) module of the ECMO network. Models CBRN threats and their events, and the medical countermeasures (vaccines, therapeutics, antidotes, diagnostics) that counter them — with efficacy/safety data, target populations, exposure scenarios, and procurement/deployment plans. Complements the HERA prioritisation module."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+                <http://data.europa.eu/h8v/ecmo/core/expvuln> ,
+                <http://data.europa.eu/h8v/ecmo/core/response> ,
+                <http://data.europa.eu/h8v/ecmo/core/foundation> ;
+    owl:versionInfo "0.3.0" ;
+    skos:changeNote "v0.2: Rebased MCMC v1.0 onto ECMO 0.3.0. CBRN_Threat ⊑ hazard:Hazard, CBRN_Event ⊑ hazard:HazardousEvent, ExposureScenario ⊑ expvuln:Exposure, TargetPopulation ⊑ foundation:Population; agent subtypes classified via fschema:subsumedUnder; property alignments remapped."@en ;
+    skos:prefLabel "ECMO MCMC — Medical Countermeasures"@en .
+
+# ---- CBRN threats & events --------------------------------------------------
+mcmc:CBRN_Threat a owl:Class ;
+    rdfs:label "CBRN Threat"@en ;
+    rdfs:comment "A chemical, biological, radiological or nuclear threat. Specialises hazard:Hazard."@en ;
+    rdfs:subClassOf hazard:Hazard ; skos:prefLabel "CBRN Threat"@en .
+mcmc:BiologicalAgent a owl:Class ; rdfs:label "Biological Agent"@en ;
+    rdfs:subClassOf mcmc:CBRN_Threat ; fschema:subsumedUnder hazard:BiologicalHazard ; skos:prefLabel "Biological Agent"@en .
+mcmc:ChemicalAgent a owl:Class ; rdfs:label "Chemical Agent"@en ;
+    rdfs:subClassOf mcmc:CBRN_Threat ; fschema:subsumedUnder hazard:ChemicalHazard ; skos:prefLabel "Chemical Agent"@en .
+mcmc:RadiologicalAgent a owl:Class ; rdfs:label "Radiological Agent"@en ;
+    rdfs:subClassOf mcmc:CBRN_Threat ; fschema:subsumedUnder hazard:RadiologicalHazard ; skos:prefLabel "Radiological Agent"@en .
+mcmc:NuclearAgent a owl:Class ; rdfs:label "Nuclear Agent"@en ;
+    rdfs:subClassOf mcmc:CBRN_Threat ; fschema:subsumedUnder hazard:NuclearHazard ; skos:prefLabel "Nuclear Agent"@en .
+
+mcmc:CBRN_Event a owl:Class ;
+    rdfs:label "CBRN Event"@en ;
+    rdfs:comment "The materialised occurrence of a CBRN threat. Specialises hazard:HazardousEvent."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ; skos:prefLabel "CBRN Event"@en .
+
+# ---- Countermeasures --------------------------------------------------------
+mcmc:MedicalCountermeasure a owl:Class ;
+    rdfs:label "Medical Countermeasure"@en ;
+    rdfs:comment "A medical product deployed against a CBRN or public-health threat (vaccine, therapeutic, antidote, diagnostic). Typed as a dul:Object (a physical/pharmaceutical entity)."@en ;
+    rdfs:subClassOf dul:Object ; skos:prefLabel "Medical Countermeasure"@en .
+mcmc:Vaccine     a owl:Class ; rdfs:label "Vaccine"@en     ; rdfs:subClassOf mcmc:MedicalCountermeasure ; skos:prefLabel "Vaccine"@en .
+mcmc:Therapeutic a owl:Class ; rdfs:label "Therapeutic"@en ; rdfs:subClassOf mcmc:MedicalCountermeasure ; skos:prefLabel "Therapeutic"@en .
+mcmc:Antidote    a owl:Class ; rdfs:label "Antidote"@en    ; rdfs:subClassOf mcmc:MedicalCountermeasure ; skos:prefLabel "Antidote"@en .
+mcmc:Diagnostic  a owl:Class ; rdfs:label "Diagnostic"@en  ; rdfs:subClassOf mcmc:MedicalCountermeasure ; skos:prefLabel "Diagnostic"@en .
+
+# ---- Supporting classes -----------------------------------------------------
+mcmc:ExposureScenario a owl:Class ;
+    rdfs:label "Exposure Scenario"@en ;
+    rdfs:comment "A (possibly modeled) exposure situation a countermeasure is applicable to. Specialises expvuln:Exposure."@en ;
+    rdfs:subClassOf expvuln:Exposure ; skos:prefLabel "Exposure Scenario"@en .
+mcmc:TargetPopulation a owl:Class ;
+    rdfs:label "Target Population"@en ;
+    rdfs:comment "The population a countermeasure is intended for. Specialises foundation:Population."@en ;
+    rdfs:subClassOf foundation:Population ; skos:prefLabel "Target Population"@en .
+mcmc:EfficacyData a owl:Class ; rdfs:label "Efficacy Data"@en ; rdfs:subClassOf dul:InformationObject ; skos:prefLabel "Efficacy Data"@en .
+mcmc:SafetyData   a owl:Class ; rdfs:label "Safety Data"@en   ; rdfs:subClassOf dul:InformationObject ; skos:prefLabel "Safety Data"@en .
+mcmc:DeploymentPlan     a owl:Class ; rdfs:label "Deployment Plan"@en     ; rdfs:subClassOf dul:Plan ; skos:prefLabel "Deployment Plan"@en .
+mcmc:ProcurementStrategy a owl:Class ; rdfs:label "Procurement Strategy"@en ; rdfs:subClassOf dul:Plan ; skos:prefLabel "Procurement Strategy"@en .
+
+# ---- Properties (rebased) ---------------------------------------------------
+mcmc:manifestsAsCBRNEvent a owl:ObjectProperty ;
+    rdfs:label "manifests as CBRN event"@en ;
+    rdfs:comment "Relates a CBRN threat to a CBRN event realising it. SubPropertyOf hazard:hasManifestationEvent."@en ;
+    rdfs:domain mcmc:CBRN_Threat ; rdfs:range mcmc:CBRN_Event ;
+    rdfs:subPropertyOf hazard:hasManifestationEvent .
+
+mcmc:targets a owl:ObjectProperty ;
+    rdfs:label "targets"@en ;
+    rdfs:comment "Relates a countermeasure to the CBRN threat it addresses. Countermeasure and threat share the intervention setting. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range mcmc:CBRN_Threat ;
+    rdfs:subPropertyOf dul:sameSettingAs .
+
+mcmc:countersEvent a owl:ObjectProperty ;
+    rdfs:label "counters event"@en ;
+    rdfs:comment "Relates a countermeasure to the CBRN event it counters. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range mcmc:CBRN_Event ;
+    rdfs:subPropertyOf dul:sameSettingAs .
+
+mcmc:isApplicableTo a owl:ObjectProperty ;
+    rdfs:label "is applicable to"@en ;
+    rdfs:comment "Relates a countermeasure to an exposure scenario it applies to. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range mcmc:ExposureScenario ;
+    rdfs:subPropertyOf dul:sameSettingAs .
+mcmc:appliesInScenario a owl:ObjectProperty ;
+    rdfs:label "applies in scenario"@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range mcmc:ExposureScenario ;
+    rdfs:subPropertyOf dul:sameSettingAs .
+
+mcmc:isIntendedFor a owl:ObjectProperty ;
+    rdfs:label "is intended for"@en ;
+    rdfs:comment "Relates a countermeasure to its target population. SubPropertyOf dul:isAbout."@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range mcmc:TargetPopulation ;
+    rdfs:subPropertyOf dul:isAbout .
+
+mcmc:isDeployedThrough a owl:ObjectProperty ;
+    rdfs:label "is deployed through"@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range mcmc:DeploymentPlan ;
+    rdfs:subPropertyOf dul:isDescribedBy .
+mcmc:isAcquiredVia a owl:ObjectProperty ;
+    rdfs:label "is acquired via"@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range mcmc:ProcurementStrategy ;
+    rdfs:subPropertyOf dul:isDescribedBy .
+
+mcmc:hasEfficacyData a owl:ObjectProperty ;
+    rdfs:label "has efficacy data"@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range mcmc:EfficacyData .
+mcmc:hasSafetyData a owl:ObjectProperty ;
+    rdfs:label "has safety data"@en ;
+    rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range mcmc:SafetyData .
+
+# ---- Datatype properties ----------------------------------------------------
+mcmc:hasMechanismOfAction a owl:DatatypeProperty ; rdfs:label "has mechanism of action"@en ; rdfs:domain mcmc:MedicalCountermeasure ; rdfs:range xsd:string .
+mcmc:hasThreatAgent a owl:DatatypeProperty ; rdfs:label "has threat agent"@en ; rdfs:domain mcmc:CBRN_Threat ; rdfs:range xsd:string .
+
+
+# ---- v0.3.0 DUL alignment additions (aboutness/mereology; provenance props left unaligned by design) ----
+mcmc:hasEfficacyData       rdfs:subPropertyOf dul:isReferenceOf .   # A MedicalCountermeasure is the reference of the EfficacyData about it.
+mcmc:hasSafetyData         rdfs:subPropertyOf dul:isReferenceOf .   # A MedicalCountermeasure is the reference of the SafetyData about it.

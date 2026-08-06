@@ -1,0 +1,95 @@
+@prefix gdacs:       <http://data.europa.eu/h8v/ecmo/gdacs/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO GDACS Module — Global Disaster Alert & Coordination System — v0.2 (ECMO 0.3.0)
+#
+# Rebased from GDACS v1.0 (purl.org/ecmo/gdacs#). Reuse decisions:
+#   - core:ActualEvent   -> gdacs:GDACS_Event ⊑ hazard:HazardousEvent
+#   - core:ActualImpact   -> gdacs:GDACS_Impact ⊑ impact:Impact
+#   - core:CommunicationEvent -> gdacs:GDACS_Alert ⊑ instruments:Warning
+#   - core:CountermeasureSituation -> gdacs:HumanitarianResponse ⊑ response:Response
+#   - HazardType -> ⊑ foundation:HazardCategory
+#   - causesImpact -> hazard:hasImpact; describesEvent -> instruments:isWarningOf
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/gdacs> a owl:Ontology ;
+    dcterms:issued "2026-07-09"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "GDACS (Global Disaster Alert and Coordination System) module of the ECMO network. Models global multi-hazard disaster alerts: real-time events with hazard type, magnitude and alert level, the areas they affect, their impacts, the alerts sources issue, and the humanitarian responses they trigger."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+                <http://data.europa.eu/h8v/ecmo/core/impact> ,
+                <http://data.europa.eu/h8v/ecmo/core/response> ,
+                <http://data.europa.eu/h8v/ecmo/core/instruments> ,
+                <http://data.europa.eu/h8v/ecmo/core/foundation> ;
+    owl:versionInfo "0.3.0" ;
+    skos:changeNote "v0.2: Rebased GDACS v1.0 onto ECMO 0.3.0; GDACS_Event ⊑ hazard:HazardousEvent, GDACS_Impact ⊑ impact:Impact, GDACS_Alert ⊑ instruments:Warning, HumanitarianResponse ⊑ response:Response, HazardType ⊑ foundation:HazardCategory; causesImpact ⊑ hazard:hasImpact, describesEvent ⊑ instruments:isWarningOf, hasHazardType ⊑ hazard:hasHazardCategory; eventMagnitudeValue ⊑ hazard:hasMagnitude."@en ;
+    skos:prefLabel "ECMO GDACS — Global Disaster Alert & Coordination System"@en .
+
+# ---- Events / impacts / alerts ----------------------------------------------
+gdacs:GDACS_Event a owl:Class ; rdfs:label "GDACS Event"@en ;
+    rdfs:comment "A real-time disaster event monitored by GDACS. Specialises hazard:HazardousEvent."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ; skos:prefLabel "GDACS Event"@en .
+gdacs:GDACS_Impact a owl:Class ; rdfs:label "GDACS Impact"@en ;
+    rdfs:subClassOf impact:Impact ; skos:prefLabel "GDACS Impact"@en .
+gdacs:GDACS_Alert a owl:Class ; rdfs:label "GDACS Alert"@en ;
+    rdfs:subClassOf instruments:Warning ; skos:prefLabel "GDACS Alert"@en .
+gdacs:HumanitarianResponse a owl:Class ; rdfs:label "Humanitarian Response"@en ;
+    rdfs:subClassOf response:Response ; skos:prefLabel "Humanitarian Response"@en .
+gdacs:GDACS_Source a owl:Class ; rdfs:label "GDACS Source"@en ;
+    rdfs:subClassOf dul:Agent ; skos:prefLabel "GDACS Source"@en .
+
+# ---- Classifications / places -----------------------------------------------
+gdacs:HazardType a owl:Class ; rdfs:label "Hazard Type"@en ;
+    rdfs:comment "The type of hazard a GDACS event represents (earthquake, cyclone, flood, …). Specialises foundation:HazardCategory."@en ;
+    rdfs:subClassOf foundation:HazardCategory ; skos:prefLabel "Hazard Type"@en .
+gdacs:AlertLevel a owl:Class ; rdfs:label "Alert Level"@en ;
+    rdfs:comment "The GDACS alert level (Green/Orange/Red)."@en ;
+    rdfs:subClassOf dul:Concept ; skos:prefLabel "Alert Level"@en .
+gdacs:AffectedArea a owl:Class ; rdfs:label "Affected Area"@en ;
+    rdfs:subClassOf dul:SpaceRegion ; skos:prefLabel "Affected Area"@en .
+
+# ---- Properties (rebased) ---------------------------------------------------
+gdacs:causesImpact a owl:ObjectProperty ; rdfs:label "causes impact"@en ;
+    rdfs:domain gdacs:GDACS_Event ; rdfs:range gdacs:GDACS_Impact ;
+    rdfs:subPropertyOf hazard:hasImpact .
+gdacs:describesEvent a owl:ObjectProperty ; rdfs:label "describes event"@en ;
+    rdfs:domain gdacs:GDACS_Alert ; rdfs:range gdacs:GDACS_Event ;
+    rdfs:subPropertyOf instruments:isWarningOf .
+gdacs:hasHazardType a owl:ObjectProperty ; rdfs:label "has hazard type"@en ;
+    rdfs:domain gdacs:GDACS_Event ; rdfs:range gdacs:HazardType ;
+    rdfs:subPropertyOf hazard:hasHazardCategory .
+gdacs:hasAlertLevel a owl:ObjectProperty ; rdfs:label "has alert level"@en ;
+    rdfs:domain gdacs:GDACS_Alert ; rdfs:range gdacs:AlertLevel ;
+    rdfs:subPropertyOf dul:isClassifiedBy .
+gdacs:affectsArea a owl:ObjectProperty ; rdfs:label "affects area"@en ;
+    rdfs:domain gdacs:GDACS_Event ; rdfs:range gdacs:AffectedArea ;
+    rdfs:subPropertyOf foundation:hasLocation .
+gdacs:triggersResponse a owl:ObjectProperty ; rdfs:label "triggers response"@en ;
+    rdfs:comment "A GDACS event triggers a humanitarian response; the two share the disaster setting. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain gdacs:GDACS_Event ; rdfs:range gdacs:HumanitarianResponse ;
+    rdfs:subPropertyOf dul:sameSettingAs .
+gdacs:issuesAlert a owl:ObjectProperty ; rdfs:label "issues alert"@en ;
+    rdfs:comment "A GDACS source issues an alert. (Provenance-flavoured; no DUL super.)"@en ;
+    rdfs:domain gdacs:GDACS_Source ; rdfs:range gdacs:GDACS_Alert .
+
+# ---- Datatype properties ----------------------------------------------------
+gdacs:eventMagnitudeValue a owl:DatatypeProperty ; rdfs:label "event magnitude value"@en ;
+    rdfs:domain gdacs:GDACS_Event ; rdfs:range xsd:decimal ; rdfs:subPropertyOf hazard:hasMagnitude .
+gdacs:affectedPopulationCount a owl:DatatypeProperty ; rdfs:label "affected population count"@en ; rdfs:domain gdacs:GDACS_Impact ; rdfs:range xsd:nonNegativeInteger .
+gdacs:fatalitiesCount a owl:DatatypeProperty ; rdfs:label "fatalities count"@en ; rdfs:domain gdacs:GDACS_Impact ; rdfs:range xsd:nonNegativeInteger .
+gdacs:estimatedDamageUSD a owl:DatatypeProperty ; rdfs:label "estimated damage (USD)"@en ; rdfs:domain gdacs:GDACS_Impact ; rdfs:range xsd:decimal .
+gdacs:alertID a owl:DatatypeProperty ; rdfs:label "alert ID"@en ; rdfs:domain gdacs:GDACS_Alert ; rdfs:range xsd:string .
+gdacs:eventID a owl:DatatypeProperty ; rdfs:label "event ID"@en ; rdfs:domain gdacs:GDACS_Event ; rdfs:range xsd:string .
+gdacs:eventDate a owl:DatatypeProperty ; rdfs:label "event date"@en ; rdfs:domain gdacs:GDACS_Event ; rdfs:range xsd:dateTime .

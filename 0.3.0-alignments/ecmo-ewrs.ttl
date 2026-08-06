@@ -1,0 +1,148 @@
+@prefix ewrs:        <http://data.europa.eu/h8v/ecmo/ewrs/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO EWRS Module — Early Warning and Response System — v0.2 (ECMO 0.3.0)
+#
+# Rebased from EWRS v1.0 (purl.org/ecmo/ewrs#). Fixed the source Turtle typo
+# (a '.' where a ';' was needed on ewrs:ThreatEvent). Reuse decisions:
+#   - core:HazardPotential  -> ewrs:Threat ⊑ hazard:Hazard
+#   - core:ModeledEvent      -> ewrs:ThreatEvent ⊑ hazard:HazardousEvent
+#   - core:CommunicationEvent -> ewrs:Alert ⊑ instruments:Warning
+#   - core:CountermeasureSituation -> ewrs:ResponseAction ⊑ response:Response
+#   - dul:InformationEntity (non-standard) -> instruments:Warning is InformationObject
+#   - PublicHealthAuthority -> ⊑ governance:Institution
+#   - threat subtypes -> fschema:subsumedUnder the matching hazard:*Hazard
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/ewrs> a owl:Ontology ;
+    dcterms:issued "2026-07-09"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "EWRS (Early Warning and Response System) module of the ECMO network. Models cross-border health-threat surveillance and communication: threats and their (modeled) threat events, cases, the surveillance systems that detect them, the alerts and warnings issued by public-health authorities, and the response actions those warnings advise."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/hazard> ,
+                <http://data.europa.eu/h8v/ecmo/core/instruments> ,
+                <http://data.europa.eu/h8v/ecmo/core/response> ,
+                <http://data.europa.eu/h8v/ecmo/core/governance> ,
+                <http://data.europa.eu/h8v/ecmo/core/foundation> ;
+    owl:versionInfo "0.3.0" ;
+    skos:changeNote "v0.2: Rebased EWRS v1.0 onto ECMO 0.3.0; fixed source Turtle syntax error; Threat ⊑ hazard:Hazard, ThreatEvent ⊑ hazard:HazardousEvent, Alert/Warning ⊑ instruments:Warning, ResponseAction ⊑ response:Response, PublicHealthAuthority ⊑ governance:Institution; threat subtypes classified via fschema:subsumedUnder; property alignments remapped."@en ;
+    skos:prefLabel "ECMO EWRS — Early Warning and Response System"@en .
+
+# ---- Threats (⊑ hazard:Hazard) ---------------------------------------------
+ewrs:Threat a owl:Class ;
+    rdfs:label "Threat"@en ;
+    rdfs:comment "A potential public-health danger tracked by EWRS. Specialises hazard:Hazard (the hazard-potential reading)."@en ;
+    rdfs:subClassOf hazard:Hazard ; skos:prefLabel "Threat"@en .
+ewrs:BiologicalThreat a owl:Class ; rdfs:label "Biological Threat"@en ;
+    rdfs:subClassOf ewrs:Threat ; fschema:subsumedUnder hazard:BiologicalHazard ; skos:prefLabel "Biological Threat"@en .
+ewrs:CommunicableDiseaseThreat a owl:Class ; rdfs:label "Communicable Disease Threat"@en ;
+    rdfs:subClassOf ewrs:BiologicalThreat ; fschema:subsumedUnder hazard:BiologicalHazard ; skos:prefLabel "Communicable Disease Threat"@en .
+ewrs:ChemicalThreat a owl:Class ; rdfs:label "Chemical Threat"@en ;
+    rdfs:subClassOf ewrs:Threat ; fschema:subsumedUnder hazard:ChemicalHazard ; skos:prefLabel "Chemical Threat"@en .
+ewrs:EnvironmentalThreat a owl:Class ; rdfs:label "Environmental Threat"@en ;
+    rdfs:subClassOf ewrs:Threat ; fschema:subsumedUnder hazard:EnvironmentalHazard ; skos:prefLabel "Environmental Threat"@en .
+
+ewrs:ThreatEvent a owl:Class ;
+    rdfs:label "Threat Event"@en ;
+    rdfs:comment "A modeled or materialised occurrence of a threat, used for early warning and response simulation. Specialises hazard:HazardousEvent."@en ;
+    rdfs:subClassOf hazard:HazardousEvent ; skos:prefLabel "Threat Event"@en .
+
+ewrs:Case a owl:Class ;
+    rdfs:label "Case"@en ;
+    rdfs:comment "A reported case associated with a threat (e.g. a confirmed human case of a communicable disease)."@en ;
+    rdfs:subClassOf dul:Situation ; skos:prefLabel "Case"@en .
+
+# ---- Communications (⊑ instruments:Warning) --------------------------------
+ewrs:Alert a owl:Class ;
+    rdfs:label "Alert"@en ;
+    rdfs:comment "An early notification of a possible health threat. Specialises instruments:Warning (an information object)."@en ;
+    rdfs:subClassOf instruments:Warning ; skos:prefLabel "Alert"@en .
+ewrs:Warning a owl:Class ;
+    rdfs:label "Warning"@en ;
+    rdfs:comment "A more specific and urgent communication than an alert, typically carrying recommended actions."@en ;
+    rdfs:subClassOf ewrs:Alert ; skos:prefLabel "Warning"@en .
+
+# ---- Actors / systems -------------------------------------------------------
+ewrs:PublicHealthAuthority a owl:Class ;
+    rdfs:label "Public Health Authority"@en ;
+    rdfs:comment "A national or supranational body that issues alerts/warnings and initiates response actions. Specialises governance:Institution."@en ;
+    rdfs:subClassOf governance:Institution ; skos:prefLabel "Public Health Authority"@en .
+ewrs:SurveillanceSystem a owl:Class ;
+    rdfs:label "Surveillance System"@en ;
+    rdfs:comment "A monitoring system that detects threats/cases and generates alerts."@en ;
+    rdfs:subClassOf dul:PhysicalObject ; skos:prefLabel "Surveillance System"@en .
+ewrs:ResponseAction a owl:Class ;
+    rdfs:label "Response Action"@en ;
+    rdfs:comment "A countermeasure action advised by a warning. Specialises response:Response."@en ;
+    rdfs:subClassOf response:Response ; skos:prefLabel "Response Action"@en .
+ewrs:GeographicLocation a owl:Class ;
+    rdfs:label "Geographic Location"@en ;
+    rdfs:subClassOf dul:SpaceRegion ; skos:prefLabel "Geographic Location"@en .
+
+# ---- Properties (rebased) ---------------------------------------------------
+ewrs:manifestsAsThreatEvent a owl:ObjectProperty ;
+    rdfs:label "manifests as threat event"@en ;
+    rdfs:comment "Relates a threat to a threat event that realises it. SubPropertyOf hazard:hasManifestationEvent."@en ;
+    rdfs:domain ewrs:Threat ; rdfs:range ewrs:ThreatEvent ;
+    rdfs:subPropertyOf hazard:hasManifestationEvent .
+
+ewrs:hasLocation a owl:ObjectProperty ;
+    rdfs:label "has location"@en ;
+    rdfs:domain ewrs:ThreatEvent ; rdfs:range ewrs:GeographicLocation ;
+    rdfs:subPropertyOf foundation:hasLocation .
+
+ewrs:generatesAlert a owl:ObjectProperty ;
+    rdfs:label "generates alert"@en ;
+    rdfs:comment "Relates a surveillance system to an alert it produces. (Provenance-flavoured; left without a DUL super.)"@en ;
+    rdfs:domain ewrs:SurveillanceSystem ; rdfs:range ewrs:Alert .
+
+ewrs:detects a owl:ObjectProperty ;
+    rdfs:label "detects"@en ;
+    rdfs:comment "Relates a surveillance system to the threats/cases it detects. Left without a DUL super because its range mixes Hazard and Situation readings."@en ;
+    rdfs:domain ewrs:SurveillanceSystem .
+
+ewrs:concernsThreat a owl:ObjectProperty ;
+    rdfs:label "concerns threat"@en ;
+    rdfs:comment "Relates a case to the threat it is a case of. Case and threat share the epidemiological setting. SubPropertyOf dul:sameSettingAs."@en ;
+    rdfs:domain ewrs:Case ; rdfs:range ewrs:Threat ;
+    rdfs:subPropertyOf dul:sameSettingAs .
+
+ewrs:issues a owl:ObjectProperty ;
+    rdfs:label "issues"@en ;
+    rdfs:comment "Relates a public-health authority to the alert/warning it issues. Left without a DUL super (the warning prov:wasAttributedTo the authority)."@en ;
+    rdfs:domain ewrs:PublicHealthAuthority ; rdfs:range ewrs:Alert .
+
+ewrs:advises a owl:ObjectProperty ;
+    rdfs:label "advises"@en ;
+    rdfs:comment "Relates a warning to the response action it recommends. SubPropertyOf dul:isAbout."@en ;
+    rdfs:domain ewrs:Warning ; rdfs:range ewrs:ResponseAction ;
+    rdfs:subPropertyOf dul:isAbout .
+
+ewrs:initiates a owl:ObjectProperty ;
+    rdfs:label "initiates"@en ;
+    rdfs:comment "Relates a public-health authority to a response action it starts. SubPropertyOf dul:isParticipantIn."@en ;
+    rdfs:domain ewrs:PublicHealthAuthority ; rdfs:range ewrs:ResponseAction ;
+    rdfs:subPropertyOf dul:isParticipantIn .
+
+ewrs:relatesTo a owl:ObjectProperty ;
+    rdfs:label "relates to"@en ;
+    rdfs:comment "Relates an alert to the threat/event it is about. SubPropertyOf dul:isAbout."@en ;
+    rdfs:domain ewrs:Alert ;
+    rdfs:subPropertyOf dul:isAbout .
+
+# ---- Datatype properties ----------------------------------------------------
+ewrs:hasSeverity a owl:DatatypeProperty ; rdfs:label "has severity"@en ; rdfs:domain ewrs:Alert ; rdfs:range xsd:string .
+ewrs:hasStatus a owl:DatatypeProperty ; rdfs:label "has status"@en ; rdfs:domain ewrs:Alert ; rdfs:range xsd:string .
+ewrs:hasTimestamp a owl:DatatypeProperty ; rdfs:label "has timestamp"@en ; rdfs:domain ewrs:Alert ; rdfs:range xsd:dateTime .

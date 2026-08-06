@@ -1,0 +1,92 @@
+@prefix idmp:        <http://data.europa.eu/h8v/ecmo/idmp/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix mcmc:        <http://data.europa.eu/h8v/ecmo/mcmc/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO IDMP Module — Identification of Medicinal Products (ISO IDMP) — v0.2
+#
+# Rebased from IDMP v1.0 (purl.org/ecmo/idmp#). Reuse decisions:
+#   - core:CountermeasureSituation -> idmp:MedicinalProduct ⊑ dul:Object
+#         (rdfs:seeAlso mcmc:MedicalCountermeasure — a medicinal product may serve
+#          as a medical countermeasure; kept as separate classes)
+#   - core:RegulatoryRequirement -> idmp:MarketingAuthorisation ⊑ dul:InformationObject
+#   - RegulatoryAuthority -> ⊑ governance:Institution
+#   - core:hasRegulatoryContext / issuedBy / isManufacturedBy -> conservative / prov:
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/idmp> a owl:Ontology ;
+    dcterms:issued "2026-07-09"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "IDMP (ISO Identification of Medicinal Products) module of the ECMO network. Models the unique identification of medicinal products: their substances, pharmaceutical products, dose forms and strengths, packaging, manufacturers, and marketing authorisations issued by regulatory authorities. Bridges to MCMC (a medicinal product may serve as a medical countermeasure)."@en ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/mcmc> ,
+                <http://data.europa.eu/h8v/ecmo/core/governance> ;
+    owl:versionInfo "0.3.0" ;
+    skos:changeNote "v0.2: Rebased IDMP v1.0 onto ECMO 0.3.0. MedicinalProduct ⊑ dul:Object (rdfs:seeAlso mcmc:MedicalCountermeasure); MarketingAuthorisation ⊑ dul:InformationObject; RegulatoryAuthority ⊑ governance:Institution; property alignments remapped (contains ⊑ dul:hasPart, hasDoseForm/hasStrength ⊑ dul:hasQuality, isManufacturedBy/issuedBy ⊑ prov:wasAttributedTo)."@en ;
+    skos:prefLabel "ECMO IDMP — Identification of Medicinal Products"@en .
+
+# ---- Products & substances --------------------------------------------------
+idmp:MedicinalProduct a owl:Class ; rdfs:label "Medicinal Product"@en ;
+    rdfs:comment "An ISO-IDMP identified medicinal product. A physical product that may serve as a medical countermeasure."@en ;
+    rdfs:subClassOf dul:Object ; rdfs:seeAlso mcmc:MedicalCountermeasure ; skos:prefLabel "Medicinal Product"@en .
+idmp:PharmaceuticalProduct a owl:Class ; rdfs:label "Pharmaceutical Product"@en ;
+    rdfs:subClassOf dul:Object ; skos:prefLabel "Pharmaceutical Product"@en .
+idmp:Substance a owl:Class ; rdfs:label "Substance"@en ; rdfs:subClassOf dul:Object ; skos:prefLabel "Substance"@en .
+idmp:ActiveSubstance a owl:Class ; rdfs:label "Active Substance"@en ; rdfs:subClassOf idmp:Substance ; skos:prefLabel "Active Substance"@en .
+idmp:Excipient a owl:Class ; rdfs:label "Excipient"@en ; rdfs:subClassOf idmp:Substance ; skos:prefLabel "Excipient"@en .
+idmp:Package a owl:Class ; rdfs:label "Package"@en ; rdfs:subClassOf dul:Object ; skos:prefLabel "Package"@en .
+
+# ---- Qualities & abstracts --------------------------------------------------
+idmp:DoseForm a owl:Class ; rdfs:label "Dose Form"@en ; rdfs:subClassOf dul:Quality ; skos:prefLabel "Dose Form"@en .
+idmp:Strength a owl:Class ; rdfs:label "Strength"@en ; rdfs:subClassOf dul:Quality ; skos:prefLabel "Strength"@en .
+idmp:UnitOfMeasure a owl:Class ; rdfs:label "Unit of Measure"@en ; rdfs:subClassOf dul:Abstract ; skos:prefLabel "Unit of Measure"@en .
+
+# ---- Regulatory -------------------------------------------------------------
+idmp:MarketingAuthorisation a owl:Class ; rdfs:label "Marketing Authorisation"@en ;
+    rdfs:comment "A regulatory information object authorising a medicinal product for market."@en ;
+    rdfs:subClassOf dul:InformationObject ; skos:prefLabel "Marketing Authorisation"@en .
+idmp:RegulatoryAuthority a owl:Class ; rdfs:label "Regulatory Authority"@en ;
+    rdfs:subClassOf governance:Institution ; skos:prefLabel "Regulatory Authority"@en .
+idmp:Manufacturer a owl:Class ; rdfs:label "Manufacturer"@en ;
+    rdfs:subClassOf dul:SocialAgent ; skos:prefLabel "Manufacturer"@en .
+
+# ---- Properties (rebased) ---------------------------------------------------
+idmp:contains a owl:ObjectProperty ; rdfs:label "contains"@en ;
+    rdfs:domain idmp:MedicinalProduct ; rdfs:range idmp:Substance ;
+    rdfs:subPropertyOf dul:hasPart .
+idmp:hasDoseForm a owl:ObjectProperty ; rdfs:label "has dose form"@en ;
+    rdfs:domain idmp:PharmaceuticalProduct ; rdfs:range idmp:DoseForm ;
+    rdfs:subPropertyOf dul:hasQuality .
+idmp:hasStrength a owl:ObjectProperty ; rdfs:label "has strength"@en ;
+    rdfs:domain idmp:PharmaceuticalProduct ; rdfs:range idmp:Strength ;
+    rdfs:subPropertyOf dul:hasQuality .
+idmp:expressedIn a owl:ObjectProperty ; rdfs:label "expressed in"@en ;
+    rdfs:comment "Relates a strength to the unit of measure it is expressed in. SubPropertyOf dul:isClassifiedBy."@en ;
+    rdfs:domain idmp:Strength ; rdfs:range idmp:UnitOfMeasure ;
+    rdfs:subPropertyOf dul:isClassifiedBy .
+idmp:isPackagedIn a owl:ObjectProperty ; rdfs:label "is packaged in"@en ;
+    rdfs:domain idmp:MedicinalProduct ; rdfs:range idmp:Package .
+idmp:hasAuthorisation a owl:ObjectProperty ; rdfs:label "has authorisation"@en ;
+    rdfs:comment "Relates a medicinal product to its marketing authorisation. (No DUL super — the authorisation dul:isAbout the product.)"@en ;
+    rdfs:domain idmp:MedicinalProduct ; rdfs:range idmp:MarketingAuthorisation .
+idmp:isManufacturedBy a owl:ObjectProperty ; rdfs:label "is manufactured by"@en ;
+    rdfs:domain idmp:MedicinalProduct ; rdfs:range idmp:Manufacturer ;
+    rdfs:subPropertyOf prov:wasAttributedTo .
+idmp:issuedBy a owl:ObjectProperty ; rdfs:label "issued by"@en ;
+    rdfs:domain idmp:MarketingAuthorisation ; rdfs:range idmp:RegulatoryAuthority ;
+    rdfs:subPropertyOf prov:wasAttributedTo .
+
+# ---- Datatype properties ----------------------------------------------------
+idmp:hasID a owl:DatatypeProperty ; rdfs:label "has ID"@en ; rdfs:range xsd:string .
+idmp:hasName a owl:DatatypeProperty ; rdfs:label "has name"@en ; rdfs:range xsd:string .
+
+
+# ---- v0.3.0 DUL alignment additions (aboutness/mereology; provenance props left unaligned by design) ----
+idmp:hasAuthorisation      rdfs:subPropertyOf dul:isReferenceOf .   # A MedicinalProduct is the reference of the MarketingAuthorisation document about it.

@@ -24,7 +24,7 @@
 @prefix : <http://data.europa.eu/h8v/ecmo/frames/> .
 
 # =============================================================================
-# ECMO Frame Model v0.1 — Framester-native encoding of the CORE Main Pattern
+# ECMO Frame Model — Framester-native encoding of the CORE Main Pattern
 #
 # Every frame Fi (fschema:Frame). Every semantic role has fschema:ontoType
 # pinning its DOLCE ancestor. Perspective shifts use fschema:hasPerspective.
@@ -36,10 +36,12 @@
 
 <http://data.europa.eu/h8v/ecmo/frames> a owl:Ontology ;
     dcterms:issued "2026-06-08"^^xsd:date ;
+    dcterms:modified "2026-08-06"^^xsd:date ;
     owl:imports <http://data.europa.eu/h8v/ecmo/core> ;
-    rdfs:comment "ECMO Frame Model — Framester-native encoding of the CORE Main Pattern's frame structure. Approved via Q-FR-1/2/3, 2026-06-08."@en ;
-    owl:versionInfo "0.1" ;
-    skos:prefLabel "ECMO Frame Model v0.1"@en .
+    rdfs:comment "ECMO Frame Model — Framester-native encoding of the CORE Main Pattern's frame structure. Approved via Q-FR-1/2/3, 2026-06-08; ontoTypes realigned to the 0.3.0 network semantics 2026-08-06."@en ;
+    skos:changeNote "0.3.0 (2026-08-06): realigned fschema:ontoType to the current DOLCE typing. Changed: Exposure & Vulnerability roles (F1.Exposure, F1.Vulnerability, F4.Exposure_Aspect, F4.Vulnerability_Aspect) dul:Quality -> dul:Situation; F9.Anchor (RiskDriver) dul:Quality -> dul:Situation; F6.RiskAssessment dul:Description -> dul:InformationObject (RiskAssessment is now foundation:Assessment = d0:Eventuality OR dul:InformationEntity); F6.RiskManagement_* dul:Description -> dul:Situation (RiskManagement subtypes are typed dul:Action + dul:Situation in the network). OPEN (reviewer call, left unchanged): instruments:Measure has no DUL type in 0.3.0 (F8.Anchor still claims dul:Description); PH.Pathogen dul:Description projection is weaker after the InfectiousDiseaseOrPathogen severance from the hazard Description branch; F7 response-phase roles keep dul:Action though the network currently asserts only dul:Situation."@en ;
+    owl:versionInfo "0.3.0" ;
+    skos:prefLabel "ECMO Frame Model"@en .
 
 # -----------------------------------------------------------------------------
 # Frames — one fschema:Frame per Sendai frame plus PH/BIO/HERA/COREF.
@@ -72,8 +74,8 @@
 # F1 — Risk
 :F1.Anchor          a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Description ; rdfs:label "F1 anchor"@en .
 :F1.Hazard          a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Description ; fschema:hasPerspective :F2 .
-:F1.Exposure        a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Quality ;    fschema:hasPerspective :F4 .
-:F1.Vulnerability   a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Quality ;    fschema:hasPerspective :F4 .
+:F1.Exposure        a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Situation ;    fschema:hasPerspective :F4 .
+:F1.Vulnerability   a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Situation ;    fschema:hasPerspective :F4 .
 :F1.Capacity        a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType capacity:Capacity ; fschema:hasPerspective :F5 .
 :F1.Materialisation a fschema:SemanticRole ; fschema:semanticRoleOf :F1 ; fschema:ontoType dul:Situation ;  fschema:hasPerspective :F2 .
 
@@ -88,8 +90,8 @@
 :F3.AffectedPopulation a fschema:SemanticRole ; fschema:semanticRoleOf :F3 ; fschema:ontoType dul:Collective .
 
 # F4 — Exposure & Vulnerability
-:F4.Exposure_Aspect        a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:Quality .
-:F4.Vulnerability_Aspect   a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:Quality .
+:F4.Exposure_Aspect        a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:Situation .
+:F4.Vulnerability_Aspect   a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:Situation .
 :F4.ExposedElement         a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:Object .
 
 # F5 — Capacity (union anchor, per Q-FR-2)
@@ -101,7 +103,7 @@
 
 # F6 — Governance
 :F6.Anchor         a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
-:F6.RiskAssessment a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+:F6.RiskAssessment a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:InformationObject .
 
 # F7 — Response & Recovery
 :F7.Anchor       a fschema:SemanticRole ; fschema:semanticRoleOf :F7 ; fschema:ontoType dul:Action .
@@ -210,10 +212,10 @@ ph:HealthCondition     fschema:playsRoleIn :PH ; fschema:hasUnaryType :PH.Health
 :F4.CriticalInfrastructure a fschema:SemanticRole ; fschema:semanticRoleOf :F4 ; fschema:ontoType dul:SocialObject .
 
 # F6 — RiskManagement variants + Sub-roles
-:F6.RiskManagement_Corrective   a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
-:F6.RiskManagement_Prospective  a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
-:F6.RiskManagement_Compensatory a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
-:F6.RiskManagement_Community    a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
+:F6.RiskManagement_Corrective   a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Situation .
+:F6.RiskManagement_Prospective  a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Situation .
+:F6.RiskManagement_Compensatory a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Situation .
+:F6.RiskManagement_Community    a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Situation .
 :F6.Policy         a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
 :F6.LegalFramework a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Description .
 :F6.SurveillanceProcess a fschema:SemanticRole ; fschema:semanticRoleOf :F6 ; fschema:ontoType dul:Process ;
@@ -233,7 +235,7 @@ ph:HealthCondition     fschema:playsRoleIn :PH ; fschema:hasUnaryType :PH.Health
 :F8.EWSComponent_ResponsePreparedness  a fschema:SemanticRole ; fschema:semanticRoleOf :F8 ; fschema:ontoType dul:Description .
 
 # F9 Drivers
-:F9.Anchor    a fschema:SemanticRole ; fschema:semanticRoleOf :F9 ; fschema:ontoType dul:Quality .
+:F9.Anchor    a fschema:SemanticRole ; fschema:semanticRoleOf :F9 ; fschema:ontoType dul:Situation .
 :F9.Mechanism a fschema:SemanticRole ; fschema:semanticRoleOf :F9 ; fschema:ontoType dul:Situation ;
               rdfs:comment "Punned role per CP-DRV-02: class-level Situation (occurrences), individual-level Description (frame)."@en .
 

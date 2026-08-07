@@ -16,53 +16,13 @@
     dcterms:issued "2026-05-06"^^xsd:date ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment "Competency Questions catalogue (Q+ and Q-) for the ECMO 0.3.0 ontology network. Each CQ is a cqs:CompetencyQuestion individual annotated with cpa:hasUnitTest. SPARQL skeletons assume the ECMO module prefixes (capacity:, disaster:, drivers:, expvuln:, governance:, hazard:, impact:, instruments:, response:, risk:) plus dul: and bio:. Prepare runtime by binding these prefixes."@en ;
-    owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
+    owl:imports <http://data.europa.eu/h8v/ecmo/cqs-schema> ,
+                <http://data.europa.eu/h8v/ecmo/core> ,
                 <http://data.europa.eu/h8v/ecmo/coref> ;
     owl:versionInfo "0.3.0" ;
     skos:prefLabel "ECMO CQ Catalogue v0.1"@en .
 
-# -- Vocabulary stubs ---------------------------------------------------------
-
-cqs:CompetencyQuestion a owl:Class ;
-    rdfs:comment "A competency question motivating the ontology. Carries a natural-language formulation, a polarity (positive or negative), the module(s) it targets, the design pattern it exercises, and an executable unit test (SPARQL or SHACL)."@en ;
-    skos:prefLabel "Competency Question"@en .
-
-cqs:NegativeCompetencyQuestion a owl:Class ;
-    rdfs:subClassOf cqs:CompetencyQuestion ;
-    rdfs:comment "A competency question whose YES answer would be a defect (b33-NEGCQ). Used to make over-commitment visible."@en ;
-    skos:prefLabel "Negative Competency Question"@en .
-
-cqs:hasNLText a owl:DatatypeProperty ;
-    rdfs:domain cqs:CompetencyQuestion ;
-    rdfs:range xsd:string ;
-    skos:prefLabel "has NL text"@en .
-
-cqs:targetsModule a owl:ObjectProperty ;
-    rdfs:domain cqs:CompetencyQuestion ;
-    rdfs:range owl:Ontology ;
-    skos:prefLabel "targets module"@en .
-
-cqs:exercisesPattern a owl:DatatypeProperty ;
-    rdfs:domain cqs:CompetencyQuestion ;
-    rdfs:range xsd:string ;
-    skos:prefLabel "exercises pattern"@en .
-
-cqs:hasPolarity a owl:DatatypeProperty ;
-    rdfs:domain cqs:CompetencyQuestion ;
-    rdfs:range xsd:string ;
-    skos:prefLabel "has polarity"@en .
-
-cqs:expectedAnswer a owl:DatatypeProperty ;
-    rdfs:domain cqs:CompetencyQuestion ;
-    rdfs:range xsd:string ;
-    rdfs:comment "Expected answer when the test is run against fixture A+/A-: 'non_empty', 'empty', 'true', 'false', or 'violation'."@en ;
-    skos:prefLabel "expected answer"@en .
-
-cqs:testKind a owl:DatatypeProperty ;
-    rdfs:domain cqs:CompetencyQuestion ;
-    rdfs:range xsd:string ;
-    rdfs:comment "One of: sparql_select, sparql_ask, shacl."@en ;
-    skos:prefLabel "test kind"@en .
+# -- Vocabulary now imported from ecmo-cqs-schema (…/cqs-schema) ------------
 
 # =============================================================================
 # §3 Foundation

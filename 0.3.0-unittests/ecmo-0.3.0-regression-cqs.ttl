@@ -27,7 +27,7 @@
 
 <http://data.europa.eu/h8v/ecmo/cqs/regression-0.3.0> a owl:Ontology ;
     dcterms:issued "2026-08-06"^^xsd:date ;
-    owl:imports <http://data.europa.eu/h8v/ecmo/core> , <http://data.europa.eu/h8v/ecmo/cqs> ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core> , <http://data.europa.eu/h8v/ecmo/cqs-schema> ;
     owl:versionInfo "0.3.0" ;
     rdfs:comment "Regression competency questions added for ECMO 0.3.0. Additive to ecmo-cqs / ecmo-cqs-extended."@en ;
     skos:prefLabel "ECMO 0.3.0 regression CQs"@en .
@@ -39,7 +39,7 @@
 cqs:CQ-DS-N01 a cqs:NegativeCompetencyQuestion ;
     cqs:hasNLText "Is any class simultaneously a dul:Description and a dul:Situation? (MUST be none.)"@en ;
     cqs:hasPolarity "negative" ;
-    cqs:testKind "ASK" ;
+    cqs:testKind "sparql_ask" ;
     cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core> ;
     cqs:exercisesPattern "descriptionandsituation" ;
     cpa:hasUnitTest """
@@ -58,7 +58,7 @@ ASK {
 cqs:CQ-DS-N02 a cqs:NegativeCompetencyQuestion ;
     cqs:hasNLText "Is any class rdfs:subClassOf both hazard:BiologicalHazard and ph:HealthCondition? (MUST be none — use fschema:subsumedUnder for the hazard frame.)"@en ;
     cqs:hasPolarity "negative" ;
-    cqs:testKind "ASK" ;
+    cqs:testKind "sparql_ask" ;
     cqs:targetsModule <http://data.europa.eu/h8v/ecmo/public-health> ;
     cqs:exercisesPattern "descriptionandsituation" ;
     cpa:hasUnitTest """
@@ -76,7 +76,7 @@ ASK {
 cqs:CQ-ASSESS-P01 a cqs:CompetencyQuestion ;
     cqs:hasNLText "For each Assessment, what entity does it assess (foundation:assesses) and what is it an assessment of (inverse foundation:isAssessedBy)?"@en ;
     cqs:hasPolarity "positive" ;
-    cqs:testKind "SELECT" ;
+    cqs:testKind "sparql_select" ;
     cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core/foundation> ;
     cqs:exercisesPattern "objectrole" ;
     cpa:hasUnitTest """
@@ -90,7 +90,7 @@ SELECT ?assessment ?assessed ?bearer WHERE {
 cqs:CQ-ASSESS-N01 a cqs:NegativeCompetencyQuestion ;
     cqs:hasNLText "Is any foundation:Assessment a subclass of a Description anchor (e.g. Hazard/Risk)? (MUST be none — assessments are Process ⊔ InformationEntity, not Descriptions.)"@en ;
     cqs:hasPolarity "negative" ;
-    cqs:testKind "ASK" ;
+    cqs:testKind "sparql_ask" ;
     cqs:targetsModule <http://data.europa.eu/h8v/ecmo/core/foundation> ;
     cqs:exercisesPattern "descriptionandsituation" ;
     cpa:hasUnitTest """
@@ -108,7 +108,7 @@ ASK {
 cqs:CQ-ALIGN-P01 a cqs:CompetencyQuestion ;
     cqs:hasNLText "Given a HazardousEvent and its Impact (hazard:hasImpact), does the DUL-level dul:sameSettingAs relation hold between them (via the v0.4 alignment)?"@en ;
     cqs:hasPolarity "positive" ;
-    cqs:testKind "SELECT" ;
+    cqs:testKind "sparql_select" ;
     cqs:targetsModule <http://data.europa.eu/h8v/ecmo/property-alignments> ;
     cqs:exercisesPattern "participation" ;
     cpa:hasUnitTest """
@@ -121,7 +121,7 @@ SELECT ?event ?impact WHERE {
 cqs:CQ-ALIGN-P02 a cqs:CompetencyQuestion ;
     cqs:hasNLText "Which entities are classified by a Concept through a property aligned to dul:isClassifiedBy (e.g. hazard:hasHazardCategory, response:involvesMeasureType)?"@en ;
     cqs:hasPolarity "positive" ;
-    cqs:testKind "SELECT" ;
+    cqs:testKind "sparql_select" ;
     cqs:targetsModule <http://data.europa.eu/h8v/ecmo/property-alignments> ;
     cqs:exercisesPattern "classification" ;
     cpa:hasUnitTest """

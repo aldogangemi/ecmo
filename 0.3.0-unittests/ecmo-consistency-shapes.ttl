@@ -44,7 +44,7 @@
 # =============================================================================
 
 <http://data.europa.eu/h8v/ecmo/shapes> a owl:Ontology ;
-    owl:imports <http://data.europa.eu/h8v/ecmo/cqs> ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/cqs-schema> ;
     dcterms:issued "2026-06-08"^^xsd:date ;
     rdfs:comment "ECMO consistency shapes v0.2: DARKSIDE negative trail, Framester-native for Family III."@en ;
     owl:imports <http://data.europa.eu/h8v/ecmo/core> ,

@@ -11,7 +11,7 @@
 @prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
 
 <http://data.europa.eu/h8v/ecmo/coref/cqs> a owl:Ontology ;
-    owl:imports <http://data.europa.eu/h8v/ecmo/coref> , <http://data.europa.eu/h8v/ecmo/cqs> ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/coref> , <http://data.europa.eu/h8v/ecmo/cqs-schema> ;
     dcterms:issued "2026-07-20"^^xsd:date ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment "Competency Questions (Q+ and Q-) for the ECMO coreference module. Each CQ is a cqs:CompetencyQuestion with an executable cpa:hasUnitTest (SPARQL or SHACL). Prefixes phsm:, response:, expvuln:, governance:, dul:, skos:, rdfs: are assumed bound."@en ;

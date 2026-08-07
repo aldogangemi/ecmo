@@ -1,0 +1,97 @@
+@prefix cqs:     <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO CQ Schema — the competency-question / unit-test annotation vocabulary.
+# Extracted from ecmo-cqs.ttl / ecmo-cqs-extended.ttl so every CQ, shape and
+# fixture module can import a single, complete definition instead of duplicating
+# (or leaving undefined) these terms. Namespace stays cqs: (…/ecmo/cqs/).
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/cqs-schema> a owl:Ontology ;
+    dcterms:issued "2026-08-06"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "Annotation vocabulary for ECMO competency questions and their executable unit tests (SPARQL/SHACL). Imported by ecmo-cqs, ecmo-cqs-extended, ecmo-consistency-shapes, ecmo-coreference-pattern-cqs, ecmo-phsm-cqs and the regression CQ modules."@en ;
+    owl:versionInfo "0.3.0" ;
+    skos:prefLabel "ECMO CQ Schema"@en .
+
+# -- Core classes -------------------------------------------------------------
+
+cqs:CompetencyQuestion a owl:Class ;
+    rdfs:comment "A competency question motivating the ontology. Carries a natural-language formulation, a polarity (positive or negative), the module(s) it targets, the design pattern it exercises, and an executable unit test (SPARQL or SHACL)."@en ;
+    skos:prefLabel "Competency Question"@en .
+
+cqs:NegativeCompetencyQuestion a owl:Class ;
+    rdfs:subClassOf cqs:CompetencyQuestion ;
+    rdfs:comment "A competency question whose YES answer would be a defect (b33-NEGCQ). Used to make over-commitment visible."@en ;
+    skos:prefLabel "Negative Competency Question"@en .
+
+# -- Core annotation properties ----------------------------------------------
+
+cqs:hasNLText a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has NL text"@en .
+
+cqs:targetsModule a owl:ObjectProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range owl:Ontology ;
+    skos:prefLabel "targets module"@en .
+
+cqs:exercisesPattern a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "exercises pattern"@en .
+
+cqs:hasPolarity a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "has polarity"@en .
+
+cqs:expectedAnswer a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Expected answer when the test is run against fixture A+/A-: 'non_empty', 'empty', 'true', 'false', or 'violation'."@en ;
+    skos:prefLabel "expected answer"@en .
+
+cqs:testKind a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:comment "One of: sparql_select, sparql_ask, shacl."@en ;
+    skos:prefLabel "test kind"@en .
+
+# -- Runtime-expectation properties (result assertions for the test harness) --
+
+cqs:expectsBindingType a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Type constraint a result binding must satisfy, written '?var = <classIRI>'. The harness asserts each named variable is an instance of the given class in every returned row."@en ;
+    skos:prefLabel "expects binding type"@en .
+
+cqs:expectsCardinality a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Cardinality expectation on the result set: e.g. 'at_least_one', 'exactly_zero', 'exactly_one'."@en ;
+    skos:prefLabel "expects cardinality"@en .
+
+cqs:expectsAllRowsSatisfy a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A SPARQL graph pattern (as a string) that every returned row must additionally satisfy, used for row-level post-conditions on a SELECT."@en ;
+    skos:prefLabel "expects all rows satisfy"@en .
+
+cqs:requiresEntailment a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:comment "'true' if the expected answer requires a reasoner (the result must be inferred, not merely asserted)."@en ;
+    skos:prefLabel "requires entailment"@en .
+
+cqs:bansDisjointClassPairs a owl:DatatypeProperty ;
+    rdfs:domain cqs:CompetencyQuestion ;
+    rdfs:range xsd:string ;
+    rdfs:comment "'true' if no returned binding may hold two OWL-disjoint types simultaneously — a coherence guard on the answer set."@en ;
+    skos:prefLabel "bans disjoint class pairs"@en .

@@ -15,7 +15,6 @@
 @prefix hera:        <http://data.europa.eu/h8v/ecmo/hera/> .
 @prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
 @prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
-@prefix mp:          <http://data.europa.eu/h8v/ecmo/main-pattern/> .
 @prefix owl:         <http://www.w3.org/2002/07/owl#> .
 @prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
 @prefix prov:        <http://www.w3.org/ns/prov#> .
@@ -116,7 +115,6 @@ agency:NadiraMoH a prov:Organization, governance:Institution ; skos:prefLabel "N
         a time:Interval ;
         time:hasBeginning [ time:inXSDDate "2026-04-15"^^xsd:date ]
     ] ;
-    ph:hasCausativeAgent ph:ZaireEbolavirus ;
     hazard:hasHazardCategory hazard:BiologicalTarget ;
     hazard:affectsPopulation :CampAkele_AffectedPopulation, :DirectlyAffected_CampAkele, :IndirectlyAffected_CampAkele ;
     hazard:hasIntensityObservation :EbolaIntensity ;
@@ -421,9 +419,9 @@ ph:ZaireEbolavirus
 
 ph:EbolaVirusDisease a ph:InfectiousDiseaseOrSyndrome ;
     skos:prefLabel "Ebola Virus Disease (EVD)"@en ;
-    ph:hasCausativeAgent ph:ZaireEbolavirus ;
     ph:hasRouteOfTransmission ph:BodyFluidContact_Route, ph:NosocomialContact_Route ;
     ph:hasSignOrSymptom :Fever, :Haemorrhage, :Vomiting, :Myalgia ;
+    ph:hasCausativeAgent ph:ZaireEbolavirus ;
     ph:hasOutcome :DeathOutcome, :RecoveryOutcome .
 
 ph:BodyFluidContact_Route a ph:RouteOfTransmission ; skos:prefLabel "Body-fluid contact"@en .
@@ -533,7 +531,7 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
 # CAPACITY + RESILIENCE (F5)
 # -----------------------------------------------------------------------------
 
-:EU_HumanitarianCapacity a capacity:Capacity ;
+:EU_HumanitarianCapacity a capacity:CopingCapacity ;
     skos:prefLabel "EU+WHO humanitarian capacity mobilised for the Nadira outbreak"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     capacity:includesInstitution agency:ECRC, agency:ECDC, agency:HERA, agency:WHO ;
@@ -654,7 +652,6 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
     governance:inJurisdiction :NadiraJurisdiction ;
     disaster:hasTemporalExtent [ a time:Interval ; time:hasBeginning [ time:inXSDDate "2026-05-05"^^xsd:date ] ] ;
     hazard:isManifestationOf hazard:BiologicalHazard ;
-    ph:hasCausativeAgent ph:ZaireEbolavirus ;
     hazard:affectsPopulation :DirectlyAffected_CampAkele, :IndirectlyAffected_CampAkele ;
     hazard:hasImpact :EVD_HumanImpact ;
     disaster:hasHumanImpact :EVD_HumanImpact ;
@@ -699,8 +696,8 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
     impact:hasReportedImpactType impact:HumanImpactType ;
     impact:affects :CampAkele_Population .
 
-# Disease manifestation (uses the v0.1 mp:manifestsCondition; will become subPropertyOf hasComponent in v2.3)
-:EVD_HumanImpact mp:manifestsCondition ph:EbolaVirusDisease .
+# Disease manifestation (uses the v0.1 ph:manifestsCondition; will become subPropertyOf hasComponent in v2.3)
+:EVD_HumanImpact ph:manifestsCondition ph:EbolaVirusDisease .
 
 :EVD_EnvironmentalImpact a impact:EnvironmentalImpact, impact:Impact ;
     skos:prefLabel "Environmental impact: medical waste, contaminated water sources"@en ;
@@ -731,69 +728,103 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
 # GOVERNANCE (F6)
 # -----------------------------------------------------------------------------
 
+# Rewritten for 0.3.0: each governance property attached to the subject class its
+# rdfs:domain requires, per ecmo-governance.ttl.
+#   RiskGovernance  : frameworks (policy/legal/institutional), stakeholders,
+#                     jurisdiction, guides -> RiskManagement.
+#   RiskManagement  : appliesStrategy, hasPolicyObjective, involvesStakeholder,
+#                     reduces/prevents/manages -> Risk (per subtype).
+#   RiskManagementPlan : implementedBy -> DisasterManagement.
+#   NationalPlatformForDRR : involvesSector, coordinatesDRR -> RiskReduction.
+#   LocalAndIndigenousApproach : usesTraditionalKnowledge -> capacity:Knowledge.
+#   EmergencyManagement : isSubPhaseOf -> Response.
+
 :Nadira_RiskGovernance a governance:RiskGovernance ;
     skos:prefLabel "Risk governance arrangements activated for the outbreak"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     governance:inJurisdiction :NadiraJurisdiction, :EUJurisdiction ;
-    governance:involvesSector :HealthSector_Nadira ;
+    governance:hasPolicyFramework :NadiraPolicy ;
+    governance:hasLegalFramework :NadiraLegal ;
+    governance:hasInstitutionalFramework :NadiraInstitutional ;
     governance:involvesStakeholder :CivilSociety_Nadira ;
     governance:involvesCivilSociety :CivilSociety_Nadira ;
-    governance:involvesCommunity :RefugeeCommunity_Akele ;
-    governance:usesTraditionalKnowledge "Community-led safe-burial practices co-designed with elders."@en ;
-    governance:guides :Nadira_RiskReductionStrategy .
+    governance:guides :Corrective_Mgmt, :Prospective_Mgmt, :Compensatory_Mgmt, :Community_Mgmt .
+
+# The risk-reduction goal (RiskReduction) and the strategy (a Plan) that serves it
+:Nadira_RiskReduction a governance:RiskReduction ;
+    skos:prefLabel "Outbreak disaster-risk-reduction effort, Nadira"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak .
 
 :Nadira_RiskReductionStrategy a governance:RiskReductionStrategy ;
     skos:prefLabel "Outbreak risk-reduction strategy for the Akele camp"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak .
 
+# Plan is implemented by a DisasterManagement action (the UCPM activation)
 :Nadira_RiskManagementPlan a governance:RiskManagementPlan ;
     skos:prefLabel "Outbreak risk-management plan, Camp Akele"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
-    governance:appliesStrategy :Nadira_RiskReductionStrategy ;
-    governance:hasPolicyFramework :NadiraPolicy ;
-    governance:hasLegalFramework :NadiraLegal ;
-    governance:hasInstitutionalFramework :NadiraInstitutional ;
-    governance:implementedBy :UCPM_Intervention, :CapDevPlan .
+    governance:implementedBy :s_ecrc_ucpm_act .
 
-# Phase sub-phase structure so CQ-GOV-P07 (isSubPhaseOf walk) returns rows.
-:ResponsePhase_Acute a response:Response, response:RiskReductionPhase ;
-    skos:prefLabel "Acute outbreak response sub-phase"@en ;
-    governance:isSubPhaseOf :ResponsePhase .
-:ResponsePhase_StandDown a response:Response, response:RiskReductionPhase ;
-    skos:prefLabel "Outbreak response stand-down sub-phase"@en ;
-    governance:isSubPhaseOf :ResponsePhase .
-
-:NadiraPolicy        a governance:Policy ;
-    skos:prefLabel "Nadira national outbreak policy"@en ;
-    governance:inJurisdiction :NadiraJurisdiction .
+# Frameworks (jurisdiction is on the RiskGovernance, not on these)
+:NadiraPolicy        a governance:Policy ; skos:prefLabel "Nadira national outbreak policy"@en .
 :NadiraLegal         a governance:LegalFramework ; skos:prefLabel "Nadira public-health emergency legal framework"@en .
 :NadiraInstitutional a governance:Institution ; skos:prefLabel "Nadira National Emergency Coordination Committee"@en .
 
-# Four risk-management subtypes
-:Corrective_Mgmt   a governance:CorrectiveRiskManagement   ; skos:prefLabel "Corrective risk management: ring vaccination + ETU expansion"@en ;
-                   coref:concernsOccurrence :NadiraEbolaOutbreak ;
-                   governance:reducesExistingRisk :NadiraEVDRisk .
-:Prospective_Mgmt  a governance:ProspectiveRiskManagement  ; skos:prefLabel "Prospective risk management: regional pathogen surveillance upgrade"@en ;
-                   coref:concernsOccurrence :NadiraEbolaOutbreak ;
-                   governance:preventsNewRisk :NadiraEVDRisk .
-:Compensatory_Mgmt a governance:CompensatoryRiskManagement ; skos:prefLabel "Compensatory risk management: livelihood support + contingency funding"@en ;
-                   coref:concernsOccurrence :NadiraEbolaOutbreak ;
-                   governance:managesResidualRisk :ResidualRiskAfterRing .
-:Community_Mgmt    a governance:CommunityBasedRiskManagement; skos:prefLabel "Community-based risk management: peer educators + traditional leaders"@en ;
-                   coref:concernsOccurrence :NadiraEbolaOutbreak .
-
-:LocalIndigenous_Approach a governance:LocalAndIndigenousApproach ;
-    skos:prefLabel "Indigenous community-led safe-burial approach"@en ;
-    coref:concernsOccurrence :NadiraEbolaOutbreak .
-
+# National platform — coordinates DRR and involves sectors
 :Nadira_NationalPlatform a governance:NationalPlatformForDRR ;
     skos:prefLabel "Nadira National Platform for DRR"@en ;
-    governance:inJurisdiction :NadiraJurisdiction .
+    governance:involvesSector :HealthSector_Nadira ;
+    governance:coordinatesDRR :Nadira_RiskReduction .
+
+# The four risk-management subtypes: apply the strategy, carry the RiskReduction
+# objective, involve stakeholders, and act on the risk via their subtype property.
+:Corrective_Mgmt a governance:CorrectiveRiskManagement ;
+    skos:prefLabel "Corrective risk management: ring vaccination + ETU expansion"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    governance:appliesStrategy :Nadira_RiskReductionStrategy ;
+    governance:hasPolicyObjective :Nadira_RiskReduction ;
+    governance:involvesStakeholder :CivilSociety_Nadira ;
+    governance:reducesExistingRisk :NadiraEVDRisk .
+
+:Prospective_Mgmt a governance:ProspectiveRiskManagement ;
+    skos:prefLabel "Prospective risk management: regional pathogen surveillance upgrade"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    governance:appliesStrategy :Nadira_RiskReductionStrategy ;
+    governance:hasPolicyObjective :Nadira_RiskReduction ;
+    governance:preventsNewRisk :NadiraEVDRisk .
+
+:Compensatory_Mgmt a governance:CompensatoryRiskManagement ;
+    skos:prefLabel "Compensatory risk management: livelihood support + contingency funding"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    governance:appliesStrategy :Nadira_RiskReductionStrategy ;
+    governance:managesResidualRisk :ResidualRiskAfterRing .
+
+:Community_Mgmt a governance:CommunityBasedRiskManagement ;
+    skos:prefLabel "Community-based risk management: peer educators + traditional leaders"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    governance:appliesStrategy :Nadira_RiskReductionStrategy ;
+    governance:involvesCommunity :RefugeeCommunity_Akele .
+
+# Local/indigenous approach uses a piece of traditional Knowledge (an individual, not a string)
+:LocalIndigenous_Approach a governance:LocalAndIndigenousApproach ;
+    skos:prefLabel "Indigenous community-led safe-burial approach"@en ;
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    governance:usesTraditionalKnowledge :SafeBurialKnowledge .
+
+:SafeBurialKnowledge a capacity:Knowledge ;
+    skos:prefLabel "Community-led safe-burial practices co-designed with elders"@en .
+
+# EmergencyManagement events are sub-phases of the Response (isSubPhaseOf: EmergencyManagement -> Response)
+:s_ecrc_ucpm_act governance:isSubPhaseOf :ResponsePhase .
+:s_ipcr_ism      governance:isSubPhaseOf :ResponsePhase .
+:s_ipcr_fcm      governance:isSubPhaseOf :ResponsePhase .
 
 # Risk information feeding governance
 :Nadira_RiskInfo a governance:RiskInformation ;
     skos:prefLabel "Consolidated risk information dossier"@en ;
-    coref:concernsOccurrence :NadiraEbolaOutbreak .
+    coref:concernsOccurrence :NadiraEbolaOutbreak ;
+    governance:informsAbout :NadiraEVDRisk .
+
 
 # -----------------------------------------------------------------------------
 # RESPONSE / RECOVERY (F7)
@@ -854,7 +885,8 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
 
 :EvacuationPlan_Akele a response:EvacuationPlan ;
     skos:prefLabel "Healthcare worker evacuation plan, Akele"@en ;
-    response:includesShelterInPlaceOption response:ShelterInPlace .
+    response:includesShelterInPlaceOption :ShelterInPlace_Akele .
+:ShelterInPlace_Akele a response:ShelterInPlace ; skos:prefLabel "Shelter-in-place option for the Akele evacuation plan"@en .
 
 :EmergencyEvacuation a response:Evacuation ;
     skos:prefLabel "Aeromedical evacuation of two infected EU healthcare workers"@en ;
@@ -1043,8 +1075,6 @@ drivers:DemographicChange           drivers:drivesRisk :NadiraEVDRisk ;
     drivers:increasesExposure :CampExposure .
 drivers:WeakGovernance              drivers:drivesRisk :NadiraEVDRisk ;
     drivers:reducesCapacity :LocalCopingCapacity .
-:LocalCopingCapacity capacity:isManagedBy :NadiraInstitutional .
-:NadiraInstitutional governance:inJurisdiction :NadiraJurisdiction .
 
 # HERA priority level asserted directly (CQ-HERA-P01 expects the property-chain result;
 # without OWL-RL reasoners materialising property chains, this triple is needed).

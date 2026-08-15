@@ -13,7 +13,6 @@
 @prefix hera:        <http://data.europa.eu/h8v/ecmo/hera/> .
 @prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
 @prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
-@prefix mp:          <http://data.europa.eu/h8v/ecmo/main-pattern/> .
 @prefix owl:         <http://www.w3.org/2002/07/owl#> .
 @prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
 @prefix prov:        <http://www.w3.org/ns/prov#> .
@@ -473,9 +472,9 @@ ph:RodentExcretaContact_Route a ph:RouteOfTransmission ; skos:prefLabel "Contact
 
 :CruiseShipHantavirusEvent hazard:hasImpact :HondiusHumanImpact .
 
-# Use the proposed mp:manifestsCondition link (introduced in the main-pattern v0.1;
+# Use the proposed ph:manifestsCondition link (introduced in the main-pattern v0.1;
 # pending re-anchoring as subPropertyOf dul:hasComponent in v2.3).
-:HondiusHumanImpact mp:manifestsCondition :HantavirusPulmonarySyndrome .
+:HondiusHumanImpact ph:manifestsCondition :HantavirusPulmonarySyndrome .
 
 # -----------------------------------------------------------------------------
 # HubAssessment + MergePolicy (consolidation, 09 May)

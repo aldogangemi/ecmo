@@ -655,3 +655,21 @@ response:Preparedness a response:RiskReductionPhase,
         "Preparazione"@it,
         "Preparação"@pt .
 
+# -----------------------------------------------------------------------------
+# Instrument classification (relocated from the CORE main-pattern, 2026-08-06)
+# Parallel to response:involvesMeasureType: classifies a specific instruments:Measure
+# by the MeasureType it implements, so Instrument (F8) and Response (F7) can be
+# matched on a shared MeasureType. Hosted here because response already imports
+# instruments (the reverse would create a cycle).
+# -----------------------------------------------------------------------------
+response:hasMeasureType a owl:ObjectProperty ;
+    rdfs:domain instruments:Measure ;
+    rdfs:range  response:MeasureType ;
+    rdfs:subPropertyOf dul:isClassifiedBy ;
+    rdfs:comment "Classifies an instruments:Measure by the response:MeasureType it implements (a dul:Concept classifier). Parallel to response:involvesMeasureType, not its inverse."@en ;
+    skos:prefLabel "has measure type"@en .
+
+response:isMeasureTypeOf a owl:ObjectProperty ;
+    owl:inverseOf response:hasMeasureType ;
+    rdfs:subPropertyOf dul:classifies ;
+    skos:prefLabel "is measure type of"@en .

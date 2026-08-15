@@ -20,12 +20,14 @@
 @prefix spec: <http://www.ontologydesignpatterns.org/cp/owl/specialization.owl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix impact: <http://data.europa.eu/h8v/ecmo/core/impact/> .
 
 <http://data.europa.eu/h8v/ecmo/public-health> a owl:Ontology ;
     dcterms:issued "2026-03-25"^^xsd:date ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     rdfs:comment "Pathogen, Disease, Transmission domain classes in the ph: namespace, plus the PathogenCharacteristic/PathogenRiskAssessment hierarchy and its five assessment subtypes (CaseFatalityRate, IncubationPeriod, Infectiousness, Toxicity, Transmissibility). Connected to ecmocore:BiologicalHazard as the bridge class. Imports the bio: module for biological entity foundations."@en ;
     owl:imports <http://data.europa.eu/h8v/ecmo/bio>,
+        ecmocore:impact,
         ecmocore:foundation,
         ecmocore:hazard ;
     owl:versionInfo "0.3.0" ;
@@ -26870,3 +26872,21 @@ ph:Yersinia a ph:PathogenicBacterium,
     bio:hasRank bio:Genus ;
     skos:prefLabel "Yersinia"@en .
 
+# -----------------------------------------------------------------------------
+# Impact -> HealthCondition bridge (relocated from the CORE main-pattern, 2026-08-06)
+# A HumanImpact instantiates a HealthCondition (e.g. an infectious disease) in the
+# affected population. Hosted here because HealthCondition and the disease model
+# live in public-health; ph imports core/impact to reach impact:HumanImpact.
+# -----------------------------------------------------------------------------
+ph:manifestsCondition a owl:ObjectProperty ;
+    rdfs:domain impact:HumanImpact ;
+    rdfs:range  ph:HealthCondition ;
+    rdfs:subPropertyOf dul:sameSettingAs ;
+    rdfs:comment "Relates a HumanImpact to the HealthCondition (e.g. an infectious disease) that co-occurs in / is instantiated by the impact in the affected population."@en ;
+    skos:editorialNote "HumanImpact (dul:Event + dul:Situation) and HealthCondition (dul:Situation) are eventualities sharing the disaster/health setting, hence dul:sameSettingAs (symmetric, domain/range dul:Entity, consistency-safe; consistent with impact:affects)."@en ;
+    skos:prefLabel "manifests condition"@en .
+
+ph:isConditionManifestedBy a owl:ObjectProperty ;
+    owl:inverseOf ph:manifestsCondition ;
+    rdfs:comment "Inverse of ph:manifestsCondition; also under dul:sameSettingAs (symmetric)."@en ;
+    skos:prefLabel "is condition manifested by"@en .

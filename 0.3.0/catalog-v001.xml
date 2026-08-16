@@ -20,10 +20,18 @@
     <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/coref" uri="ecmo-coreference-pattern.ttl"/>
     <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/epipulse" uri="ecmo-epipulse.ttl"/>
     <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/hera" uri="ecmo-hera.ttl"/>
-    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/hip" uri="ecmo-hip.ttl"/>
     <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/hub" uri="ecmo-hub.ttl"/>
     <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/phsm" uri="ecmo-phsm.ttl"/>
     <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/property-alignments" uri="ecmo-property-alignments.ttl"/>
     <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/public-health" uri="ecmo-ph.ttl"/>
+    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/athina" uri="0.3.0-alignments/ecmo-athina.ttl"/>
+    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/cecis" uri="0.3.0-alignments/ecmo-cecis.ttl"/>
+    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/eios" uri="0.3.0-alignments/ecmo-eios.ttl"/>
+    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/ewrs" uri="0.3.0-alignments/ecmo-ewrs.ttl"/>
+    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/gdacs" uri="0.3.0-alignments/ecmo-gdacs.ttl"/>
+    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/idmp" uri="0.3.0-alignments/ecmo-idmp.ttl"/>
+    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/mcmc" uri="0.3.0-alignments/ecmo-mcmc.ttl"/>
+    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/rasff" uri="0.3.0-alignments/ecmo-rasff.ttl"/>
+    <uri id="ECMO-0.3.0 map" name="http://data.europa.eu/h8v/ecmo/hip" uri="0.3.0-alignments/ecmo-hip.ttl"/>
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public"/>
 </catalog>

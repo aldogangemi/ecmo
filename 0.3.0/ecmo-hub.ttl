@@ -10,11 +10,15 @@
     dcterms:issued "2026-08-03"^^xsd:date ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
                               owl:imports <http://data.europa.eu/h8v/ecmo/core> ,
-                                          <http://data.europa.eu/h8v/ecmo/coref> ,                                          <http://data.europa.eu/h8v/ecmo/hip> ,
-                                          <http://data.europa.eu/h8v/ecmo/epipulse> ,
-                                          <http://data.europa.eu/h8v/ecmo/frames> ,
-                                          <http://data.europa.eu/h8v/ecmo/public-health> ,
-                                          <http://data.europa.eu/h8v/ecmo/phsm> ,
+                                          <http://data.europa.eu/h8v/ecmo/hip> ,
+                                          <http://data.europa.eu/h8v/ecmo/eios> ,
+                                          <http://data.europa.eu/h8v/ecmo/ewrs> ,
+                                          <http://data.europa.eu/h8v/ecmo/mcmc> ,
+                                          <http://data.europa.eu/h8v/ecmo/cecis> ,
+                                          <http://data.europa.eu/h8v/ecmo/rasff> ,
+                                          <http://data.europa.eu/h8v/ecmo/gdacs> ,
+                                          <http://data.europa.eu/h8v/ecmo/athina> ,
+                                          <http://data.europa.eu/h8v/ecmo/idmp> ,
                                           <http://data.europa.eu/h8v/ecmo/property-alignments> ;
     owl:versionIRI ecmohub:2.4 ;
     owl:versionInfo "0.3.0" ;

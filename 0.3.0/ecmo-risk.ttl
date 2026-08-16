@@ -1,6 +1,7 @@
 @prefix capacity: <http://data.europa.eu/h8v/ecmo/core/capacity/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix d0: <http://www.ontologydesignpatterns.org/ont/d0.owl#> .
 @prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
 @prefix expvuln: <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
 @prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
@@ -105,9 +106,9 @@ risk:IntensiveRisk a risk:Risk,
         "Risco intensivo de desastre"@pt .
 
 risk:assessesRisk a owl:ObjectProperty ;
-    rdfs:comment "Relates a risk assessment or planning process to the Risk it analyses."@en ;
+    rdfs:comment "The EVALUATIVE mode of addressing a Risk: an assessment analyses/quantifies the Risk. Distinct from managing or reducing it."@en ;
     rdfs:range risk:Risk ;
-    rdfs:subPropertyOf foundation:assesses ;
+    rdfs:subPropertyOf risk:addressesRisk, foundation:assesses ;
     owl:inverseOf risk:isAssessedBy ;
     skos:prefLabel "assesses risk"@en,
         "valuta il rischio"@it .
@@ -269,3 +270,26 @@ risk:Risk a owl:Class,
         "Risco de evento perigoso"@pt ;
     skos:topConceptOf foundation:SendaiFrameworkTerminology .
 
+# -----------------------------------------------------------------------------
+# risk:addressesRisk — general engagement of an eventuality with a Risk (0.3.0).
+# Separates the three modes crisis-management experts distinguish, so that
+# managing/reducing a risk is no longer routed through assessesRisk (Assessment).
+# -----------------------------------------------------------------------------
+risk:addressesRisk a owl:ObjectProperty ;
+    rdfs:domain d0:Eventuality ;
+    rdfs:range risk:Risk ;
+    rdfs:subPropertyOf dul:sameSettingAs ;
+    rdfs:comment "An eventuality (assessment, management, reduction, response) that engages a Risk. Its sub-properties fix the mode of engagement: assessesRisk (evaluate), managesRisk (govern/treat), reducesRisk (lower)."@en ;
+    skos:prefLabel "addresses risk"@en .
+
+risk:managesRisk a owl:ObjectProperty ;
+    rdfs:range risk:Risk ;
+    rdfs:subPropertyOf risk:addressesRisk ;
+    rdfs:comment "The MANAGERIAL mode of addressing a Risk: governing, coordinating or treating it (incl. residual risk) without necessarily lowering it. Domain: any eventuality (inherited d0:Eventuality)."@en ;
+    skos:prefLabel "manages risk"@en .
+
+risk:reducesRisk a owl:ObjectProperty ;
+    rdfs:range risk:Risk ;
+    rdfs:subPropertyOf risk:addressesRisk ;
+    rdfs:comment "The REDUCTIVE mode of addressing a Risk: lowering it, whether by preventing new risk or reducing existing risk. Domain: any eventuality (inherited d0:Eventuality)."@en ;
+    skos:prefLabel "reduces risk"@en .

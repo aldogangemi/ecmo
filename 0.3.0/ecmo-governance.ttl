@@ -54,8 +54,12 @@ governance:EmergencyManagement a dul:Description,
 governance:HazardousEventRiskManagement a owl:Class ;
     rdfs:comment "The application of policies, processes and actions to prevent new risk, reduce existing risk and manage residual risk, contributing to the strengthening of resilience and reduction of losses. Equivalent to DisasterRiskManagement (Sendai terminology)."@en ;
     rdfs:subClassOf [ a owl:Restriction ;
-            owl:onProperty risk:assessesRisk ;
+            owl:onProperty risk:managesRisk ;
             owl:someValuesFrom risk:Risk ],
+        [ a owl:Restriction ; owl:onProperty dul:satisfies ;
+            owl:someValuesFrom governance:HazardousEventRiskManagementPlan ],
+        [ a owl:Restriction ; owl:onProperty foundation:contributesTo ;
+            owl:someValuesFrom governance:HazardousEventRiskReduction ],
         dul:Action,
         dul:Situation ;
     skos:prefLabel "Gefahrenereignis-Risikomanagement"@de,
@@ -67,10 +71,7 @@ governance:HazardousEventRiskManagement a owl:Class ;
 
 governance:HazardousEventRiskManagementPlan a owl:Class ;
     rdfs:comment "A document setting out goals and specific objectives for reducing losses together with related actions. Equivalent to DisasterRiskManagementPlan."@en ;
-    rdfs:subClassOf [ a owl:Restriction ;
-            owl:onProperty foundation:contributesTo ;
-            owl:someValuesFrom governance:HazardousEventRiskReduction ],
-        dul:Description,
+    rdfs:subClassOf dul:Description,
         dul:Plan ;
     skos:prefLabel "Gefahrenereignis-Risikomanagementplan"@de,
         "Hazardous Event Risk Management Plan"@en,
@@ -81,10 +82,7 @@ governance:HazardousEventRiskManagementPlan a owl:Class ;
 
 governance:HazardousEventRiskReductionStrategy a owl:Class ;
     rdfs:comment "A strategic framework guiding and coordinating risk reduction policies and measures. Equivalent to DisasterRiskReductionStrategy."@en ;
-    rdfs:subClassOf [ a owl:Restriction ;
-            owl:onProperty foundation:contributesTo ;
-            owl:someValuesFrom governance:HazardousEventRiskReduction ],
-        dul:Description ;
+    rdfs:subClassOf dul:Description ;
     skos:prefLabel "Strategie zur Risikominderung bei Gefahrenereignissen"@de,
         "Hazardous Event Risk Reduction Strategy"@en,
         "Estrategia de reducción de riesgos de eventos peligrosos"@es,
@@ -309,6 +307,7 @@ governance:involvesStakeholder a owl:ObjectProperty ;
         "coinvolge portatore di interesse"@it .
 
 governance:managesResidualRisk a owl:ObjectProperty ;
+    rdfs:subPropertyOf risk:managesRisk ;
     rdfs:comment "Relates a CompensatoryRiskManagement approach to the ResidualRisk it addresses through financial and social protection mechanisms."@en ;
     rdfs:domain governance:CompensatoryRiskManagement ;
     rdfs:range risk:ResidualRisk ;
@@ -316,6 +315,7 @@ governance:managesResidualRisk a owl:ObjectProperty ;
         "gestisce rischio residuo"@it .
 
 governance:preventsNewRisk a owl:ObjectProperty ;
+    rdfs:subPropertyOf risk:reducesRisk ;
     rdfs:comment "Relates a ProspectiveRiskManagement approach to the Risk it eliminates by ensuring new development does not generate future risk."@en ;
     rdfs:domain governance:ProspectiveRiskManagement ;
     rdfs:range risk:Risk ;
@@ -323,6 +323,7 @@ governance:preventsNewRisk a owl:ObjectProperty ;
         "previene nuovo rischio"@it .
 
 governance:reducesExistingRisk a owl:ObjectProperty ;
+    rdfs:subPropertyOf risk:reducesRisk ;
     rdfs:comment "Relates a CorrectiveRiskManagement approach to the existing Risk it addresses through retrofitting, relocation and structural measures."@en ;
     rdfs:domain governance:CorrectiveRiskManagement ;
     rdfs:range risk:Risk ;
@@ -583,8 +584,10 @@ governance:HazardousEventRiskReduction a owl:Class, owl:NamedIndividual, dul:Des
     rdfs:comment "Activities aimed at preventing new and reducing existing risk and managing residual risk. Equivalent to DisasterRiskReduction (Sendai terminology). v2.3 (CP-GOV-01, EVENT-DS-1): severed class-level subClassOf dul:Description; retained individual-level typing via owl:NamedIndividual + rdf:type dul:Description + fschema:subsumedUnder. Instances of the class remain Situations (enacted reduction processes); the class IRI (punned individual) remains a Description-side frame."@en ;
     fschema:subsumedUnder dul:Description ;
     rdfs:subClassOf [ a owl:Restriction ;
-            owl:onProperty risk:assessesRisk ;
+            owl:onProperty risk:reducesRisk ;
             owl:someValuesFrom risk:Risk ],
+        [ a owl:Restriction ; owl:onProperty dul:satisfies ;
+            owl:someValuesFrom governance:HazardousEventRiskReductionStrategy ],
         dul:Situation ;
     skos:prefLabel "Gefahrenereignis-Risikominderung"@de,
         "Hazardous Event Risk Reduction"@en,

@@ -62,11 +62,11 @@
 
 coref:Occurrence a owl:Class ;
     rdfs:subClassOf dul:Situation ;
-    rdfs:comment "A minimal-commitment world-occurrence anchor. Carries only the spatio-temporal kernel that all agencies are presumed to agree on (location, opening time, and optionally a closing time). Does not carry hazard typing, severity, impacts or any claim that is subject to inter-agency disagreement. All such claims live on linked Situations (HazardClassificationSituation, StakeholderSituation, etc.) via concernsOccurrence."@en ;
+    rdfs:comment "A minimal-commitment world-occurrence anchor. Carries only the spatio-temporal kernel that all agencies are presumed to agree on (location, opening time, and optionally a closing time). Does not carry hazard typing, severity, impacts or any claim that is subject to inter-agency disagreement. All such claims live on linked Situations (HazardManifestationClassification, StakeholderSituation, etc.) via concernsOccurrence."@en ;
     skos:editorialNote "An Occurrence is a Situation, not an Event, because it is the referent of multiple agency-local situations rather than a happening in its own right. Local situations may type themselves as dul:Event under alignment; the Occurrence does not."@en ;
     skos:prefLabel "Occurrence (world-event anchor)"@en .
 
-coref:HazardClassificationSituation a owl:Class ;
+coref:HazardManifestationClassification a owl:Class ;
     rdfs:subClassOf dul:Situation ;
     rdfs:comment "A reified hazard typing assertion holding over a specified epistemic interval. classifiesAs points to the Hazard individual asserted to hold; foundation:hasTemporalValidity bounds when the assertion was held to be true; supersededBy chains to the next classification (with refinedBy / correctedBy sub-properties capturing whether the change is taxonomic refinement or belief retraction)."@en ;
     skos:prefLabel "Hazard Classification Situation"@en .
@@ -115,7 +115,7 @@ coref:sameOccurrenceAs a owl:ObjectProperty, owl:SymmetricProperty ;
     skos:prefLabel "same occurrence as"@en .
 
 coref:classifiesAs a owl:ObjectProperty ;
-    rdfs:domain coref:HazardClassificationSituation ;
+    rdfs:domain coref:HazardManifestationClassification ;
     rdfs:range  hazard:Hazard ;
     rdfs:comment "Points from a reified classification situation to the Hazard individual asserted to hold at the corresponding epistemic interval. Use Hazard individuals (e.g. ph:Hantaviridae, ph:AndesVirus), not classes — taxonomic relations among them are carried by fschema:subsumedUnder."@en ;
     skos:prefLabel "classifies as"@en .

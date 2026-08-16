@@ -2,6 +2,7 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix disaster: <http://data.europa.eu/h8v/ecmo/core/disaster/> .
 @prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix d0: <http://www.ontologydesignpatterns.org/ont/d0.owl#> .
 @prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
 @prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
 @prefix governance: <http://data.europa.eu/h8v/ecmo/core/governance/> .
@@ -331,6 +332,7 @@ response:HazardousEventRiskReductionPhase a owl:Class ;
     rdfs:subClassOf [ a owl:Restriction ;
             owl:onProperty foundation:contributesTo ;
             owl:someValuesFrom governance:HazardousEventRiskReduction ],
+        response:RiskReductionPhase,
         dul:Action,
         dul:Situation ;
     skos:prefLabel "Phase der Risikominderung bei Gefahrenereignissen"@de,
@@ -612,7 +614,7 @@ response:RiskReductionPhase a owl:Class ;
     rdfs:subClassOf [ a owl:Restriction ;
             owl:onProperty response:isTaskOf ;
             owl:someValuesFrom governance:HazardousEventRiskManagementPlan ],
-        dul:Task ;
+        d0:Activity ;
     skos:editorialNote "Descriptions & Situations (D&S) dual reading: DRM phases have two complementary interpretations. (1) As event-specific actions/situations: 'the Response to earthquake X' — a concrete Action or Situation enacted during a specific HazardousEvent. This reading is captured by the DUL typing of each subclass (dul:Action, dul:Situation). (2) As general recommendations/tasks: 'Response activities to be undertaken in any earthquake scenario' — normative task types prescribed by a RiskManagementPlan (dul:Plan). This reading is captured by the isTaskOf restriction. The Plan (Description-level) defines what should be done; the phase instance (Situation-level) satisfies that definition when enacted. This D&S duality avoids the need for separate task-type and task-instance classes."@en ;
     skos:prefLabel "Katastrophenvorsorgephase"@de,
         "DRR Phase"@en,

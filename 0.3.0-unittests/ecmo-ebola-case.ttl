@@ -838,20 +838,19 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
 :LogisticsCapacityType a response:CapacityType ; skos:prefLabel "Logistics capacity"@en .
 :ClinicalCapacityType  a response:CapacityType ; skos:prefLabel "Clinical surge capacity"@en .
 
-:PreparednessPhase a response:Preparedness ;
+:PreparednessPhase a response:Preparedness, response:HazardousEventRiskReductionPhase ;
     skos:prefLabel "Outbreak preparedness phase"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     response:precedesPhase :ResponsePhase ;
     response:linksToEWS :EWS_System .
 
-:ResponsePhase a response:Response ;
+:ResponsePhase a response:Response, response:HazardousEventRiskReductionPhase ;
     skos:prefLabel "Active outbreak response phase"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     response:precedesPhase :RecoveryPhase ;
-    response:involvesEmergencyService :EmergencyMedicalService ;
-    response:involvesMeasureType :RingVaccinationMT, :ContactTracingMT, :SafeBurialMT .
+    response:involvesEmergencyService :EmergencyMedicalService .
 
-:RecoveryPhase a response:Recovery ;
+:RecoveryPhase a response:Recovery, response:HazardousEventRiskReductionPhase ;
     skos:prefLabel "Recovery / rehabilitation phase"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     response:precedesPhase :ReconstructionPhase ;
@@ -859,7 +858,7 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
     response:restoresBasicServicesAfter :NadiraEVDDisaster ;
     response:alignsWithPrinciple response:BuildBackBetter .
 
-:ReconstructionPhase a response:Reconstruction ;
+:ReconstructionPhase a response:Reconstruction, response:HazardousEventRiskReductionPhase ;
     skos:prefLabel "Reconstruction phase: water/sanitation, schools, livelihoods"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     response:alignsWithPrinciple response:BuildBackBetter ;
@@ -868,7 +867,7 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
 :UCPM_Intervention a response:Intervention ;
     skos:prefLabel "UCPM-coordinated intervention (May–Jul 2026)"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
-    response:involvesMeasureType :RingVaccinationMT, :ContactTracingMT ;
+    response:involvesMeasureType :RingVaccinationMT, :ContactTracingMT, :SafeBurialMT ;
     response:requiresCapacity :LogisticsCapacityType ;
     response:lessensImpactOf hazard:BiologicalHazard ;
     response:meetsNeedsOf :CampAkele_AffectedPopulation ;

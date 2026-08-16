@@ -128,7 +128,7 @@ ph:AndesOrthohantavirus a hazard:BiologicalHazard, ph:PathogenicVirus, owl:Named
     skos:prefLabel "Andes orthohantavirus"@en ;
     fschema:subsumedUnder ph:Hantaviridae .
 
-:Cls_t0_unknown a coref:HazardClassificationSituation ;
+:Cls_t0_unknown a coref:HazardManifestationClassification ;
     skos:prefLabel "Hazard classification @ 02-03 May — etiology unknown"@en ;
     coref:concernsOccurrence :HondiusOutbreak ;
     coref:classifiesAs :UnknownBiologicalAgent ;
@@ -140,7 +140,7 @@ ph:AndesOrthohantavirus a hazard:BiologicalHazard, ph:PathogenicVirus, owl:Named
     coref:refinedBy :Cls_t1_hantaviridae ;
     prov:wasAttributedTo agency:EWS .
 
-:Cls_t1_hantaviridae a coref:HazardClassificationSituation ;
+:Cls_t1_hantaviridae a coref:HazardManifestationClassification ;
     skos:prefLabel "Hazard classification @ 03-08 May — Hantaviridae (family-level)"@en ;
     coref:concernsOccurrence :HondiusOutbreak ;
     coref:classifiesAs ph:Hantaviridae ;
@@ -152,7 +152,7 @@ ph:AndesOrthohantavirus a hazard:BiologicalHazard, ph:PathogenicVirus, owl:Named
     coref:refinedBy :Cls_t2_andesvirus ;
     prov:wasAttributedTo agency:ARGUS, agency:ECRC, agency:ECDC .
 
-:Cls_t2_andesvirus a coref:HazardClassificationSituation ;
+:Cls_t2_andesvirus a coref:HazardManifestationClassification ;
     skos:prefLabel "Hazard classification @ 08 May+ — Andes orthohantavirus (PCR-confirmed)"@en ;
     coref:concernsOccurrence :HondiusOutbreak ;
     coref:classifiesAs ph:AndesOrthohantavirus ;
@@ -169,7 +169,7 @@ ph:AndesOrthohantavirus a hazard:BiologicalHazard, ph:PathogenicVirus, owl:Named
 # a moment when the official classification stayed at family level.
 # -----------------------------------------------------------------------------
 
-:Cls_t1a_argus_SinNombre a coref:HazardClassificationSituation ;
+:Cls_t1a_argus_SinNombre a coref:HazardManifestationClassification ;
     skos:prefLabel "Working hypothesis @ 04 May — Sin Nombre virus (ARGUS internal)"@en ;
     rdfs:comment "ARGUS's internal working hypothesis on 04 May, never elevated to an official classification; corrected by the 08 May PCR confirmation. Recorded as a parallel Situation so the disagreement is auditable rather than erased."@en ;
     coref:concernsOccurrence :HondiusOutbreak ;
@@ -183,7 +183,7 @@ ph:AndesOrthohantavirus a hazard:BiologicalHazard, ph:PathogenicVirus, owl:Named
     coref:conflictsWith :Cls_t1b_ecrc_SeoulVirus ;
     prov:wasAttributedTo agency:ARGUS .
 
-:Cls_t1b_ecrc_SeoulVirus a coref:HazardClassificationSituation ;
+:Cls_t1b_ecrc_SeoulVirus a coref:HazardManifestationClassification ;
     skos:prefLabel "Working hypothesis @ 04 May — Seoul virus (ECRC internal)"@en ;
     coref:concernsOccurrence :HondiusOutbreak ;
     coref:classifiesAs ph:SeoulVirus ;

@@ -228,7 +228,7 @@ ph:MarburgVirus a hazard:BiologicalHazard, ph:PathogenicVirus, ph:Pathogen, owl:
 :MarburgVac a hera:AvailabilityOfVaccines ;
     foundation:hasLevel hera:NotAvailable_Vaccines .
 
-:Cls_t0_unknown a coref:HazardClassificationSituation ;
+:Cls_t0_unknown a coref:HazardManifestationClassification ;
     skos:prefLabel "Classification @ 15-18 Apr — Unknown haemorrhagic agent"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     coref:classifiesAs :UnknownHaemorrhagicAgent ;
@@ -240,7 +240,7 @@ ph:MarburgVirus a hazard:BiologicalHazard, ph:PathogenicVirus, ph:Pathogen, owl:
     coref:refinedBy :Cls_t1_filoviridae ;
     prov:wasAttributedTo agency:NadiraMoH, agency:EWS .
 
-:Cls_t1_filoviridae a coref:HazardClassificationSituation ;
+:Cls_t1_filoviridae a coref:HazardManifestationClassification ;
     skos:prefLabel "Classification @ 18-25 Apr — Filoviridae (family-level)"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     coref:classifiesAs ph:Filoviridae ;
@@ -252,7 +252,7 @@ ph:MarburgVirus a hazard:BiologicalHazard, ph:PathogenicVirus, ph:Pathogen, owl:
     coref:refinedBy :Cls_t2_zaire ;
     prov:wasAttributedTo agency:WHO, agency:ECDC .
 
-:Cls_t2_zaire a coref:HazardClassificationSituation ;
+:Cls_t2_zaire a coref:HazardManifestationClassification ;
     skos:prefLabel "Classification @ 25 Apr+ — Zaire ebolavirus (PCR-confirmed)"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     coref:classifiesAs ph:ZaireEbolavirus ;
@@ -263,7 +263,7 @@ ph:MarburgVirus a hazard:BiologicalHazard, ph:PathogenicVirus, ph:Pathogen, owl:
     prov:wasAttributedTo agency:WHO, agency:ECDC, agency:IPCR .
 
 # Conflict bay: WHO field team briefly suspected Marburg before PCR confirmation
-:Cls_t1a_who_marburg a coref:HazardClassificationSituation ;
+:Cls_t1a_who_marburg a coref:HazardManifestationClassification ;
     skos:prefLabel "Working hypothesis @ 22-25 Apr — Marburg virus (WHO field team)"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     coref:classifiesAs ph:MarburgVirus ;
@@ -277,7 +277,7 @@ ph:MarburgVirus a hazard:BiologicalHazard, ph:PathogenicVirus, ph:Pathogen, owl:
     coref:hasConflictReport :ConflictReport_MarburgVsEbola ;
     prov:wasAttributedTo agency:WHO .
 
-:Cls_t1b_ecdc_ebola a coref:HazardClassificationSituation ;
+:Cls_t1b_ecdc_ebola a coref:HazardManifestationClassification ;
     skos:prefLabel "Working hypothesis @ 22-25 Apr — Ebolavirus (ECDC modelling)"@en ;
     coref:concernsOccurrence :NadiraEbolaOutbreak ;
     coref:classifiesAs ph:Ebolavirus ;

@@ -50,8 +50,8 @@ coref:NoConflictingClassificationAtSameInstantShape a sh:NodeShape ;
             PREFIX foundation:<http://data.europa.eu/h8v/ecmo/core/foundation/>
             PREFIX time:      <http://www.w3.org/2006/time#>
             SELECT $this ?c1 ?c2 WHERE {
-                ?c1 a coref:HazardClassificationSituation ; coref:concernsOccurrence $this .
-                ?c2 a coref:HazardClassificationSituation ; coref:concernsOccurrence $this .
+                ?c1 a coref:HazardManifestationClassification ; coref:concernsOccurrence $this .
+                ?c2 a coref:HazardManifestationClassification ; coref:concernsOccurrence $this .
                 FILTER (STR(?c1) < STR(?c2))
                 FILTER NOT EXISTS { ?c1 coref:supersededBy+ ?c2 . }
                 FILTER NOT EXISTS { ?c2 coref:supersededBy+ ?c1 . }
@@ -107,11 +107,11 @@ cqs:CQ-COREF-P02 a cqs:CompetencyQuestion ;
     cqs:hasPolarity "positive" ;
     cqs:targetsModule <http://data.europa.eu/h8v/ecmo/coref> ;
     cqs:hasNLText "What was the identified hazard for the Occurrence at a given date (e.g. 04 May 2026)?" ;
-    cqs:exercisesPattern "HazardClassificationSituation × time filter" ;
+    cqs:exercisesPattern "HazardManifestationClassification × time filter" ;
     cqs:testKind "sparql_select" ;
     cqs:expectedAnswer "non_empty" ;
     cpa:hasUnitTest """SELECT ?hazard WHERE {
-  ?c a coref:HazardClassificationSituation ; coref:concernsOccurrence ex:HondiusOutbreak ;
+  ?c a coref:HazardManifestationClassification ; coref:concernsOccurrence ex:HondiusOutbreak ;
      coref:classifiesAs ?hazard ; foundation:hasTemporalValidity ?i .
   ?i time:hasBeginning/time:inXSDDate ?b .
   OPTIONAL { ?i time:hasEnd/time:inXSDDate ?e . }
@@ -126,7 +126,7 @@ cqs:CQ-COREF-P03 a cqs:CompetencyQuestion ;
     cqs:testKind "sparql_select" ;
     cqs:expectedAnswer "non_empty" ;
     cpa:hasUnitTest """SELECT ?hazard WHERE {
-  ?c a coref:HazardClassificationSituation ; coref:concernsOccurrence ex:HondiusOutbreak ;
+  ?c a coref:HazardManifestationClassification ; coref:concernsOccurrence ex:HondiusOutbreak ;
      coref:classifiesAs ?hazard .
   FILTER NOT EXISTS { ?c coref:supersededBy ?later . }
 }""" .

@@ -65,7 +65,7 @@ ex:HondiusOutbreak a coref:Occurrence ;
     ] .
 
 # Three reified hazard classifications, chained by refinedBy (all taxonomic)
-ex:Cls_t0_unknown a coref:HazardClassificationSituation ;
+ex:Cls_t0_unknown a coref:HazardManifestationClassification ;
     skos:prefLabel "Classification at t0 — unknown etiology"@en ;
     coref:concernsOccurrence ex:HondiusOutbreak ;
     coref:classifiesAs ex:UnknownDisease ;
@@ -77,7 +77,7 @@ ex:Cls_t0_unknown a coref:HazardClassificationSituation ;
     coref:refinedBy ex:Cls_t1_hantaviridae ;
     prov:wasAttributedTo agency:EWS .
 
-ex:Cls_t1_hantaviridae a coref:HazardClassificationSituation ;
+ex:Cls_t1_hantaviridae a coref:HazardManifestationClassification ;
     skos:prefLabel "Classification at t1 — Hantaviridae family"@en ;
     coref:concernsOccurrence ex:HondiusOutbreak ;
     coref:classifiesAs ph:Hantaviridae ;
@@ -89,7 +89,7 @@ ex:Cls_t1_hantaviridae a coref:HazardClassificationSituation ;
     coref:refinedBy ex:Cls_t2_andesvirus ;
     prov:wasAttributedTo agency:ARGUS, agency:ECRC .
 
-ex:Cls_t2_andesvirus a coref:HazardClassificationSituation ;
+ex:Cls_t2_andesvirus a coref:HazardManifestationClassification ;
     skos:prefLabel "Classification at t2 — Andes hantavirus (PCR-confirmed)"@en ;
     coref:concernsOccurrence ex:HondiusOutbreak ;
     coref:classifiesAs ph:AndesVirus ;

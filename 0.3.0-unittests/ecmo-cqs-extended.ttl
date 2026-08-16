@@ -1738,8 +1738,8 @@ cqs:CQ-COREF-P02
             "?hazard = http://data.europa.eu/h8v/ecmo/core/hazard/Hazard" .
 cqs:CQ-COREF-P04
     cqs:expectsBindingType
-            "?earlier = http://data.europa.eu/h8v/ecmo/coref/HazardClassificationSituation",
-            "?later = http://data.europa.eu/h8v/ecmo/coref/HazardClassificationSituation" .
+            "?earlier = http://data.europa.eu/h8v/ecmo/coref/HazardManifestationClassification",
+            "?later = http://data.europa.eu/h8v/ecmo/coref/HazardManifestationClassification" .
 cqs:CQ-COREF-P05
     cqs:expectsBindingType
             "?agency = http://www.w3.org/ns/prov#Organization" .
@@ -1752,8 +1752,8 @@ cqs:CQ-COREF-P07
             "?other = http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Situation" .
 cqs:CQ-COREF-P08
     cqs:expectsBindingType
-            "?earlier = http://data.europa.eu/h8v/ecmo/coref/HazardClassificationSituation",
-            "?later = http://data.europa.eu/h8v/ecmo/coref/HazardClassificationSituation" .
+            "?earlier = http://data.europa.eu/h8v/ecmo/coref/HazardManifestationClassification",
+            "?later = http://data.europa.eu/h8v/ecmo/coref/HazardManifestationClassification" .
 cqs:CQ-COREF-P09
     cqs:expectsBindingType
             "?conflict = http://data.europa.eu/h8v/ecmo/coref/ConflictReport" .

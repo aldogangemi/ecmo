@@ -270,7 +270,7 @@ foundation:isComplementaryTo rdfs:subPropertyOf dul:sameSettingAs .
 
 # =============================================================================
 # Group L — Framester binding on the coref: pattern
-# When (c) proceeds, the coref:HazardClassificationSituation → coref:Occurrence
+# When (c) proceeds, the coref:HazardManifestationClassification → coref:Occurrence
 # link is a natural fschema:frameFor. Not asserting here — will land in the
 # frame-model TTL once the frame model is validated.
 # =============================================================================

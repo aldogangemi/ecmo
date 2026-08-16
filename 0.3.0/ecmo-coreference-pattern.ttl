@@ -57,7 +57,7 @@
     skos:prefLabel     "ECMO Data-Level Coreference Pattern"@en .
 
 # =============================================================================
-# Vocabulary stubs — classes
+# Vocabulary to deal with occurrence classification
 # =============================================================================
 
 coref:Occurrence a owl:Class ;
@@ -65,11 +65,19 @@ coref:Occurrence a owl:Class ;
     rdfs:comment "A minimal-commitment world-occurrence anchor. Carries only the spatio-temporal kernel that all agencies are presumed to agree on (location, opening time, and optionally a closing time). Does not carry hazard typing, severity, impacts or any claim that is subject to inter-agency disagreement. All such claims live on linked Situations (HazardManifestationClassification, StakeholderSituation, etc.) via concernsOccurrence."@en ;
     skos:editorialNote "An Occurrence is a Situation, not an Event, because it is the referent of multiple agency-local situations rather than a happening in its own right. Local situations may type themselves as dul:Event under alignment; the Occurrence does not."@en ;
     skos:prefLabel "Occurrence (world-event anchor)"@en .
+    
+hazard:HazardousEvent a owl:Class ;
+    rdfs:subClassOf coref:Occurrence .
+    
+coref:OccurrenceFeatureClassification a owl:Class ;
+    rdfs:subClassOf dul:Situation ;
+    rdfs:comment "A reified occurrence typing assertion holding over a specified epistemic interval. classifiesAs points to the Hazard individual asserted to hold; foundation:hasTemporalValidity bounds when the assertion was held to be true; supersededBy chains to the next classification (with refinedBy / correctedBy sub-properties capturing whether the change is taxonomic refinement or belief retraction)."@en ;
+    skos:prefLabel "Occurrence Feature Classification"@en .
 
 coref:HazardManifestationClassification a owl:Class ;
-    rdfs:subClassOf dul:Situation ;
+    rdfs:subClassOf coref:OccurrenceFeatureClassification ;
     rdfs:comment "A reified hazard typing assertion holding over a specified epistemic interval. classifiesAs points to the Hazard individual asserted to hold; foundation:hasTemporalValidity bounds when the assertion was held to be true; supersededBy chains to the next classification (with refinedBy / correctedBy sub-properties capturing whether the change is taxonomic refinement or belief retraction)."@en ;
-    skos:prefLabel "Hazard Classification Situation"@en .
+    skos:prefLabel "Hazard Manifestation Classification"@en .
 
 coref:StakeholderAssessment a owl:Class ;
     rdfs:subClassOf foundation:Assessment ;
@@ -91,13 +99,9 @@ coref:ConflictReport a owl:Class ;
     rdfs:comment "A reified record of disagreement between two or more Situations or Descriptions about the same property of the same Occurrence. Carries the conflicting parties, the property in dispute, the values asserted by each, and (optionally) the resolution chosen by an enclosing HubAssessment."@en ;
     skos:prefLabel "Conflict Report"@en .
 
-# =============================================================================
-# Vocabulary stubs — properties
-# =============================================================================
-
 coref:concernsOccurrence a owl:ObjectProperty, owl:FunctionalProperty ;
-    rdfs:domain dul:Situation ;
-    rdfs:range  coref:Occurrence ;
+    rdfs:domain coref:OccurrenceFeatureClassification ;
+    rdfs:range coref:Occurrence ;
     rdfs:subPropertyOf dul:isSettingFor ;
     rdfs:comment "Links any local Situation (an agency record, a classification situation, an impact situation, etc.) to the single Occurrence it is founded on. Functional on the local-situation side: each local situation is founded on at most one Occurrence. Coreference between two local situations is *computed* via shared target, never asserted via owl:sameAs."@en ;
     skos:prefLabel "concerns occurrence"@en .
@@ -105,24 +109,39 @@ coref:concernsOccurrence a owl:ObjectProperty, owl:FunctionalProperty ;
 coref:isConcernedBy a owl:ObjectProperty ;
     owl:inverseOf coref:concernsOccurrence ;
     skos:prefLabel "is concerned by"@en .
+    
+coref:hasFeatureClassification a owl:ObjectProperty ;
+    rdfs:domain coref:Occurrence ;
+    rdfs:range coref:OccurrenceFeatureClassification ;
+    rdfs:subPropertyOf coref:isConcernedBy ;
+    rdfs:comment "Links an occurrence or some attribute/quality of the occurrence to a classification context."@en ;
+    skos:prefLabel "has feature classification"@en .
+    
+coref:hasManifestedHazard a owl:ObjectProperty ;
+    rdfs:domain coref:HazardManifestationClassification ;
+    rdfs:range hazard:Hazard ;
+    owl:propertyChainAxiom ( coref:concernsOccurrence hazard:isManifestationOf ) ;
+    rdfs:comment "Points from a reified classification situation to the Hazard individual asserted to hold at the corresponding epistemic interval. Use Hazard individuals (e.g. ph:Hantaviridae, ph:AndesVirus), not classes — taxonomic relations among them are carried by fschema:subsumedUnder."@en ;
+    skos:prefLabel "has manifested hazard"@en .
+
+coref:accordingTo a owl:ObjectProperty ;
+    rdfs:domain coref:OccurrenceFeatureClassification ;
+    rdfs:range dul:Agent ;
+    rdfs:subPropertyOf dul:isSettingFor ;
+    rdfs:comment "Links any local Situation (an agency record, a classification situation, an impact situation, etc.) to the single Occurrence it is founded on. Functional on the local-situation side: each local situation is founded on at most one Occurrence. Coreference between two local situations is *computed* via shared target, never asserted via owl:sameAs."@en ;
+    skos:prefLabel "according to"@en .
 
 coref:sameOccurrenceAs a owl:ObjectProperty, owl:SymmetricProperty ;
     rdfs:domain dul:Situation ;
-    rdfs:range  dul:Situation ;
+    rdfs:range dul:Situation ;
     rdfs:subPropertyOf prov:alternateOf ;
     rdfs:comment "Soft equivalence: two records concern the same world-occurrence under different perspectives. Symmetric, NOT transitive at the OWL level (we deliberately exclude transitivity so that mis-asserted pairs do not propagate through the graph). Weaker than owl:sameAs: does not entail identity of properties. Use when an Occurrence anchor cannot yet be minted; otherwise prefer pointing both situations at a shared coref:Occurrence."@en ;
     skos:editorialNote "Do NOT declare owl:TransitiveProperty on sameOccurrenceAs. A SHACL shape can flag long sameOccurrenceAs chains as candidates for promotion to a shared concernsOccurrence target."@en ;
     skos:prefLabel "same occurrence as"@en .
 
-coref:classifiesAs a owl:ObjectProperty ;
-    rdfs:domain coref:HazardManifestationClassification ;
-    rdfs:range  hazard:Hazard ;
-    rdfs:comment "Points from a reified classification situation to the Hazard individual asserted to hold at the corresponding epistemic interval. Use Hazard individuals (e.g. ph:Hantaviridae, ph:AndesVirus), not classes — taxonomic relations among them are carried by fschema:subsumedUnder."@en ;
-    skos:prefLabel "classifies as"@en .
-
 coref:supersededBy a owl:ObjectProperty, owl:AsymmetricProperty, owl:IrreflexiveProperty ;
     rdfs:domain dul:Situation ;
-    rdfs:range  dul:Situation ;
+    rdfs:range dul:Situation ;
     rdfs:subPropertyOf prov:wasInvalidatedBy ;
     rdfs:comment "The later situation invalidates the earlier within the epistemic chain concerning the same Occurrence. Asymmetric and irreflexive. NOT declared transitive at OWL level: we want the audit chain to be walkable step by step; transitive closure is left to query time (SPARQL property paths)."@en ;
     skos:prefLabel "superseded by"@en .

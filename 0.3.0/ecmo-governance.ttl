@@ -544,7 +544,7 @@ governance:RiskReduction a dul:InformationObject,
         [ a owl:Restriction ;
             owl:onProperty foundation:contributesTo ;
             owl:someValuesFrom governance:SustainableDevelopment ],
-        dul:Eventuality ;
+        d0:Eventuality ;
     skos:definition "Disaster risk reduction is aimed at preventing new and reducing existing disaster risk and managing residual risk, all of which contribute to strengthening resilience and therefore to the achievement of sustainable development."@en ;
     skos:inScheme foundation:SendaiFrameworkTerminology ;
     skos:prefLabel "Katastrophenvorsorge"@de,

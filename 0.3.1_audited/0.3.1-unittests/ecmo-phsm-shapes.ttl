@@ -1,0 +1,62 @@
+@prefix phsm:     <http://data.europa.eu/h8v/ecmo/phsm/> .
+@prefix response: <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix owl:      <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:     <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+
+# SHACL shapes for the ECMO PHSM module.
+# These encode closed-world constraints NOT entailed by the OWL axioms
+# (mandatory classification, single-valued RMD parameters, closed value sets),
+# i.e. the executable side of the negative competency questions (b33-NEGCQ).
+
+phsm:PublicHealthMeasureShape a sh:NodeShape ;
+    sh:targetClass phsm:PublicHealthMeasure ;
+    rdfs:comment "Every enacted public health measure must carry exactly one measure category and at most one value of each ECDC-JRC RMD parameter, drawn from the closed value sets." ;
+
+    sh:property [
+        sh:path phsm:hasMeasureCategory ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class response:MeasureType ;
+        sh:message "A public health measure must be classified by exactly one PublicHealthMeasureType (a response:MeasureType)." ;
+    ] ;
+    sh:property [
+        sh:path phsm:hasLegalStatus ;
+        sh:maxCount 1 ;
+        sh:in ( phsm:Mandatory phsm:Voluntary phsm:LegalStatusNotAvailable ) ;
+        sh:message "Legal status must be one of Mandatory, Voluntary, Not available (ECDC-JRC RMD 'status')." ;
+    ] ;
+    sh:property [
+        sh:path phsm:hasImplementationScope ;
+        sh:maxCount 1 ;
+        sh:in ( phsm:FullImplementation phsm:PartialImplementation ) ;
+        sh:message "Implementation scope must be Full or Partial (RMD 'implementation')." ;
+    ] ;
+    sh:property [
+        sh:path phsm:hasGeographicScope ;
+        sh:maxCount 1 ;
+        sh:in ( phsm:NationalScope phsm:RegionalScope phsm:LocalScope ) ;
+        sh:message "Geographic scope must be National, Regional or Local (RMD 'geographical representation')." ;
+    ] ;
+    sh:property [
+        sh:path phsm:appliesInSetting ;
+        sh:class phsm:Setting ;
+        sh:message "appliesInSetting must point to a phsm:Setting individual." ;
+    ] ;
+    sh:property [
+        sh:path phsm:hasLifecycleStatus ;
+        sh:maxCount 1 ;
+        sh:in ( phsm:Scheduled phsm:Ongoing phsm:Completed phsm:Suspended ) ;
+        sh:message "Lifecycle status must be Scheduled, Ongoing, Completed or Suspended (JRC EWRS 'Measure details')." ;
+    ] ;
+    sh:property [
+        sh:path phsm:hasEndDate ;
+        sh:maxCount 1 ; sh:datatype xsd:date ;
+        sh:message "hasEndDate must be a single xsd:date." ;
+    ] ;
+    sh:property [
+        sh:path phsm:hasStartDate ;
+        sh:maxCount 1 ; sh:datatype xsd:date ;
+        sh:message "hasStartDate must be a single xsd:date." ;
+    ] .

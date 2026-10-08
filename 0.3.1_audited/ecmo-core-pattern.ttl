@@ -1,0 +1,166 @@
+@prefix bio:         <http://data.europa.eu/h8v/ecmo/bio/> .
+@prefix capacity:    <http://data.europa.eu/h8v/ecmo/core/capacity/> .
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix cqs:         <http://data.europa.eu/h8v/ecmo/cqs/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix disaster:    <http://data.europa.eu/h8v/ecmo/core/disaster/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix expvuln:     <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix hera:        <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix impact:      <http://data.europa.eu/h8v/ecmo/core/impact/> .
+@prefix instruments: <http://data.europa.eu/h8v/ecmo/core/instruments/> .
+@prefix governance:  <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+@prefix situation: <http://data.europa.eu/h8v/ecmo/core/situation/> .
+
+# =============================================================================
+# ECMO-CORE Main Pattern — Content Pattern (semantic summary of ECMO-CORE)
+# Updated 2026-08-06.
+#
+# This file defines NO new terms of its own. It is a *semantic summary*: a small,
+# curated EXTRACT of the main ECMO axioms, stated verbatim over the real ECMO IRIs
+# (the anchor D&S typings + the backbone relations). Loading this file alone gives
+# a consumer the core backbone without the full module network; loading it together
+# with ECMO is harmless (the triples are identical to the modules').
+#
+# It is NOT imported by any ECMO module. It does not import ECMO-core either, so
+# that external applications can pull in just these few predicates cheaply.
+#
+# The two relations this pattern used to introduce locally are now defined in their
+# home modules (reused here, not redefined):
+#   - ph:manifestsCondition / ph:isConditionManifestedBy  -> ecmo-ph.ttl
+#   - response:hasMeasureType / response:isMeasureTypeOf   -> ecmo-response.ttl
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/main-pattern> a owl:Ontology ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/situation> ;
+    dcterms:creator "ECMO design team" ;
+    dcterms:issued  "2026-05-06"^^xsd:date ;
+    dcterms:modified "2026-08-06"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment    "Semantic summary of the ECMO-CORE network: a curated extract of its main axioms over the real ECMO IRIs (reused, never redefined). Synthesises the 12 anchor concepts (Hazard, HazardousEvent, Exposure, Vulnerability, Capacity, Risk, RiskAssessment, Impact, Response, Instrument, Pathogen, InfectiousDisease) and their backbone relations around the Risk hub and the Hazard/HazardousEvent D&S coupling. Defines no new terms; is not imported by any ECMO module."@en ;
+    skos:editorialNote "0.3.0 anchor typing carried by the extract below (verbatim from the modules): Hazard = dul:Description + dul:ContextualDisposition; HazardousEvent = dul:Event + dul:Situation (dul:satisfies the Hazard frame via hazard:isManifestationOf); Risk = dul:Description + dul:ContextualDisposition (a Situation realises it via disaster:realizesRisk); Exposure, Vulnerability, HealthCondition = dul:Situation; Impact, HumanImpact = dul:Event + dul:Situation; Response/Intervention = dul:Action + dul:Situation; RiskAssessment ⊑ foundation:Assessment (≡ d0:Eventuality ⊔ dul:InformationEntity). Hazard sub-types and disease/pathogen classes attach to the hazard frames via fschema:subsumedUnder, not rdfs:subClassOf, preserving dul:Description ⊓ dul:Situation = ∅."@en ;
+    cpa:hasIntent       "Provide a single integrative view of how the ECMO modules cohere around the Risk relational hub and the Hazard / HazardousEvent (D&S) coupling; usable as the landing diagram and as a lightweight backbone import for downstream knowledge-graph consumers."@en ;
+    cpa:scenarios       "Scenario A — retrieve, for a HazardousEvent, its realised Risk, the four determinants, the affected population, the impacts, and the measures the response references. Scenario B — align a Pathogen prioritised by HERA with the BiologicalHazard frame and the InfectiousDisease that may manifest in HumanImpact."@en ;
+    cpa:coversRequirements "CQ-RISK-P01; CQ-HAZ-P01/P04; CQ-EXV-P01/P04; CQ-CAP-P06; CQ-DIS-P01/P05; CQ-RES-P02/P03; CQ-INS-P01/P02; CQ-PH-P01/P03; CQ-HERA-P01; CQ-X-P01/P03/P07; coherence guards CQ-X-N01/N02."@en ;
+    cpa:hasConsequences "The two coverage gaps this pattern once patched locally are now closed in the modules themselves (2026-08-06): HumanImpact→HealthCondition is ph:manifestsCondition (ecmo-ph.ttl); Instrument→MeasureType is response:hasMeasureType (ecmo-response.ttl), parallel to response:involvesMeasureType. This file no longer introduces any term; it only reuses them."@en ;
+    cpa:hasComponent    ecmocore:foundation, ecmocore:hazard, ecmocore:risk, ecmocore:disaster,
+                        ecmocore:expvuln, ecmocore:capacity, ecmocore:governance, ecmocore:response,
+                        ecmocore:instruments, ecmocore:impact,
+                        <http://data.europa.eu/h8v/ecmo/public-health>,
+                        <http://data.europa.eu/h8v/ecmo/bio>,
+                        <http://data.europa.eu/h8v/ecmo/hera> ;
+    cpa:relatedCPs      <http://www.ontologydesignpatterns.org/cp/owl/descriptionandsituation.owl> ,
+                        <http://www.ontologydesignpatterns.org/cp/owl/objectrole.owl> ,
+                        <http://www.ontologydesignpatterns.org/cp/owl/participation.owl> ;
+    cpa:extractedFrom   <http://data.europa.eu/h8v/ecmo/core> ;
+    owl:versionInfo "0.3.1" ;
+    skos:prefLabel      "ECMO-CORE Main Pattern (semantic summary)"@en .
+
+# =============================================================================
+# EXTRACTED BACKBONE — verbatim subset of ECMO axioms, reusing the ECMO IRIs.
+# Nothing below introduces a new term; every triple also occurs in a module.
+# =============================================================================
+
+# --- Anchor classes: D&S / DOLCE typing (from the modules) -------------------
+hazard:Hazard          rdfs:subClassOf dul:Description, dul:ContextualDisposition .
+hazard:HazardousEvent  rdfs:subClassOf dul:Event, dul:Situation .
+hazard:BiologicalHazard rdfs:subClassOf hazard:Hazard .
+risk:Risk              rdfs:subClassOf dul:Description, dul:ContextualDisposition .
+expvuln:Exposure       rdfs:subClassOf dul:Situation .
+expvuln:Vulnerability  rdfs:subClassOf dul:Situation .
+expvuln:ExposedElement rdfs:subClassOf dul:Object .
+capacity:Capacity      rdfs:subClassOf dul:Entity .
+impact:Impact          rdfs:subClassOf dul:Event, dul:Situation .
+impact:HumanImpact     rdfs:subClassOf impact:Impact .
+response:Intervention  rdfs:subClassOf dul:Action, dul:Situation .
+response:MeasureType   rdfs:subClassOf dul:SocialObject .
+governance:RiskAssessment rdfs:subClassOf foundation:Assessment .
+ph:Pathogen            rdfs:subClassOf bio:BiologicalEntity .
+ph:InfectiousDisease   rdfs:subClassOf ph:InfectiousDiseaseOrSyndrome .
+ph:HealthCondition     rdfs:subClassOf dul:Situation .
+
+# --- Backbone relations: domain -> range (from the modules) ------------------
+# Risk = f(Hazard, Exposure, Vulnerability, Capacity)
+risk:hasHazardDeterminant        rdfs:domain risk:Risk ; rdfs:range hazard:Hazard .
+risk:hasExposureDeterminant      rdfs:domain risk:Risk ; rdfs:range expvuln:Exposure .
+risk:hasVulnerabilityDeterminant rdfs:domain risk:Risk ; rdfs:range expvuln:Vulnerability .
+risk:hasCapacityDeterminant      rdfs:domain risk:Risk ; rdfs:range capacity:Capacity .
+# Hazard / HazardousEvent D&S coupling
+hazard:isManifestationOf         rdfs:domain hazard:HazardousEvent ; rdfs:range hazard:Hazard .
+disaster:realizesRisk            rdfs:domain hazard:HazardousEvent ; rdfs:range risk:Risk .
+hazard:hasImpact                 rdfs:domain hazard:HazardousEvent ; rdfs:range impact:Impact .
+hazard:affectsPopulation         rdfs:domain hazard:HazardousEvent ; rdfs:range disaster:AffectedPopulation .
+# Exposure / Vulnerability wiring
+expvuln:exposesElement           rdfs:domain expvuln:Exposure ; rdfs:range expvuln:ExposedElement .
+expvuln:isExposedTo              rdfs:domain expvuln:Exposure ; rdfs:range hazard:Hazard .
+# Response / Instruments
+response:involvesCapacity        rdfs:domain response:Intervention ; rdfs:range capacity:Capacity .
+response:involvesMeasureType     rdfs:domain response:Intervention ; rdfs:range response:MeasureType .
+response:hasMeasureType          rdfs:domain instruments:Measure   ; rdfs:range response:MeasureType .   # relocated to ecmo-response.ttl
+instruments:forecastsEvent       rdfs:domain instruments:EarlyWarningSystem .   # range: hazard:Hazard ⊔ hazard:HazardousEvent
+# Public health
+ph:hasCausativeAgent             rdfs:domain ph:DiseaseOrSyndrome .   # range: ph:Pathogen ⊔ ph:Toxin ⊔ ph:Pest ⊔ hazard:ChemicalHazard ⊔ hazard:EnvironmentalHazard
+ph:manifestsCondition            rdfs:domain impact:HumanImpact ; rdfs:range ph:HealthCondition .   # relocated to ecmo-ph.ttl
+
+# -----------------------------------------------------------------------------
+# Pattern-level unit tests (subset of the CQ catalogue most relevant here).
+# Full catalogue: ecmo-cqs.ttl
+# -----------------------------------------------------------------------------
+
+<http://data.europa.eu/h8v/ecmo/main-pattern> cpa:hasUnitTest """
+# CQ-X-P01 — full risk configuration for a community + most recent assessment
+SELECT ?community ?r ?h ?e ?v ?c ?report WHERE {
+  ?r risk:hasHazardDeterminant ?h ; risk:hasExposureDeterminant ?e ;
+     risk:hasVulnerabilityDeterminant ?v ; risk:hasCapacityDeterminant ?c .
+  ?e expvuln:exposesElement ?community .
+  OPTIONAL { ?report situation:isReportFor ?event . ?event disaster:realizesRisk ?r . }
+}""", """
+# CQ-X-P03 — Signal -> Validation -> HazardousEvent -> Disaster classification
+SELECT ?signal ?event ?impact ?onset ?scale WHERE {
+  ?signal a situation:Signal ; situation:pertainsToEvent ?event .
+  ?val situation:validatesSignal ?signal ; situation:confirmsEvent ?event .
+  ?event a disaster:Disaster ; hazard:hasImpact ?impact .
+  ?impact impact:hasImpactIntensity impact:VeryHighImpactIntensity .
+  OPTIONAL { ?event disaster:hasOnsetType ?onset . }
+  OPTIONAL { ?event disaster:hasScaleType ?scale . }
+}""", """
+# CQ-X-P07 — Pathogen × HERA × BiologicalHazard × Public-health governance
+SELECT ?p ?prio ?bh ?event ?gov WHERE {
+  ?p a ph:Pathogen ; hera:hasPriorityLevel ?prio .
+  ?bh a hazard:BiologicalHazard . ?event hazard:isManifestationOf ?bh .
+  ?disease ph:hasCausativeAgent ?p .
+  OPTIONAL { ?gov a governance:RiskGovernance ; governance:analysesHazard ?bh . }
+}""", """
+# Pattern-specific — InfectiousDisease as a HumanImpact via ph:manifestsCondition
+SELECT ?event ?hi ?disease ?pathogen WHERE {
+  ?event hazard:hasImpact ?hi . ?hi a impact:HumanImpact ; ph:manifestsCondition ?disease .
+  ?disease a ph:InfectiousDisease ; ph:hasCausativeAgent ?pathogen .
+}""", """
+# Pattern-specific — Match Response.involvesMeasureType with Instrument.hasMeasureType
+SELECT ?response ?measureType ?instrument WHERE {
+  ?response response:involvesMeasureType ?measureType .
+  ?instrument response:hasMeasureType ?measureType .
+}""" .
+
+# -----------------------------------------------------------------------------
+# Cross-references to the CQ catalogue
+# -----------------------------------------------------------------------------
+
+<http://data.europa.eu/h8v/ecmo/main-pattern> cpa:relatedCPs
+    cqs:CQ-RISK-P01, cqs:CQ-HAZ-P01, cqs:CQ-HAZ-P04, cqs:CQ-EXV-P01, cqs:CQ-EXV-P04,
+    cqs:CQ-CAP-P06, cqs:CQ-DIS-P01, cqs:CQ-DIS-P05, cqs:CQ-RES-P02, cqs:CQ-RES-P03,
+    cqs:CQ-INS-P01, cqs:CQ-INS-P02, cqs:CQ-PH-P01, cqs:CQ-PH-P03, cqs:CQ-HERA-P01,
+    cqs:CQ-X-P01, cqs:CQ-X-P03, cqs:CQ-X-P07,
+    # Coherence guards
+    cqs:CQ-X-N01, cqs:CQ-X-N02 .

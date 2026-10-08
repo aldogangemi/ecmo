@@ -1,0 +1,414 @@
+@prefix cpa:         <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix d0:          <http://www.ontologydesignpatterns.org/ont/d0.owl#> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix dul:         <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore:    <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation:  <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix fschema:     <https://w3id.org/framester/schema/> .
+@prefix hazard:      <http://data.europa.eu/h8v/ecmo/core/hazard/> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix ph:          <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix prov:        <http://www.w3.org/ns/prov#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix response:    <http://data.europa.eu/h8v/ecmo/core/response/> .
+@prefix risk:        <http://data.europa.eu/h8v/ecmo/core/risk/> .
+@prefix situation:   <http://data.europa.eu/h8v/ecmo/core/situation/> .
+@prefix skos:        <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================================
+# ECMO Situation Module — 0.3.1
+#
+# Occurrence anchor, occurrence-feature classification, supersession chain,
+# hub adjudication layer (from the 0.3.0 Data-Level Coreference Pattern
+# EVENT-COREF-1, <http://data.europa.eu/h8v/ecmo/coref>), plus the
+# occurrence-related infrastructure formerly in ecmo-foundation: eventuality
+# relations (contributesTo, includesEvent, isEvolvedAs), Signal /
+# EventValidation, and occurrence-anchored RiskAssessmentReport.
+#
+# Layering: situation imports foundation only. Frame modules (hazard,
+# governance, response, ...) import situation. hazard:HazardousEvent is
+# declared a subclass of situation:Occurrence in the hazard module.
+# =============================================================================
+
+<http://data.europa.eu/h8v/ecmo/core/situation> a owl:Ontology ;
+    owl:imports <http://data.europa.eu/h8v/ecmo/core/foundation> ;
+    owl:versionInfo "0.3.1" ;
+    owl:versionIRI <http://data.europa.eu/h8v/ecmo/core/situation/0.3.1> ;
+    owl:priorVersion <http://data.europa.eu/h8v/ecmo/coref> ;
+    dcterms:issued "2026-09-28"^^xsd:date ;
+    dcterms:creator    "ECMO design team" ;
+    dcterms:license    <https://creativecommons.org/licenses/by/4.0/> ;
+    cpa:hasIntent      "Provide an ABox-level coreference mechanism that (i) anchors heterogeneous agency-local Situations to a single world-occurrence without owl:sameAs collapsing them, (ii) reifies hazard classification as a time-stamped Situation that can be refined or corrected over time, (iii) supports adjudicated consolidation via an optional Hub layer with reified conflict reports and merge policies."@en ;
+    cpa:scenarios      "Scenario A — Hantavirus outbreak aboard MV Hondius. A first signal on 02 May 2026 reports an outbreak of unknown etiology. On 03-06 May the etiology is narrowed to Hantaviridae. On 08 May PCR identifies Andes hantavirus. Six EU systems (EWS, ARGUS, ECRC/UCPM, ATHINA, IPCR, ECMP) emit local records at different points. All concern one Occurrence; the classification refines monotonically through the Hantaviridae taxonomy."@en ;
+    cpa:coversRequirements "CQ-COREF-P01..P09 plus CQ-COREF-N01..N04 (in this file). Pattern-specific Q+ exercise occurrence-anchored queries, time-bounded classification retrieval, supersession-chain walking and Hub aggregation. Q- guard against owl:sameAs leakage, against simultaneous conflicting classifications at the same epistemic instant, against refinedBy violating fschema:subsumedUnder, and against orphan local situations."@en ;
+    cpa:hasConsequences "Local situations remain typed under their agency-local class (via the alignment module). The Occurrence anchor adds one shared reference. Classification evolution is captured without retraction. Conflicts are reified, not erased. owl:sameAs is never asserted between local situations: coreference is computed via shared concernsOccurrence target. Backward compatibility: existing situation:Signal/EventValidation/RiskAssessmentReport scaffolding is reused without change."@en ;
+    cpa:hasComponent   ecmocore:foundation, ecmocore:hazard, ecmocore:disaster,
+                       ecmocore:governance,
+                       <http://data.europa.eu/h8v/ecmo/public-health> ;
+    cpa:relatedCPs     <http://www.ontologydesignpatterns.org/cp/owl/descriptionandsituation.owl> ,
+                       <http://www.w3.org/ns/prov#> ,
+                       <http://www.w3.org/2006/time#> ;
+    cpa:extractedFrom  <http://data.europa.eu/h8v/ecmo/core> ;
+    rdfs:comment "Situation module of the ECMO ontology network: the minimal-commitment Occurrence anchor shared by all agency records, reified time-stamped occurrence classifications with refinement/correction supersession, signal and validation infrastructure, occurrence-anchored assessment reports, and the optional hub layer for adjudicated consolidation."@en ;
+    skos:prefLabel "ECMO-CORE Situation Module"@en .
+
+# --- Occurrence anchor and classification (from coref 0.1; the block comment below is the original pattern header, kept for provenance) ---
+# =============================================================================
+# ECMO Data-Level Coreference Pattern (EVENT-COREF-1) — v0.1
+#
+# Solves the problem the schema-alignment layer cannot solve on its own:
+# multiple local Situations (typed via the agency-local ontologies and their
+# alignment to ECMO) all concern one world-occurrence, with classifications
+# that evolve over time and per-agency claims that may refine or correct
+# each other. Defines the Occurrence anchor, reified Classification
+# Situations, the supersession chain with refinement vs correction
+# sub-properties, and the optional Hub layer (HubAssessment + MergePolicy +
+# ConflictReport) for adjudicated consolidation.
+#
+# Schema-level cross-stakeholder Description integration is OUT OF SCOPE: it
+# is handled by the alignment module (each agency-local class -> ECMO core
+# class). This pattern operates on the ABox layer only.
+# =============================================================================
+
+
+# =============================================================================
+# Vocabulary to deal with occurrence classification
+# =============================================================================
+
+situation:Occurrence a owl:Class ;
+    rdfs:subClassOf d0:Eventuality ;
+    rdfs:comment "A minimal-commitment world-occurrence anchor. Carries only the spatio-temporal kernel that all agencies are presumed to agree on (location, opening time, and optionally a closing time). Does not carry hazard typing, severity, impacts or any claim that is subject to inter-agency disagreement. All such claims live on linked Situations (HazardManifestationClassification, StakeholderSituation, etc.) via concernsOccurrence."@en ;
+    skos:prefLabel "Occurrence (world-event anchor)"@en .
+    
+situation:EventOrSituation a owl:Class ;
+    owl:equivalentClass situation:Occurrence ;
+    rdfs:comment "An alias class to occurrences" ;
+    skos:prefLabel "event or situation (world-event anchor)"@en .
+     
+    
+situation:OccurrenceFeatureClassification a owl:Class ;
+    rdfs:subClassOf dul:Situation ;
+    rdfs:comment "A reified occurrence typing assertion holding over a specified epistemic interval. classifiesAs points to the Hazard individual asserted to hold; foundation:hasTemporalValidity bounds when the assertion was held to be true; supersededBy chains to the next classification (with refinedBy / correctedBy sub-properties capturing whether the change is taxonomic refinement or belief retraction)."@en ;
+    skos:prefLabel "Occurrence Feature Classification"@en .
+
+
+situation:StakeholderAssessment a owl:Class ;
+    rdfs:subClassOf foundation:Assessment ;
+    rdfs:comment "A per-stakeholder assessment used at the Hub layer when adjudicated consolidation is performed. Optional at the data layer: agency-local class typings already function as descriptions via the alignment module. Reach for StakeholderAssessment only when explicit merge bookkeeping is needed."@en ;
+    skos:prefLabel "Stakeholder Assessment"@en .
+
+situation:HubAssessment a owl:Class ;
+    rdfs:subClassOf situation:StakeholderAssessment ;
+    rdfs:comment "A consolidated, hub-curated description that aggregates a set of StakeholderAssessments (or directly a set of local situations) and applies an explicit MergePolicy to resolve conflicts among them. The HubAssessment is itself attributable (prov:wasAttributedTo) and revisable."@en ;
+    skos:prefLabel "Hub Assessment"@en .
+
+situation:MergePolicy a owl:Class ;
+    rdfs:subClassOf dul:Description ;
+    rdfs:comment "A reified policy describing how a HubAssessment selected among conflicting per-agency claims (e.g. latest-wins, highest-confidence-wins, manual-adjudication, source-priority-list). Policies are first-class so the merge is auditable and replaceable."@en ;
+    skos:prefLabel "Merge Policy"@en .
+
+situation:ConflictReport a owl:Class ;
+    rdfs:subClassOf dul:InformationObject ;
+    rdfs:comment "A reified record of disagreement between two or more Situations or Descriptions about the same property of the same Occurrence. Carries the conflicting parties, the property in dispute, the values asserted by each, and (optionally) the resolution chosen by an enclosing HubAssessment."@en ;
+    skos:prefLabel "Conflict Report"@en .
+
+situation:concernsOccurrence a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:domain [ owl:unionOf ( dul:Situation dul:InformationObject ) ] ;
+    rdfs:range situation:Occurrence ;
+    rdfs:subPropertyOf dul:isSettingFor ;
+    rdfs:comment "Links any local Situation (an agency record, a classification situation, an impact situation, etc.) to the single Occurrence it is founded on. Functional on the local-situation side: each local situation is founded on at most one Occurrence. Coreference between two local situations is *computed* via shared target, never asserted via owl:sameAs."@en ;
+    skos:prefLabel "concerns occurrence"@en .
+
+situation:isConcernedBy a owl:ObjectProperty ;
+    owl:inverseOf situation:concernsOccurrence ;
+    skos:prefLabel "is concerned by"@en .
+    
+situation:hasFeatureClassification a owl:ObjectProperty ;
+    rdfs:domain situation:Occurrence ;
+    rdfs:range situation:OccurrenceFeatureClassification ;
+    rdfs:subPropertyOf situation:isConcernedBy ;
+    rdfs:comment "Links an occurrence or some attribute/quality of the occurrence to a classification context."@en ;
+    skos:prefLabel "has feature classification"@en .
+    
+
+situation:accordingTo a owl:ObjectProperty ;
+    rdfs:domain situation:OccurrenceFeatureClassification ;
+    rdfs:range dul:Agent ;
+    rdfs:subPropertyOf dul:isSettingFor ;
+    rdfs:comment "Links a classification situation to the agent (agency, system, expert) on whose authority the classification is asserted. Distinct from prov:wasAttributedTo on the record: accordingTo names the epistemic source of the claim, not the producer of the document."@en ;
+    skos:prefLabel "according to"@en .
+
+situation:sameOccurrenceAs a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range dul:Situation ;
+    rdfs:subPropertyOf prov:alternateOf ;
+    rdfs:comment "Soft equivalence: two records concern the same world-occurrence under different perspectives. Symmetric, NOT transitive at the OWL level (we deliberately exclude transitivity so that mis-asserted pairs do not propagate through the graph). Weaker than owl:sameAs: does not entail identity of properties. Use when an Occurrence anchor cannot yet be minted; otherwise prefer pointing both situations at a shared situation:Occurrence."@en ;
+    skos:editorialNote "Do NOT declare owl:TransitiveProperty on sameOccurrenceAs. A SHACL shape can flag long sameOccurrenceAs chains as candidates for promotion to a shared concernsOccurrence target."@en ;
+    skos:prefLabel "same occurrence as"@en .
+
+situation:supersededBy a owl:ObjectProperty, owl:AsymmetricProperty, owl:IrreflexiveProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range dul:Situation ;
+    rdfs:subPropertyOf prov:wasInvalidatedBy ;
+    rdfs:comment "The later situation invalidates the earlier within the epistemic chain concerning the same Occurrence. Asymmetric and irreflexive. NOT declared transitive at OWL level: we want the audit chain to be walkable step by step; transitive closure is left to query time (SPARQL property paths)."@en ;
+    skos:prefLabel "superseded by"@en .
+
+situation:supersedes a owl:ObjectProperty ;
+    owl:inverseOf situation:supersededBy ;
+    skos:prefLabel "supersedes"@en .
+
+situation:refinedBy a owl:ObjectProperty ;
+    rdfs:subPropertyOf situation:supersededBy ;
+    rdfs:comment "Taxonomic refinement: the later classification is a more specific Hazard individual subsumed (via fschema:subsumedUnder) under the earlier one. Entailments from the earlier classification REMAIN valid; the later simply tightens the bound. Example: a classification asserting ph:Hantaviridae is refinedBy a classification asserting ph:AndesVirus."@en ;
+    skos:editorialNote "A SHACL shape (see situation:RefinementMustBeTaxonomicShape below) enforces that the later classifiesAs target is fschema:subsumedUnder the earlier."@en ;
+    skos:prefLabel "refined by"@en .
+
+situation:refines a owl:ObjectProperty ;
+    owl:inverseOf situation:refinedBy ;
+    rdfs:subPropertyOf situation:supersedes ;
+    skos:prefLabel "refines"@en .
+
+situation:correctedBy a owl:ObjectProperty ;
+    rdfs:subPropertyOf situation:supersededBy ;
+    rdfs:comment "Belief retraction: the later classification replaces a wrong earlier one. Entailments from the earlier classification are NOT preserved; downstream reasoners should treat the earlier as retracted (but it remains in the graph for audit). Example: a classification asserting ph:LassaVirus is correctedBy a classification asserting ph:AndesVirus."@en ;
+    skos:prefLabel "corrected by"@en .
+
+situation:corrects a owl:ObjectProperty ;
+    owl:inverseOf situation:correctedBy ;
+    rdfs:subPropertyOf situation:supersedes ;
+    skos:prefLabel "corrects"@en .
+
+situation:aggregatesAssessment a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:domain situation:HubAssessment ;
+    rdfs:range  [ owl:unionOf ( dul:Situation situation:StakeholderAssessment ) ] ;
+    rdfs:comment "From a HubAssessment to one of the StakeholderAssessments it consolidates. Transitive so a hierarchy of hubs (regional -> national -> EU-level) walks cleanly via property paths."@en ;
+    skos:prefLabel "aggregates assessment"@en .
+
+situation:appliesMergePolicy a owl:ObjectProperty ;
+    rdfs:domain situation:HubAssessment ;
+    rdfs:range  situation:MergePolicy ;
+    rdfs:comment "Links a HubAssessment to the MergePolicy that governed its consolidation choices. Multiple policies can be applied if the merge proceeded in stages."@en ;
+    skos:prefLabel "applies merge policy"@en .
+
+situation:hostsAssessment a owl:ObjectProperty ;
+    rdfs:domain situation:Occurrence ;
+    rdfs:range  situation:HubAssessment ;
+    rdfs:comment "Convenience reverse-direction shortcut from an Occurrence to the HubAssessment(s) currently maintaining a consolidated view of it."@en ;
+    skos:prefLabel "hosts assessment"@en .
+
+situation:conflictsWith a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range  dul:Situation ;
+    rdfs:comment "Symmetric: marks two co-occurrence-anchored situations as known to disagree on at least one property. The disagreement detail is reified by an associated ConflictReport via hasConflictReport."@en ;
+    skos:prefLabel "conflicts with"@en .
+
+situation:hasConflictReport a owl:ObjectProperty ;
+    rdfs:range situation:ConflictReport ;
+    rdfs:comment "From a Situation (or a HubAssessment) to a reified ConflictReport detailing a disagreement it is party to or has adjudicated."@en ;
+    skos:prefLabel "has conflict report"@en .
+
+situation:disputedProperty a owl:ObjectProperty ;
+    rdfs:domain situation:ConflictReport ;
+    rdfs:comment "Points to the (punned) property the parties to the conflict disagree about (e.g. hazard:isManifestationOf, hazard:hasSeverityLevel)."@en ;
+    skos:prefLabel "disputed property"@en .
+
+# --- Eventuality relations, Signal/EventValidation, RiskAssessmentReport (from foundation 0.3.0) ---
+
+situation:contributesTo a owl:ObjectProperty ;
+    rdfs:comment "Generic contribution relation between DRR activities and goals."@en ;
+    rdfs:domain d0:Eventuality ;
+    rdfs:range d0:Eventuality ;
+    rdfs:subPropertyOf dul:sameSettingAs ;
+    skos:prefLabel "contributes to"@en,
+        "contribuisce a"@it .
+
+situation:includesEvent a owl:ObjectProperty ;
+    skos:editorialNote "0.3.2: owl:TransitiveProperty removed. As a transitive subproperty of dul:includesEvent (⊑ dul:isSettingFor) it made dul:isSettingFor/hasSetting non-simple, putting DUL 4.2's Transition ⊑ isSettingFor ≥2 outside OWL 2 DL. Use the SPARQL property path situation:includesEvent+ for transitive closure."@en ;
+	rdfs:subPropertyOf dul:includesEvent ;
+    rdfs:comment "A mereological relation holding for eventualities (either events, event types, or situations)."@en ;
+    rdfs:domain d0:Eventuality ;
+    rdfs:range d0:Eventuality ;
+    skos:prefLabel "includes event"@en .
+
+situation:isEvolvedAs a owl:ObjectProperty ;
+    rdfs:comment "A causal relation holding for eventualities (either events, event types, or situations)."@en ;
+    rdfs:domain d0:Eventuality ;
+    rdfs:range d0:Eventuality ;
+    skos:prefLabel "is evolved as"@en .
+
+situation:hasReportDate a owl:DatatypeProperty ;
+    rdfs:comment "The date the risk assessment report was issued."@en ;
+    rdfs:domain situation:RiskAssessmentReport ;
+    rdfs:range xsd:date ;
+    skos:prefLabel "report date"@en .
+
+situation:confirmsEvent a owl:ObjectProperty ;
+    rdfs:comment "Indicates that an event validation confirms a hazardous event."@en ;
+    rdfs:domain situation:EventValidation ;
+    rdfs:range situation:Occurrence ;
+    owl:inverseOf situation:isConfirmedBy ;
+    skos:prefLabel "confirms event"@en .
+
+situation:generatesSignal a owl:ObjectProperty ;
+    rdfs:comment "Indicates that an observation source generates a signal."@en ;
+    rdfs:domain dul:InformationObject ;
+    rdfs:range situation:Signal ;
+    owl:inverseOf situation:isSignalFrom ;
+    skos:prefLabel "generates signal"@en .
+
+situation:hasConfidenceScore a owl:DatatypeProperty ;
+    rdfs:comment "Confidence score (0-1) for a signal."@en ;
+    rdfs:domain situation:Signal ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "has confidence score"@en .
+
+situation:hasRiskAssessmentReport a owl:ObjectProperty ;
+    rdfs:comment "Links a hazardous event to its risk assessment report."@en ;
+    rdfs:domain situation:Occurrence ;
+    rdfs:range situation:RiskAssessmentReport ;
+    owl:inverseOf situation:isReportFor ;
+    skos:prefLabel "has risk assessment report"@en .
+
+situation:hasSignal a owl:ObjectProperty ;
+    rdfs:comment "Indicates that a hazardous event has been signalled."@en ;
+    owl:inverseOf situation:pertainsToEvent ;
+    skos:prefLabel "has signal"@en .
+
+situation:isConfirmedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates that a hazardous event has been confirmed by a validation process."@en ;
+    owl:inverseOf situation:confirmsEvent ;
+    skos:prefLabel "is confirmed by"@en .
+
+situation:isRecommendedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the report recommending this measure type."@en ;
+    owl:inverseOf situation:recommendsMeasure ;
+    skos:prefLabel "is recommended by"@en .
+
+situation:isReportFor a owl:ObjectProperty ;
+    rdfs:comment "Indicates the hazardous event that a risk assessment report covers."@en ;
+    owl:inverseOf situation:hasRiskAssessmentReport ;
+    skos:prefLabel "is report for"@en .
+
+situation:isSignalFrom a owl:ObjectProperty ;
+    rdfs:comment "Indicates the observation source from which a signal originates."@en ;
+    owl:inverseOf situation:generatesSignal ;
+    skos:prefLabel "is signal from"@en .
+
+situation:isValidatedBy a owl:ObjectProperty ;
+    rdfs:comment "Indicates the validation process examining this signal."@en ;
+    owl:inverseOf situation:validatesSignal ;
+    skos:prefLabel "is validated by"@en .
+
+situation:pertainsToEvent a owl:ObjectProperty ;
+    rdfs:comment "Relates a Signal to the HazardousEvent it may indicate."@en ;
+    rdfs:domain situation:Signal ;
+    rdfs:range situation:Occurrence ;
+    owl:inverseOf situation:hasSignal ;
+    skos:prefLabel "pertains to event"@en .
+
+situation:recommendsMeasure a owl:ObjectProperty ;
+    rdfs:comment "A risk assessment report recommends a specific measure type."@en ;
+    rdfs:domain situation:RiskAssessmentReport ;
+    rdfs:range response:MeasureType ;
+    owl:inverseOf situation:isRecommendedBy ;
+    skos:prefLabel "recommends measure"@en .
+
+situation:EventValidation a owl:Class ;
+    rdfs:comment "The process of confirming the veracity and nature of a Signal to determine if it represents a real hazardous event."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty situation:validatesSignal ;
+            owl:someValuesFrom situation:Signal ],
+        dul:Process ;
+    skos:prefLabel "Ereignisvalidierung"@de,
+        "Event Validation"@en,
+        "Validacion de evento"@es,
+        "Validation d'evenement"@fr,
+        "Validazione dell'evento"@it,
+        "Validacao de evento"@pt .
+
+situation:validatesSignal a owl:ObjectProperty ;
+    rdfs:comment "Indicates that an event validation process examines a signal."@en ;
+    rdfs:domain situation:EventValidation ;
+    rdfs:range situation:Signal ;
+    owl:inverseOf situation:isValidatedBy ;
+    skos:prefLabel "validates signal"@en .
+
+situation:RiskAssessmentReport a owl:Class ;
+    rdfs:comment "A documented assessment of the risk posed by a hazardous event, including likelihood and impact analysis."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty risk:assessesRisk ;
+            owl:someValuesFrom risk:Risk ],
+        dul:InformationObject ;
+    skos:prefLabel "Risikobewertungsbericht"@de,
+        "Risk Assessment Report"@en,
+        "Informe de evaluacion de riesgos"@es,
+        "Rapport d'evaluation des risques"@fr,
+        "Rapporto di valutazione del rischio"@it,
+        "Relatorio de avaliacao de riscos"@pt .
+
+situation:Signal a owl:Class ;
+    rdfs:comment "An indication or anomaly detected in open-source data that may point to a potential public health event."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty situation:hasConfidenceScore ;
+            owl:someValuesFrom xsd:decimal ],
+        dul:InformationObject ;
+    skos:prefLabel "Signal"@de,
+        "Signal"@en,
+        "Senal"@es,
+        "Signal"@fr,
+        "Segnale"@it,
+        "Sinal"@pt .
+
+situation:classifiesAs a owl:ObjectProperty ;
+    rdfs:domain situation:OccurrenceFeatureClassification ;
+    rdfs:comment "Generic projection from a reified occurrence-feature classification to the (punned) individual asserted to classify the occurrence feature during the classification's temporal validity. Feature-specific sub-properties fix the range: hazard:hasManifestedHazard (range hazard:Hazard) is the hazard specialisation. No range is declared here because classification targets are punned individuals of Description-side classes (Hazard is dul:Description + dul:ContextualDisposition), not dul:Concept."@en ;
+    skos:prefLabel "classifies as"@en .
+
+
+# --- rdfs:isDefinedBy (generated 0.3.1; one line per class/property/individual declared in this module) ---
+<http://data.europa.eu/h8v/ecmo/core/situation/ConflictReport> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/EventOrSituation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/EventValidation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/HubAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/MergePolicy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/Occurrence> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/OccurrenceFeatureClassification> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/RiskAssessmentReport> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/Signal> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/StakeholderAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/accordingTo> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/aggregatesAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/appliesMergePolicy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/classifiesAs> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/concernsOccurrence> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/confirmsEvent> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/conflictsWith> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/contributesTo> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/correctedBy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/corrects> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/disputedProperty> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/generatesSignal> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/hasConfidenceScore> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/hasConflictReport> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/hasFeatureClassification> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/hasReportDate> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/hasRiskAssessmentReport> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/hasSignal> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/hostsAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/includesEvent> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/isConcernedBy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/isConfirmedBy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/isEvolvedAs> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/isRecommendedBy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/isReportFor> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/isSignalFrom> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/isValidatedBy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/pertainsToEvent> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/recommendsMeasure> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/refinedBy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/refines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/sameOccurrenceAs> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/supersededBy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/supersedes> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .
+<http://data.europa.eu/h8v/ecmo/core/situation/validatesSignal> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/situation> .

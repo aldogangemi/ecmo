@@ -1,0 +1,49 @@
+@prefix phsm:       <http://data.europa.eu/h8v/ecmo/phsm/> .
+@prefix expvuln:    <http://data.europa.eu/h8v/ecmo/core/expvuln/> .
+@prefix governance: <http://data.europa.eu/h8v/ecmo/core/governance/> .
+@prefix ex:         <http://data.europa.eu/h8v/ecmo/phsm/example/> .
+@prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+
+# A+ : positive fixture ABox. Should CONFORM to ecmo-phsm-shapes.ttl and make the
+# positive competency questions return non-empty. Demonstrates the RMD record view.
+
+# Biological / communicable-disease NPI (WHO PHSM branch)
+ex:IT_MaskMandate_PublicTransport_2020 a phsm:PublicHealthMeasure, phsm:NonPharmaceuticalMeasure ;
+    rdfs:label "Mandatory mask mandate on domestic public transport, Italy, 2020"@en ;
+    phsm:hasMeasureCategory phsm:Masks ;
+    phsm:hasLegalStatus phsm:Mandatory ;
+    phsm:hasImplementationScope phsm:FullImplementation ;
+    phsm:hasGeographicScope phsm:NationalScope ;
+    phsm:targetsPopulationGroup expvuln:ElderlyPopulation ;
+    phsm:appliesInSetting phsm:DomesticPublicTransport ;
+    phsm:appliesInJurisdiction ex:Italy .
+
+# Environmental / chemical protective action (JRC env/chem branch, cross-maps to core)
+# Carries the JRC EWRS 'Measure details' layer: lifecycle status + start/end dates.
+ex:FR_EvacuationOrder_ChemicalRelease_2024 a phsm:PublicHealthMeasure ;
+    rdfs:label "Evacuation order after an industrial chemical release, Lyon metropolis, 2024"@en ;
+    phsm:hasMeasureCategory phsm:EvacuationOrder ;
+    phsm:hasLegalStatus phsm:Mandatory ;
+    phsm:hasImplementationScope phsm:FullImplementation ;
+    phsm:hasGeographicScope phsm:LocalScope ;
+    phsm:appliesInSetting phsm:OutdoorPublicSpace ;
+    phsm:appliesInJurisdiction ex:LyonMetropolis ;
+    phsm:hasLifecycleStatus phsm:Completed ;
+    phsm:hasStartDate "2024-06-14"^^xsd:date ;
+    phsm:hasEndDate "2024-06-16"^^xsd:date .
+
+# Contact tracing (multi-provenance category: WHO 1.3 + JRC-bio bio.CDM.2)
+ex:DE_ContactTracing_2020 a phsm:PublicHealthMeasure, phsm:NonPharmaceuticalMeasure ;
+    rdfs:label "National digital contact tracing, Germany, 2020"@en ;
+    phsm:hasMeasureCategory phsm:ContactTracing ;
+    phsm:hasLegalStatus phsm:Voluntary ;
+    phsm:hasImplementationScope phsm:PartialImplementation ;
+    phsm:hasGeographicScope phsm:NationalScope ;
+    phsm:appliesInSetting phsm:UnspecifiedSetting ;
+    phsm:appliesInJurisdiction ex:Germany .
+
+ex:Italy a governance:Jurisdiction ; rdfs:label "Italy"@en .
+ex:Germany a governance:Jurisdiction ; rdfs:label "Germany"@en .
+ex:LyonMetropolis a governance:Jurisdiction ; rdfs:label "Métropole de Lyon"@en .

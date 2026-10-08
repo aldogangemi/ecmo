@@ -1,0 +1,2474 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix ecmocore: <http://data.europa.eu/h8v/ecmo/core/> .
+@prefix foundation: <http://data.europa.eu/h8v/ecmo/core/foundation/> .
+@prefix hera: <http://data.europa.eu/h8v/ecmo/hera/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix ph: <http://data.europa.eu/h8v/ecmo/public-health/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://data.europa.eu/h8v/ecmo/hera> a owl:Ontology ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:source <https://health.ec.europa.eu/document/download/147630e7-835a-40cc-96d4-e0dc44707396_en?filename=hera_wd-health-treat-prioritisation-assessment_en.pdf> ;
+    rdfs:comment "HERA Health Threat Prioritisation Assessment concepts for medical countermeasures. Integrated into ECMO-CORE v2.0 from the Comprehensive 2025 Health Threat Prioritisation Assessment. Defines pathogen risk assessment criteria (prioritisation, PHEIC potential, cross-border threat, transmissibility, population immunity, pathogenicity) and MCM availability scales (vaccines, therapeutics)."@en ;
+    owl:imports ecmocore:foundation,
+        <http://data.europa.eu/h8v/ecmo/public-health> ;
+    owl:versionInfo "0.3.1" ;
+    skos:prefLabel "ECMO HERA Risk Prioritisation Module"@en .
+
+hera:Available_Therapeutics a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfTherapeuticsScale ;
+    foundation:orderInScale 2 ;
+    skos:prefLabel "Available"@en .
+
+hera:Available_Vaccines a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfVaccinesScale ;
+    foundation:orderInScale 2 ;
+    skos:prefLabel "Available"@en .
+
+hera:Limited_Therapeutics a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfTherapeuticsScale ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Limited"@en .
+
+hera:Limited_Vaccines a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfVaccinesScale ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Limited"@en .
+
+hera:Medium_PHEICPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PHEICPotentialScale ;
+    foundation:orderInScale 2 ;
+    skos:prefLabel "Medium PHEIC Potential"@en .
+
+hera:NotAvailable_Therapeutics a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfTherapeuticsScale ;
+    foundation:orderInScale 0 ;
+    skos:prefLabel "Not Available"@en .
+
+hera:NotAvailable_Vaccines a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:AvailabilityOfVaccinesScale ;
+    foundation:orderInScale 0 ;
+    skos:prefLabel "Not Available"@en .
+
+hera:hasAvailabilityOfTherapeutics a owl:ObjectProperty ;
+    rdfs:comment "Indicates the availability of therapeutics for a given pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:AvailabilityOfTherapeutics ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has availability of therapeutics"@en .
+
+hera:hasAvailabilityOfVaccines a owl:ObjectProperty ;
+    rdfs:comment "Indicates the availability of vaccines for a given pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:AvailabilityOfVaccines ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has availability of vaccines"@en .
+
+hera:hasEUCrossBorderThreatPotential a owl:ObjectProperty ;
+    rdfs:comment "Indicates the EU cross-border threat potential of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:EUCrossBorderThreatPotential ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has EU cross-border threat potential"@en .
+
+hera:hasPHEICPotential a owl:ObjectProperty ;
+    rdfs:comment "Indicates the PHEIC potential of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:PHEICPotential ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has PHEIC potential"@en .
+
+hera:hasPathogenicity a owl:ObjectProperty ;
+    rdfs:comment "Indicates the pathogenicity level of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:Pathogenicity ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has pathogenicity"@en .
+
+hera:hasPopulationImmunity a owl:ObjectProperty ;
+    rdfs:comment "Indicates the population immunity level against a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:PopulationImmunity ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has population immunity"@en .
+
+hera:hasPriorityLevel a owl:ObjectProperty ;
+    rdfs:comment "Indicates the prioritisation level value assigned to a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:propertyChainAxiom ( hera:hasPriority foundation:hasLevel ) ;
+    skos:prefLabel "has priority level"@en .
+
+hera:hasTransmissibilityAssessment a owl:ObjectProperty ;
+    rdfs:comment "Indicates the transmissibility assessment of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:Transmissibility ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has transmissibility assessment"@en .
+
+hera:AvailabilityOfTherapeutics a owl:Class ;
+    rdfs:comment "The assessment of the availability of therapeutics for a pathogen."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:TherapeuticAvailabilityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Availability of Therapeutics"@en .
+
+hera:AvailabilityOfVaccines a owl:Class ;
+    rdfs:comment "The assessment of the availability of vaccines for a pathogen."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:VaccineAvailabilityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Availability of Vaccines"@en .
+
+hera:CrossBorderCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "EU Cross-Border Threat"@en .
+
+hera:EUCrossBorderThreatPotential a owl:Class ;
+    rdfs:comment "The assessment of the potential of a pathogen to pose a cross-border health threat within the EU."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:CrossBorderCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "EU Cross-Border Threat Potential"@en .
+
+hera:High_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:VeryHigh_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 5 ;
+    foundation:previousValue hera:ModerateToHigh_EUCrossBorderThreatPotential ;
+    skos:prefLabel "High EU Cross-Border Threat Potential"@en .
+
+hera:High_PHEICPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PHEICPotentialScale ;
+    foundation:orderInScale 3 ;
+    skos:prefLabel "High PHEIC Potential"@en .
+
+hera:ImmunityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Population Immunity"@en .
+
+hera:Low_PHEICPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PHEICPotentialScale ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low PHEIC Potential"@en .
+
+hera:PHEICCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "PHEIC Potential"@en .
+
+hera:PHEICPotential a owl:Class ;
+    rdfs:comment "The assessment of the potential of a pathogen to provoke events declared a Public Health Emergency of International Concern (PHEIC)."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:PHEICCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "PHEIC Potential"@en .
+
+hera:PathogenPrioritisation a owl:Class ;
+    rdfs:comment "The overall prioritisation level of a pathogen according to HERA."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:PrioritisationCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Pathogen Prioritisation"@en .
+
+hera:Pathogenicity a owl:Class ;
+    rdfs:comment "The assessment of the pathogenicity of a pathogen."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:PathogenicityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Pathogenicity"@en .
+
+hera:PathogenicityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Pathogenicity"@en .
+
+hera:PopulationImmunity a owl:Class ;
+    rdfs:comment "The assessment of the population immunity against a pathogen."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:ImmunityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Population Immunity"@en .
+
+hera:PrioritisationCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Overall Prioritisation"@en .
+
+hera:TherapeuticAvailabilityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Therapeutic Availability"@en .
+
+hera:Transmissibility a owl:Class ;
+    rdfs:comment "The qualitative assessment of the transmissibility of a pathogen according to the HERA framework."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue hera:TransmissibilityCriterion ;
+            owl:onProperty hera:hasAssessmentCriterion ],
+        hera:PathogenRiskAssessment ;
+    skos:prefLabel "Transmissibility Assessment"@en .
+
+hera:TransmissibilityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Transmissibility"@en .
+
+hera:VaccineAvailabilityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Vaccine Availability"@en .
+
+hera:hasPriority a owl:ObjectProperty ;
+    rdfs:comment "Indicates the overall prioritisation level of a pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:PathogenPrioritisation ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has priority"@en .
+
+hera:HighToVeryHigh_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:VeryHigh_Pathogenicity ;
+    foundation:orderInScale 7 ;
+    foundation:previousValue hera:High_Pathogenicity ;
+    skos:prefLabel "High to Very High Pathogenicity"@en .
+
+hera:High_PathogenPrioritisation a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenPrioritisationScale ;
+    foundation:nextValue hera:Highest_PathogenPrioritisation ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:Moderate_PathogenPrioritisation ;
+    skos:prefLabel "High Priority"@en .
+
+hera:High_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:HighToVeryHigh_Pathogenicity ;
+    foundation:orderInScale 6 ;
+    foundation:previousValue hera:ModerateToHigh_Pathogenicity ;
+    skos:prefLabel "High Pathogenicity"@en .
+
+hera:High_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:orderInScale 5 ;
+    foundation:previousValue hera:Moderate_PopulationImmunity ;
+    skos:prefLabel "High Population Immunity"@en .
+
+hera:High_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:orderInScale 5 ;
+    foundation:previousValue hera:Moderate_Transmissibility ;
+    skos:prefLabel "High Transmissibility"@en .
+
+hera:Highest_PathogenPrioritisation a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenPrioritisationScale ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:High_PathogenPrioritisation ;
+    skos:prefLabel "Highest Priority"@en .
+
+hera:LowToModerate_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:Moderate_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_EUCrossBorderThreatPotential ;
+    skos:prefLabel "Low to Moderate EU Cross-Border Threat Potential"@en .
+
+hera:LowToModerate_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:ModerateToLow_Pathogenicity ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_Pathogenicity ;
+    skos:prefLabel "Low to Moderate Pathogenicity"@en .
+
+hera:LowToModerate_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:nextValue hera:ModerateToLow_PopulationImmunity ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_PopulationImmunity ;
+    skos:prefLabel "Low to Moderate Population Immunity"@en .
+
+hera:LowToModerate_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:nextValue hera:ModerateToLow_Transmissibility ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_Transmissibility ;
+    skos:prefLabel "Low to Moderate Transmissibility"@en .
+
+hera:Low_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:LowToModerate_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low EU Cross-Border Threat Potential"@en .
+
+hera:Low_PathogenPrioritisation a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenPrioritisationScale ;
+    foundation:nextValue hera:Moderate_PathogenPrioritisation ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low Priority"@en .
+
+hera:Low_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:LowToModerate_Pathogenicity ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low Pathogenicity"@en .
+
+hera:Low_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:nextValue hera:LowToModerate_PopulationImmunity ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low Population Immunity"@en .
+
+hera:Low_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:nextValue hera:LowToModerate_Transmissibility ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low Transmissibility"@en .
+
+hera:ModerateToHigh_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:High_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:Moderate_EUCrossBorderThreatPotential ;
+    skos:prefLabel "Moderate to High EU Cross-Border Threat Potential"@en .
+
+hera:ModerateToHigh_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:High_Pathogenicity ;
+    foundation:orderInScale 5 ;
+    foundation:previousValue hera:Moderate_Pathogenicity ;
+    skos:prefLabel "Moderate to High Pathogenicity"@en .
+
+hera:ModerateToLow_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:Moderate_Pathogenicity ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:LowToModerate_Pathogenicity ;
+    skos:prefLabel "Moderate to Low Pathogenicity"@en .
+
+hera:ModerateToLow_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:nextValue hera:Moderate_PopulationImmunity ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:LowToModerate_PopulationImmunity ;
+    skos:prefLabel "Moderate to Low Population Immunity"@en .
+
+hera:ModerateToLow_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:nextValue hera:Moderate_Transmissibility ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:LowToModerate_Transmissibility ;
+    skos:prefLabel "Moderate to Low Transmissibility"@en .
+
+hera:Moderate_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:nextValue hera:ModerateToHigh_EUCrossBorderThreatPotential ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:LowToModerate_EUCrossBorderThreatPotential ;
+    skos:prefLabel "Moderate EU Cross-Border Threat Potential"@en .
+
+hera:Moderate_PathogenPrioritisation a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenPrioritisationScale ;
+    foundation:nextValue hera:High_PathogenPrioritisation ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_PathogenPrioritisation ;
+    skos:prefLabel "Moderate Priority"@en .
+
+hera:Moderate_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:nextValue hera:ModerateToHigh_Pathogenicity ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:ModerateToLow_Pathogenicity ;
+    skos:prefLabel "Moderate Pathogenicity"@en .
+
+hera:Moderate_PopulationImmunity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PopulationImmunityScale ;
+    foundation:nextValue hera:High_PopulationImmunity ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:ModerateToLow_PopulationImmunity ;
+    skos:prefLabel "Moderate Population Immunity"@en .
+
+hera:Moderate_Transmissibility a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TransmissibilityScale ;
+    foundation:nextValue hera:High_Transmissibility ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:ModerateToLow_Transmissibility ;
+    skos:prefLabel "Moderate Transmissibility"@en .
+
+hera:VeryHigh_EUCrossBorderThreatPotential a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:EUCrossBorderThreatPotentialScale ;
+    foundation:orderInScale 6 ;
+    rdfs:comment "The pathogen has a very high potential to pose a cross-border health threat within the EU."@en ;
+    skos:prefLabel "Very High EU Cross-Border Threat Potential"@en .
+
+hera:VeryHigh_Pathogenicity a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PathogenicityScale ;
+    foundation:orderInScale 8 ;
+    foundation:previousValue hera:HighToVeryHigh_Pathogenicity ;
+    skos:prefLabel "Very High Pathogenicity"@en .
+
+hera:AvailabilityOfTherapeuticsScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    skos:prefLabel "Availability of Therapeutics Scale"@en .
+
+hera:AvailabilityOfVaccinesScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    skos:prefLabel "Availability of Vaccines Scale"@en .
+
+hera:PHEICPotentialScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:High_PHEICPotential ;
+    foundation:hasMinValue hera:Low_PHEICPotential ;
+    skos:prefLabel "PHEIC Potential Scale"@en .
+
+hera:PathogenPrioritisationScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:Highest_PathogenPrioritisation ;
+    foundation:hasMinValue hera:Low_PathogenPrioritisation ;
+    skos:prefLabel "Pathogen Prioritisation Scale"@en .
+
+hera:PopulationImmunityScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:High_PopulationImmunity ;
+    foundation:hasMinValue hera:Low_PopulationImmunity ;
+    skos:prefLabel "Population Immunity Scale"@en .
+
+hera:TransmissibilityScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:High_Transmissibility ;
+    foundation:hasMinValue hera:Low_Transmissibility ;
+    skos:prefLabel "Transmissibility Scale"@en .
+
+hera:EUCrossBorderThreatPotentialScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:VeryHigh_EUCrossBorderThreatPotential ;
+    foundation:hasMinValue hera:Low_EUCrossBorderThreatPotential ;
+    skos:prefLabel "EU Cross-Border Threat Potential Scale"@en .
+
+hera:PathogenRiskAssessmentLevelScale a owl:Class ;
+    rdfs:comment "A scale used to categorise pathogen risk levels."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:hasValue foundation:PathogenRiskDomain ;
+            owl:onProperty foundation:hasAssessmentDomain ],
+        foundation:QualitativeAssessmentLevelScale ;
+    skos:prefLabel "Pathogen Risk Assessment Level Scale"@en .
+
+hera:PathogenicityScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:VeryHigh_Pathogenicity ;
+    foundation:hasMinValue hera:Low_Pathogenicity ;
+    skos:prefLabel "Pathogenicity Scale"@en .
+
+hera:hasAssessmentCriterion a owl:ObjectProperty ;
+    rdfs:comment "Indicates the specific criterion assessed in a pathogen risk assessment."@en ;
+    rdfs:domain hera:PathogenRiskAssessment ;
+    rdfs:range hera:AssessmentCriterion ;
+    skos:prefLabel "has assessment criterion"@en .
+
+hera:hasPathogenRisk a owl:ObjectProperty ;
+    rdfs:comment "Indicates the risk assessment associated with a given pathogen."@en ;
+    rdfs:domain ph:Pathogen ;
+    rdfs:range hera:PathogenRiskAssessment ;
+    rdfs:subPropertyOf foundation:hasQualitativeAssessment ;
+    skos:prefLabel "has pathogen risk assessment"@en .
+
+hera:AssessmentCriterion a owl:Class ;
+    rdfs:comment "The criterion assessed in a pathogen risk assessment."@en ;
+    rdfs:subClassOf dul:Concept ;
+    skos:prefLabel "Assessment Criterion"@en .
+
+hera:PathogenRiskAssessment a owl:Class ;
+    rdfs:comment "The risk assessment of a pathogen, according to a specific criterion in the HERA prioritisation framework."@en ;
+    rdfs:subClassOf foundation:QualitativeAssessment ;
+    skos:prefLabel "Pathogen Risk Assessment"@en .
+
+hera:FungalPriorityGroupAssessment a owl:Class ;
+    rdfs:comment "A pathogen prioritisation assessment expressed using the WHO 2022 fungal priority groups Critical, High and Medium."@en ;
+    rdfs:subClassOf
+        [
+            a owl:Restriction ;
+            owl:onProperty hera:hasAssessmentCriterion ;
+            owl:hasValue hera:FungalPriorityGroupCriterion
+        ] ;
+    skos:prefLabel "Fungal Priority Group Assessment"@en .
+	
+hera:FungalPriorityGroupCriterion
+    a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    rdfs:comment "The criterion used to assign a fungal pathogen to a WHO fungal priority group."@en ;
+    skos:prefLabel "Fungal Priority Group"@en .
+
+hera:hasFungalPriorityGroupAssessment a owl:ObjectProperty ;
+    rdfs:comment "Links a fungal pathogen to its WHO 2022 fungal priority group assessment."@en ;
+    rdfs:domain ph:PathogenicFungus ;
+    rdfs:range hera:FungalPriorityGroupAssessment ;
+    skos:prefLabel "has fungal priority group assessment"@en .
+
+hera:hasFungalPriorityGroupLevel a owl:ObjectProperty ;
+    rdfs:comment "Indicates the fungal priority group level assigned through a fungal priority group assessment."@en ;
+    rdfs:domain ph:PathogenicFungus ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:propertyChainAxiom (
+        hera:hasFungalPriorityGroupAssessment
+        foundation:hasLevel
+    ) ;
+    rdfs:subPropertyOf hera:hasPriorityLevel ;
+    skos:prefLabel "has fungal priority group level"@en .
+	
+hera:FungalPriorityGroupScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:Critical_FungalPriorityGroup ;
+    foundation:hasMinValue hera:Medium_FungalPriorityGroup ;
+    skos:prefLabel "Fungal Priority Group Scale"@en .
+
+hera:Medium_FungalPriorityGroup a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:FungalPriorityGroupScale ;
+    foundation:nextValue hera:High_FungalPriorityGroup ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Medium Fungal Priority Group"@en .
+
+hera:High_FungalPriorityGroup a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:FungalPriorityGroupScale ;
+    foundation:nextValue hera:Critical_FungalPriorityGroup ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Medium_FungalPriorityGroup ;
+    skos:prefLabel "High Fungal Priority Group"@en .
+
+hera:Critical_FungalPriorityGroup a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:FungalPriorityGroupScale ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:High_FungalPriorityGroup ;
+    skos:prefLabel "Critical Fungal Priority Group"@en .
+
+hera:BacterialPriorityGroupAssessment a owl:Class ;
+    rdfs:comment "A pathogen prioritisation assessment expressed using the WHO bacterial priority groups Critical, High and Medium."@en ;
+    rdfs:subClassOf
+        [
+            a owl:Restriction ;
+            owl:onProperty hera:hasAssessmentCriterion ;
+            owl:hasValue hera:BacterialPriorityGroupCriterion
+        ] ;
+    skos:prefLabel "Bacterial Priority Group Assessment"@en .
+	
+hera:BacterialPriorityGroupCriterion
+    a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    rdfs:comment "The criterion used to assign a bacterial pathogen to a WHO bacterial priority group."@en ;
+    skos:prefLabel "Bacterial Priority Group"@en .
+
+hera:hasBacterialPriorityGroupAssessment a owl:ObjectProperty ;
+    rdfs:comment "Links a bacterial pathogen to its WHO bacterial priority group assessment."@en ;
+    rdfs:domain ph:PathogenicBacterium ;
+    rdfs:range hera:BacterialPriorityGroupAssessment ;
+    skos:prefLabel "has bacterial priority group assessment"@en .
+
+hera:hasBacterialPriorityGroupLevel a owl:ObjectProperty ;
+    rdfs:comment "Indicates the bacterial priority group level assigned through a bacterial priority group assessment."@en ;
+    rdfs:domain ph:PathogenicBacterium ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:propertyChainAxiom (
+        hera:hasBacterialPriorityGroupAssessment
+        foundation:hasLevel
+    ) ;
+    rdfs:subPropertyOf hera:hasPriorityLevel ;
+    skos:prefLabel "has bacterial priority group level"@en .
+	
+hera:BacterialPriorityGroupScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:Critical_BacterialPriorityGroup ;
+    foundation:hasMinValue hera:Medium_BacterialPriorityGroup ;
+    skos:prefLabel "Bacterial Priority Group Scale"@en .
+
+hera:Medium_BacterialPriorityGroup a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:BacterialPriorityGroupScale ;
+    foundation:nextValue hera:High_BacterialPriorityGroup ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Medium Bacterial Priority Group"@en .
+
+hera:High_BacterialPriorityGroup a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:BacterialPriorityGroupScale ;
+    foundation:nextValue hera:Critical_BacterialPriorityGroup ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Medium_BacterialPriorityGroup ;
+    skos:prefLabel "High Bacterial Priority Group"@en .
+
+hera:Critical_BacterialPriorityGroup a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:BacterialPriorityGroupScale ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:High_BacterialPriorityGroup ;
+    skos:prefLabel "Critical Bacterial Priority Group"@en .
+
+hera:TreatabilityAssessment a owl:Class ;
+    rdfs:comment "An assessment of the current level of treatability of a resistant bacterial pathogen category."@en ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:hasValue hera:TreatabilityCriterion ;
+        owl:onProperty hera:hasAssessmentCriterion
+    ], hera:PathogenRiskAssessment ;
+    skos:prefLabel "Treatability Assessment"@en .
+
+hera:PotentialFutureTreatmentAvailabilityAssessment a owl:Class ;
+    rdfs:comment "An assessment of the likelihood that treatment may become available in the future for a resistant bacterial pathogen category."@en ;
+    rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:hasValue hera:PotentialFutureTreatmentAvailabilityCriterion ;
+        owl:onProperty hera:hasAssessmentCriterion
+    ], hera:PathogenRiskAssessment ;
+    skos:prefLabel "Potential Future Treatment Availability Assessment"@en .
+	
+hera:hasTreatability a owl:ObjectProperty ;
+    rdfs:comment "Links a pathogen to its treatability assessment."@en ;
+    rdfs:domain ph:PathogenicBacterium ;
+    rdfs:range hera:TreatabilityAssessment ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has treatability assessment"@en .
+
+hera:hasPotentialFutureTreatmentAvailability a owl:ObjectProperty ;
+    rdfs:comment "Links a pathogen to its potential future treatment availability assessment."@en ;
+    rdfs:domain ph:PathogenicBacterium ;
+    rdfs:range hera:PotentialFutureTreatmentAvailabilityAssessment ;
+    rdfs:subPropertyOf hera:hasPathogenRisk ;
+    skos:prefLabel "has potential future treatment availability assessment"@en .
+
+hera:hasTreatabilityLevel a owl:ObjectProperty ;
+    rdfs:comment "Indicates the treatability level assigned through a treatability assessment."@en ;
+    rdfs:domain ph:PathogenicBacterium ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:propertyChainAxiom ( hera:hasTreatability foundation:hasLevel ) ;
+    skos:prefLabel "has treatability level"@en .
+
+hera:hasPotentialFutureTreatmentAvailabilityLevel a owl:ObjectProperty ;
+    rdfs:comment "Indicates the future treatment availability level assigned through a future treatment availability assessment."@en ;
+    rdfs:domain ph:PathogenicBacterium ;
+    rdfs:range foundation:QualitativeAssessmentLevelValue ;
+    owl:propertyChainAxiom ( hera:hasPotentialFutureTreatmentAvailability foundation:hasLevel ) ;
+    skos:prefLabel "has potential future treatment availability level"@en .
+	
+hera:TreatabilityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Level of Treatability"@en .
+
+hera:PotentialFutureTreatmentAvailabilityCriterion a hera:AssessmentCriterion,
+        owl:NamedIndividual ;
+    skos:prefLabel "Likelihood of Potential Future Treatment Availability"@en .
+	
+hera:TreatabilityScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:High_Treatability ;
+    foundation:hasMinValue hera:Low_Treatability ;
+    skos:prefLabel "Treatability Scale"@en .
+
+hera:Low_Treatability a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TreatabilityScale ;
+    foundation:nextValue hera:MediumLow_Treatability ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Low Treatability"@en .
+
+hera:MediumLow_Treatability a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TreatabilityScale ;
+    foundation:nextValue hera:Medium_Treatability ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Low_Treatability ;
+    skos:prefLabel "Medium–Low Treatability"@en .
+
+hera:Medium_Treatability a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TreatabilityScale ;
+    foundation:nextValue hera:HighMedium_Treatability ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:MediumLow_Treatability ;
+    skos:prefLabel "Medium Treatability"@en .
+
+hera:HighMedium_Treatability a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TreatabilityScale ;
+    foundation:nextValue hera:High_Treatability ;
+    foundation:orderInScale 4 ;
+    foundation:previousValue hera:Medium_Treatability ;
+    skos:prefLabel "High–Medium Treatability"@en .
+
+hera:High_Treatability a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:TreatabilityScale ;
+    foundation:orderInScale 5 ;
+    foundation:previousValue hera:HighMedium_Treatability ;
+    skos:prefLabel "High Treatability"@en .
+
+hera:PotentialFutureTreatmentAvailabilityScale a hera:PathogenRiskAssessmentLevelScale,
+        owl:NamedIndividual ;
+    foundation:hasMaxValue hera:Likely_FutureTreatmentAvailability ;
+    foundation:hasMinValue hera:Unlikely_FutureTreatmentAvailability ;
+    skos:prefLabel "Potential Future Treatment Availability Scale"@en .
+
+hera:Unlikely_FutureTreatmentAvailability a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PotentialFutureTreatmentAvailabilityScale ;
+    foundation:nextValue hera:Possible_FutureTreatmentAvailability ;
+    foundation:orderInScale 1 ;
+    skos:prefLabel "Unlikely Future Treatment Availability"@en .
+
+hera:Possible_FutureTreatmentAvailability a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PotentialFutureTreatmentAvailabilityScale ;
+    foundation:nextValue hera:Likely_FutureTreatmentAvailability ;
+    foundation:orderInScale 2 ;
+    foundation:previousValue hera:Unlikely_FutureTreatmentAvailability ;
+    skos:prefLabel "Possible Future Treatment Availability"@en .
+
+hera:Likely_FutureTreatmentAvailability a foundation:QualitativeAssessmentLevelValue,
+        owl:NamedIndividual ;
+    foundation:inScale hera:PotentialFutureTreatmentAvailabilityScale ;
+    foundation:orderInScale 3 ;
+    foundation:previousValue hera:Possible_FutureTreatmentAvailability ;
+    skos:prefLabel "Likely Future Treatment Availability"@en .
+	
+
+
+
+
+
+# --- 0.3.1: HERA assessment individuals relocated from ecmo-ph.ttl (home namespace) ---
+
+hera:AmpicillinResistantHaemophilusInfluenzae_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Ampicillin-resistant Haemophilus influenzae in the medium group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Ampicillin-resistant Haemophilus influenzae bacterial priority group assessment"@en .
+
+hera:AmpicillinResistantHaemophilusInfluenzae_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Ampicillin-resistant Haemophilus influenzae as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Ampicillin-resistant Haemophilus influenzae potential future treatment availability assessment"@en .
+
+hera:AmpicillinResistantHaemophilusInfluenzae_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:HighMedium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Ampicillin-resistant Haemophilus influenzae as high–medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Ampicillin-resistant Haemophilus influenzae treatability assessment"@en .
+
+hera:Arenaviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "ribavirin used for Lassa; no broadly approved antivirals for other arenaviruses"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Arenaviridae Availability of therapeutics assessment"@en .
+
+hera:Arenaviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:NotAvailable_Vaccines ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Arenaviridae Availability of vaccines assessment"@en .
+
+hera:Arenaviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "Lassa: imported cases show risk via travel, lab exposure; requires high-level containment readiness"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Arenaviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Arenaviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Arenaviridae PHEIC potential assessment"@en .
+
+hera:Arenaviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Pathogenicity ;
+    foundation:hasJustification "Lassa fever, haemorrhagic fevers"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Arenaviridae Pathogenicity assessment"@en .
+
+hera:Arenaviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_PopulationImmunity ;
+    foundation:hasJustification "sporadic regional exposure; no widespread immunity or vaccines in general population"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Arenaviridae Population Immunity assessment"@en .
+
+hera:Arenaviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Arenaviridae prioritisation assessment"@en .
+
+hera:Arenaviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:LowToModerate_Transmissibility ;
+    foundation:hasJustification "mostly via rodent contact or contaminated materials; human-to-human transmission possible in outbreak"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Arenaviridae Transmissibility assessment"@en .
+
+hera:AspergillusFumigatus_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Aspergillus fumigatus in the critical priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Aspergillus fumigatus WHO fungal priority group assessment"@en .
+
+hera:CandidaAlbicans_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Candida albicans in the critical priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Candida albicans WHO fungal priority group assessment"@en .
+
+hera:CandidaAuris_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Candida auris in the critical priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Candida auris WHO fungal priority group assessment"@en .
+
+hera:CandidaParapsilosis_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Candida parapsilosis in the high priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Candida parapsilosis WHO fungal priority group assessment"@en .
+
+hera:CandidaTropicalis_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Candida tropicalis in the high priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Candida tropicalis WHO fungal priority group assessment"@en .
+
+hera:CarbapenemResistantAcinetobacterBaumannii_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Carbapenem-resistant Acinetobacter baumannii in the critical group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Carbapenem-resistant Acinetobacter baumannii bacterial priority group assessment"@en .
+
+hera:CarbapenemResistantAcinetobacterBaumannii_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Carbapenem-resistant Acinetobacter baumannii as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Carbapenem-resistant Acinetobacter baumannii potential future treatment availability assessment"@en .
+
+hera:CarbapenemResistantAcinetobacterBaumannii_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Carbapenem-resistant Acinetobacter baumannii as low treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Carbapenem-resistant Acinetobacter baumannii treatability assessment"@en .
+
+hera:CarbapenemResistantEnterobacterSpp_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “carbapenem-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Carbapenem-resistant Enterobacter spp. bacterial priority group assessment"@en .
+
+hera:CarbapenemResistantEnterobacterSpp_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Possible_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Carbapenem-resistant Enterobacter spp. as possible."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Carbapenem-resistant Enterobacter spp. potential future treatment availability assessment"@en .
+
+hera:CarbapenemResistantEnterobacterSpp_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:MediumLow_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Carbapenem-resistant Enterobacter spp. as medium–low treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Carbapenem-resistant Enterobacter spp. treatability assessment"@en .
+
+hera:CarbapenemResistantEscherichiaColi_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “carbapenem-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Carbapenem-resistant Escherichia coli bacterial priority group assessment"@en .
+
+hera:CarbapenemResistantEscherichiaColi_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Possible_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Carbapenem-resistant Escherichia coli as possible."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Carbapenem-resistant Escherichia coli potential future treatment availability assessment"@en .
+
+hera:CarbapenemResistantEscherichiaColi_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:MediumLow_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Carbapenem-resistant Escherichia coli as medium–low treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Carbapenem-resistant Escherichia coli treatability assessment"@en .
+
+hera:CarbapenemResistantKlebsiellaPneumoniae_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “carbapenem-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Carbapenem-resistant Klebsiella pneumoniae bacterial priority group assessment"@en .
+
+hera:CarbapenemResistantKlebsiellaPneumoniae_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Carbapenem-resistant Klebsiella pneumoniae as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Carbapenem-resistant Klebsiella pneumoniae potential future treatment availability assessment"@en .
+
+hera:CarbapenemResistantKlebsiellaPneumoniae_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:MediumLow_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Carbapenem-resistant Klebsiella pneumoniae as medium–low treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Carbapenem-resistant Klebsiella pneumoniae treatability assessment"@en .
+
+hera:CarbapenemResistantPseudomonasAeruginosa_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Carbapenem-resistant Pseudomonas aeruginosa in the high group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Carbapenem-resistant Pseudomonas aeruginosa bacterial priority group assessment"@en .
+
+hera:CarbapenemResistantPseudomonasAeruginosa_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Carbapenem-resistant Pseudomonas aeruginosa as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Carbapenem-resistant Pseudomonas aeruginosa potential future treatment availability assessment"@en .
+
+hera:CarbapenemResistantPseudomonasAeruginosa_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:MediumLow_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Carbapenem-resistant Pseudomonas aeruginosa as medium–low treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Carbapenem-resistant Pseudomonas aeruginosa treatability assessment"@en .
+
+hera:Coccidioides_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Coccidioides spp. in the medium priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Coccidioides spp. WHO fungal priority group assessment"@en .
+
+hera:Coronaviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Available_Therapeutics ;
+    foundation:hasJustification "e.g. Paxlovid, remdesivir; no broad-spectrum coronavirus antiviral yet available"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Coronaviridae Availability of therapeutics assessment"@en .
+
+hera:Coronaviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Available_Vaccines ;
+    foundation:hasJustification "updated vaccines widely deployed; no universal coronavirus vaccine yet"@en ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Coronaviridae Availability of vaccines assessment"@en .
+
+hera:Coronaviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:VeryHigh_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "highly transmissible, novel strains, airborne; epi- and pandemic emergence"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Coronaviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Coronaviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Coronaviridae PHEIC potential assessment"@en .
+
+hera:Coronaviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:ModerateToHigh_Pathogenicity ;
+    foundation:hasJustification "SARS, MERS, COVID-19"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Coronaviridae Pathogenicity assessment"@en .
+
+hera:Coronaviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_PopulationImmunity ;
+    foundation:hasJustification "broad prior exposure, but waning immunity and variant escape reduce protection"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Coronaviridae Population Immunity assessment"@en .
+
+hera:Coronaviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Highest_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Coronaviridae prioritisation assessment"@en .
+
+hera:Coronaviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Transmissibility ;
+    foundation:hasJustification "airborne"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Coronaviridae Transmissibility assessment"@en .
+
+hera:CryptococcusGattii_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Cryptococcus gattii in the medium priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Cryptococcus gattii WHO fungal priority group assessment"@en .
+
+hera:CryptococcusNeoformans_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Cryptococcus neoformans in the critical priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Cryptococcus neoformans WHO fungal priority group assessment"@en .
+
+hera:EumycetomaCausativeAgents_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Eumycetoma causative agents in the high priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Eumycetoma causative agents WHO fungal priority group assessment"@en .
+
+hera:Filoviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "Monoclonals for Ebola, no broad-spectrum treatments; supportive care"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Filoviridae Availability of therapeutics assessment"@en .
+
+hera:Filoviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Vaccines ;
+    foundation:hasJustification "Ebola vaccines authorised with limited deployment; no vaccines for other strains, no panfilovirus vaccine"@en ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Filoviridae Availability of vaccines assessment"@en .
+
+hera:Filoviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "importation risk through travel and lab exposure; high fatality risk and potential for severe outbreaks"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Filoviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Filoviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Filoviridae PHEIC potential assessment"@en .
+
+hera:Filoviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:HighToVeryHigh_Pathogenicity ;
+    foundation:hasJustification "depending on strain"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Filoviridae Pathogenicity assessment"@en .
+
+hera:Filoviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_PopulationImmunity ;
+    foundation:hasJustification "sporadic outbreaks, limited exposure"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Filoviridae Population Immunity assessment"@en .
+
+hera:Filoviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Highest_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Filoviridae prioritisation assessment"@en .
+
+hera:Filoviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_Transmissibility ;
+    foundation:hasJustification "contact with bodily fluids"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Filoviridae Transmissibility assessment"@en .
+
+hera:Flaviviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "antivirals in trials, supportive care"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Flaviviridae Availability of therapeutics assessment"@en .
+
+hera:Flaviviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Available_Vaccines ;
+    foundation:hasJustification "Yellow Fever vaccines, Qdenga and Dengvaxia for Dengue; TBEV vaccine used in endemic EU regions"@en ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Flaviviridae Availability of vaccines assessment"@en .
+
+hera:Flaviviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "vector-borne with expanding range; climate and travel increase risk of EU-wide transmission"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Flaviviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Flaviviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Flaviviridae PHEIC potential assessment"@en .
+
+hera:Flaviviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:ModerateToHigh_Pathogenicity ;
+    foundation:hasJustification "Dengue, Yellow Fever, Zika"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Flaviviridae Pathogenicity assessment"@en .
+
+hera:Flaviviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_PopulationImmunity ;
+    foundation:hasJustification "partial and serotype-specific immunity depending on virus; vaccine-induced immunity for some flaviviruses"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Flaviviridae Population Immunity assessment"@en .
+
+hera:Flaviviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Highest_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Flaviviridae prioritisation assessment"@en .
+
+hera:Flaviviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_Transmissibility ;
+    foundation:hasJustification "vector-borne: primarily mosquito- and tick-borne, with rare non-vector transmission depending on the viru"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Flaviviridae Transmissibility assessment"@en .
+
+hera:FluoroquinoloneResistantNeisseriaGonorrhoeae_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the high group from the combined WHO 2024 figure category “third-generation cephalosporin-resistant and/or fluoroquinolone-resistant Neisseria gonorrhoeae”; the resistance profiles are listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Fluoroquinolone-resistant Neisseria gonorrhoeae bacterial priority group assessment"@en .
+
+hera:FluoroquinoloneResistantNeisseriaGonorrhoeae_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Fluoroquinolone-resistant Neisseria gonorrhoeae as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Fluoroquinolone-resistant Neisseria gonorrhoeae potential future treatment availability assessment"@en .
+
+hera:FluoroquinoloneResistantNeisseriaGonorrhoeae_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Fluoroquinolone-resistant Neisseria gonorrhoeae as medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Fluoroquinolone-resistant Neisseria gonorrhoeae treatability assessment"@en .
+
+hera:FluoroquinoloneResistantNontyphoidalSalmonella_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Fluoroquinolone-resistant non-typhoidal Salmonella in the high group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Fluoroquinolone-resistant non-typhoidal Salmonella bacterial priority group assessment"@en .
+
+hera:FluoroquinoloneResistantNontyphoidalSalmonella_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Possible_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Fluoroquinolone-resistant non-typhoidal Salmonella as possible."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Fluoroquinolone-resistant non-typhoidal Salmonella potential future treatment availability assessment"@en .
+
+hera:FluoroquinoloneResistantNontyphoidalSalmonella_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:HighMedium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Fluoroquinolone-resistant non-typhoidal Salmonella as high–medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Fluoroquinolone-resistant non-typhoidal Salmonella treatability assessment"@en .
+
+hera:FluoroquinoloneResistantSalmonellaTyphi_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Fluoroquinolone-resistant Salmonella Typhi in the high group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Fluoroquinolone-resistant Salmonella Typhi bacterial priority group assessment"@en .
+
+hera:FluoroquinoloneResistantSalmonellaTyphi_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Fluoroquinolone-resistant Salmonella Typhi as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Fluoroquinolone-resistant Salmonella Typhi potential future treatment availability assessment"@en .
+
+hera:FluoroquinoloneResistantSalmonellaTyphi_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:MediumLow_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Fluoroquinolone-resistant Salmonella Typhi as medium–low treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Fluoroquinolone-resistant Salmonella Typhi treatability assessment"@en .
+
+hera:FluoroquinoloneResistantShigellaSpp_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Fluoroquinolone-resistant Shigella spp. in the high group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Fluoroquinolone-resistant Shigella spp. bacterial priority group assessment"@en .
+
+hera:FluoroquinoloneResistantShigellaSpp_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Fluoroquinolone-resistant Shigella spp. as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Fluoroquinolone-resistant Shigella spp. potential future treatment availability assessment"@en .
+
+hera:FluoroquinoloneResistantShigellaSpp_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:HighMedium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Fluoroquinolone-resistant Shigella spp. as high–medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Fluoroquinolone-resistant Shigella spp. treatability assessment"@en .
+
+hera:Fusarium_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Fusarium spp. in the high priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Fusarium spp. WHO fungal priority group assessment"@en .
+
+hera:Hantaviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "supportive care; no approved antivirals"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Hantaviridae Availability of therapeutics assessment"@en .
+
+hera:Hantaviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:NotAvailable_Vaccines ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Hantaviridae Availability of vaccines assessment"@en .
+
+hera:Hantaviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "endemic in rural EU; potential outbreaks require coordinated awareness and rodent exposure prevention"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Hantaviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Hantaviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Hantaviridae PHEIC potential assessment"@en .
+
+hera:Hantaviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:ModerateToHigh_Pathogenicity ;
+    foundation:hasJustification "Hantavirus Pulmonary Syndrome and Haemorrhagic Fever with Renal Syndrome"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Hantaviridae Pathogenicity assessment"@en .
+
+hera:Hantaviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_PopulationImmunity ;
+    foundation:hasJustification "sporadic outbreaks, limited natural immunity"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Hantaviridae Population Immunity assessment"@en .
+
+hera:Hantaviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Hantaviridae prioritisation assessment"@en .
+
+hera:Hantaviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_Transmissibility ;
+    foundation:hasJustification "transmitted through aerosolised rodent excreta; rare human-to-human spread"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Hantaviridae Transmissibility assessment"@en .
+
+hera:Histoplasma_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Histoplasma spp. in the high priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Histoplasma spp. WHO fungal priority group assessment"@en .
+
+hera:LomentosporaProlificans_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Lomentospora prolificans in the medium priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Lomentospora prolificans WHO fungal priority group assessment"@en .
+
+hera:MacrolideResistantGroupAStreptococci_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Macrolide-resistant Group A Streptococci in the medium group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Macrolide-resistant Group A Streptococci bacterial priority group assessment"@en .
+
+hera:MacrolideResistantGroupAStreptococci_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Possible_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Macrolide-resistant Group A Streptococci as possible."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Macrolide-resistant Group A Streptococci potential future treatment availability assessment"@en .
+
+hera:MacrolideResistantGroupAStreptococci_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Macrolide-resistant Group A Streptococci as high treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Macrolide-resistant Group A Streptococci treatability assessment"@en .
+
+hera:MacrolideResistantStreptococcusPneumoniae_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Macrolide-resistant Streptococcus pneumoniae in the medium group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Macrolide-resistant Streptococcus pneumoniae bacterial priority group assessment"@en .
+
+hera:MacrolideResistantStreptococcusPneumoniae_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Likely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Macrolide-resistant Streptococcus pneumoniae as likely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Macrolide-resistant Streptococcus pneumoniae potential future treatment availability assessment"@en .
+
+hera:MacrolideResistantStreptococcusPneumoniae_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Macrolide-resistant Streptococcus pneumoniae as high treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Macrolide-resistant Streptococcus pneumoniae treatability assessment"@en .
+
+hera:MethicillinResistantStaphylococcusAureus_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Methicillin-resistant Staphylococcus aureus in the high group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Methicillin-resistant Staphylococcus aureus bacterial priority group assessment"@en .
+
+hera:MethicillinResistantStaphylococcusAureus_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Methicillin-resistant Staphylococcus aureus as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Methicillin-resistant Staphylococcus aureus potential future treatment availability assessment"@en .
+
+hera:MethicillinResistantStaphylococcusAureus_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Methicillin-resistant Staphylococcus aureus as high treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Methicillin-resistant Staphylococcus aureus treatability assessment"@en .
+
+hera:Mucorales_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Mucorales in the high priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Mucorales WHO fungal priority group assessment"@en .
+
+hera:Nairoviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "supportive care; no approved antivirals (ribavirin use remains inconclusive, not broadly approved)"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Nairoviridae Availability of therapeutics assessment"@en .
+
+hera:Nairoviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:NotAvailable_Vaccines ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Nairoviridae Availability of vaccines assessment"@en .
+
+hera:Nairoviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "CCHF virus detected in southern Europe; travel-related cases and vector presence increasing"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Nairoviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Nairoviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Nairoviridae PHEIC potential assessment"@en .
+
+hera:Nairoviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Pathogenicity ;
+    foundation:hasJustification "Crimean-Congo Haemorrhagic Fever"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Nairoviridae Pathogenicity assessment"@en .
+
+hera:Nairoviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_PopulationImmunity ;
+    foundation:hasJustification "rare exposure and limited natural immunity"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Nairoviridae Population Immunity assessment"@en .
+
+hera:Nairoviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Nairoviridae prioritisation assessment"@en .
+
+hera:Nairoviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_Transmissibility ;
+    foundation:hasJustification "primarily tick-borne; limited transmission through direct contact with infected fluids"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Nairoviridae Transmissibility assessment"@en .
+
+hera:NakaseomycesGlabrata_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Nakaseomyces glabrata in the high priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Nakaseomyces glabrata WHO fungal priority group assessment"@en .
+
+hera:Orthomyxoviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Available_Therapeutics ;
+    foundation:hasJustification "Antivirals like oseltamivir, baloxavir"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Orthomyxoviridae Availability of therapeutics assessment"@en .
+
+hera:Orthomyxoviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Available_Vaccines ;
+    foundation:hasJustification "Seasonal flu vaccines, pandemic preparedness"@en ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Orthomyxoviridae Availability of vaccines assessment"@en .
+
+hera:Orthomyxoviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:VeryHigh_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "airborne, seasonal variants, antigenic shifts maintain pandemic risk"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Orthomyxoviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Orthomyxoviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Orthomyxoviridae PHEIC potential assessment"@en .
+
+hera:Orthomyxoviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Pathogenicity ;
+    foundation:hasJustification "Moderate (seasonal flu) to high (avian flu)"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Orthomyxoviridae Pathogenicity assessment"@en .
+
+hera:Orthomyxoviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:ModerateToHigh_PopulationImmunity ;
+    foundation:hasJustification "highly dependent on viral strain, with likely no pre-existing immunity to a novel/pandemic strain"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Orthomyxoviridae Population Immunity assessment"@en .
+
+hera:Orthomyxoviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Highest_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Orthomyxoviridae prioritisation assessment"@en .
+
+hera:Orthomyxoviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Transmissibility ;
+    foundation:hasJustification "airborne"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Orthomyxoviridae Transmissibility assessment"@en .
+
+hera:Paracoccidioides_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Paracoccidioides spp. in the medium priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Paracoccidioides spp. WHO fungal priority group assessment"@en .
+
+hera:Paramyxoviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "supportive care only; no approved antivirals for Nipah or Hendra"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Paramyxoviridae Availability of therapeutics assessment"@en .
+
+hera:Paramyxoviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:NotAvailable_Vaccines ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Paramyxoviridae Availability of vaccines assessment"@en .
+
+hera:Paramyxoviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "Nipah virus: zoonotic, high-fatality risk; potential for importation or spillover"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Paramyxoviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Paramyxoviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Paramyxoviridae PHEIC potential assessment"@en .
+
+hera:Paramyxoviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Pathogenicity ;
+    foundation:hasJustification "severe disease and high mortality in documented outbreaks"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Paramyxoviridae Pathogenicity assessment"@en .
+
+hera:Paramyxoviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_PopulationImmunity ;
+    foundation:hasJustification "Population immunity negligible for Nipah and Hendra; no existing exposure or immunisation"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Paramyxoviridae Population Immunity assessment"@en .
+
+hera:Paramyxoviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Paramyxoviridae prioritisation assessment"@en .
+
+hera:Paramyxoviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_Transmissibility ;
+    foundation:hasJustification "Nipah/Hendra require close contact, limited sustained human-to-human transmission"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Paramyxoviridae Transmissibility assessment"@en .
+
+hera:PenicillinResistantGroupBStreptococci_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Penicillin-resistant Group B Streptococci in the medium group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Penicillin-resistant Group B Streptococci bacterial priority group assessment"@en .
+
+hera:PenicillinResistantGroupBStreptococci_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Possible_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Penicillin-resistant Group B Streptococci as possible."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Penicillin-resistant Group B Streptococci potential future treatment availability assessment"@en .
+
+hera:PenicillinResistantGroupBStreptococci_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:HighMedium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Penicillin-resistant Group B Streptococci as high–medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Penicillin-resistant Group B Streptococci treatability assessment"@en .
+
+hera:Phenuiviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "supportive care; no approved antivirals"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Phenuiviridae Availability of therapeutics assessment"@en .
+
+hera:Phenuiviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:NotAvailable_Vaccines ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Phenuiviridae Availability of vaccines assessment"@en .
+
+hera:Phenuiviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "RVF importation risk; climate-driven vector spread raise potential for EU transmission"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Phenuiviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Phenuiviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Phenuiviridae PHEIC potential assessment"@en .
+
+hera:Phenuiviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_Pathogenicity ;
+    foundation:hasJustification "RVF, SFTS can cause haemorrhagic fever"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Phenuiviridae Pathogenicity assessment"@en .
+
+hera:Phenuiviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_PopulationImmunity ;
+    foundation:hasJustification "sporadic outbreaks, limited immunity in most populations"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Phenuiviridae Population Immunity assessment"@en .
+
+hera:Phenuiviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Phenuiviridae prioritisation assessment"@en .
+
+hera:Phenuiviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_Transmissibility ;
+    foundation:hasJustification "transmitted by mosquitoes or ticks; limited human-to-human transmission"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Phenuiviridae Transmissibility assessment"@en .
+
+hera:PichiaKudriavzevii_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Pichia kudriavzevii in the medium priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Pichia kudriavzevii WHO fungal priority group assessment"@en .
+
+hera:Picornaviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "supportive care; no broad-spectrum antivirals for enteroviruses"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Picornaviridae Availability of therapeutics assessment"@en .
+
+hera:Picornaviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Available_Vaccines ;
+    foundation:hasJustification "polio vaccines widely used; no vaccines for nonpolio enteroviruses"@en ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Picornaviridae Availability of vaccines assessment"@en .
+
+hera:Picornaviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:LowToModerate_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "poliovirus eradicated in EU; non-polio enteroviruses cause localised outbreaks, limited cross-border relevance"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Picornaviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Picornaviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Picornaviridae PHEIC potential assessment"@en .
+
+hera:Picornaviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:LowToModerate_Pathogenicity ;
+    foundation:hasJustification "mostly mild disease, with poliovirus and EV-D68 potentially causing severe neurological outcomes"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Picornaviridae Pathogenicity assessment"@en .
+
+hera:Picornaviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PopulationImmunity ;
+    foundation:hasJustification "broad exposure to many enteroviruses; polio mostly eradicated, non-polio enteroviruses still circulating widely"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Picornaviridae Population Immunity assessment"@en .
+
+hera:Picornaviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Picornaviridae prioritisation assessment"@en .
+
+hera:Picornaviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_Transmissibility ;
+    foundation:hasJustification "faecal-oral and respiratory routes; personto-person transmission documented"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Picornaviridae Transmissibility assessment"@en .
+
+hera:PneumocystisJirovecii_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Pneumocystis jirovecii in the medium priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Pneumocystis jirovecii WHO fungal priority group assessment"@en .
+
+hera:Poxviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Available_Therapeutics ;
+    foundation:hasJustification "Cidofovir, tecovirimat for smallpox and MPXV"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Poxviridae Availability of therapeutics assessment"@en .
+
+hera:Poxviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Available_Vaccines ;
+    foundation:hasJustification "Smallpox vaccine, MPXV vaccines"@en ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Poxviridae Availability of vaccines assessment"@en .
+
+hera:Poxviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:ModerateToHigh_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "MPXV outbreak, historical smallpox risk"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Poxviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Poxviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Poxviridae PHEIC potential assessment"@en .
+
+hera:Poxviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_Pathogenicity ;
+    foundation:hasJustification "Smallpox eradicated; mpox emerging with moderate morbidity and mortality"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Poxviridae Pathogenicity assessment"@en .
+
+hera:Poxviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:LowToModerate_PopulationImmunity ;
+    foundation:hasJustification "smallpox vaccine-derived immunity waning; mpox-specific immunity limited"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Poxviridae Population Immunity assessment"@en .
+
+hera:Poxviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Highest_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Poxviridae prioritisation assessment"@en .
+
+hera:Poxviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_Transmissibility ;
+    foundation:hasJustification "primarily direct contact; droplets possible in close, prolonged exposure"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Poxviridae Transmissibility assessment"@en .
+
+hera:RifampicinResistantMycobacteriumTuberculosis_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Rifampicin-resistant Mycobacterium tuberculosis in the critical group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Rifampicin-resistant Mycobacterium tuberculosis bacterial priority group assessment"@en .
+
+hera:RifampicinResistantMycobacteriumTuberculosis_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Rifampicin-resistant Mycobacterium tuberculosis as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Rifampicin-resistant Mycobacterium tuberculosis potential future treatment availability assessment"@en .
+
+hera:RifampicinResistantMycobacteriumTuberculosis_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Rifampicin-resistant Mycobacterium tuberculosis as low treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Rifampicin-resistant Mycobacterium tuberculosis treatability assessment"@en .
+
+hera:Scedosporium_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Scedosporium spp. in the medium priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Scedosporium spp. WHO fungal priority group assessment"@en .
+
+hera:TalaromycesMarneffei_FungalPriorityGroupAssessment a hera:FungalPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_FungalPriorityGroup ;
+    foundation:hasJustification "The WHO fungal priority pathogens list, 2022 places Talaromyces marneffei in the medium priority group."@en ;
+    hera:hasAssessmentCriterion hera:FungalPriorityGroupCriterion ;
+    dcterms:source hera:WHO2022FungalPriorityPathogensFigure ;
+    skos:prefLabel "Talaromyces marneffei WHO fungal priority group assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantCitrobacterSpp_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “third-generation cephalosporin-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Citrobacter spp. bacterial priority group assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantCitrobacterSpp_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Possible_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Third-generation cephalosporin-resistant Citrobacter spp. as possible."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Citrobacter spp. potential future treatment availability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantCitrobacterSpp_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Third-generation cephalosporin-resistant Citrobacter spp. as medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Citrobacter spp. treatability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantEnterobacterSpp_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “third-generation cephalosporin-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Enterobacter spp. bacterial priority group assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantEnterobacterSpp_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Likely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Third-generation cephalosporin-resistant Enterobacter spp. as likely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Enterobacter spp. potential future treatment availability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantEnterobacterSpp_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Third-generation cephalosporin-resistant Enterobacter spp. as medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Enterobacter spp. treatability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantEscherichiaColi_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “third-generation cephalosporin-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Escherichia coli bacterial priority group assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantEscherichiaColi_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Possible_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Third-generation cephalosporin-resistant Escherichia coli as possible."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Escherichia coli potential future treatment availability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantEscherichiaColi_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Third-generation cephalosporin-resistant Escherichia coli as medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Escherichia coli treatability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantKlebsiellaPneumoniae_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “third-generation cephalosporin-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Klebsiella pneumoniae bacterial priority group assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantKlebsiellaPneumoniae_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Possible_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Third-generation cephalosporin-resistant Klebsiella pneumoniae as possible."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Klebsiella pneumoniae potential future treatment availability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantKlebsiellaPneumoniae_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Third-generation cephalosporin-resistant Klebsiella pneumoniae as medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Klebsiella pneumoniae treatability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantMorganellaSpp_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “third-generation cephalosporin-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Morganella spp. bacterial priority group assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantMorganellaSpp_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Likely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Third-generation cephalosporin-resistant Morganella spp. as likely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Morganella spp. potential future treatment availability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantMorganellaSpp_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Third-generation cephalosporin-resistant Morganella spp. as medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Morganella spp. treatability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantNeisseriaGonorrhoeae_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the high group from the combined WHO 2024 figure category “third-generation cephalosporin-resistant and/or fluoroquinolone-resistant Neisseria gonorrhoeae”; the resistance profiles are listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Neisseria gonorrhoeae bacterial priority group assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantNeisseriaGonorrhoeae_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Third-generation cephalosporin-resistant Neisseria gonorrhoeae as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Neisseria gonorrhoeae potential future treatment availability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantNeisseriaGonorrhoeae_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:MediumLow_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Third-generation cephalosporin-resistant Neisseria gonorrhoeae as medium–low treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Neisseria gonorrhoeae treatability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantProteusSpp_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “third-generation cephalosporin-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Proteus spp. bacterial priority group assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantProteusSpp_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Likely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Third-generation cephalosporin-resistant Proteus spp. as likely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Proteus spp. potential future treatment availability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantProteusSpp_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Third-generation cephalosporin-resistant Proteus spp. as medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Proteus spp. treatability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantSerratiaSpp_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Critical_BacterialPriorityGroup ;
+    foundation:hasJustification "Assigned to the critical group by inheritance from the broader WHO 2024 figure category “third-generation cephalosporin-resistant Enterobacterales”; the species or genus-specific category is listed separately in Tables A2.11 and A2.12."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Serratia spp. bacterial priority group assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantSerratiaSpp_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Likely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Third-generation cephalosporin-resistant Serratia spp. as likely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Serratia spp. potential future treatment availability assessment"@en .
+
+hera:ThirdGenerationCephalosporinResistantSerratiaSpp_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Third-generation cephalosporin-resistant Serratia spp. as medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Third-generation cephalosporin-resistant Serratia spp. treatability assessment"@en .
+
+hera:Togaviridae_AvailabilityOfTherapeutics a hera:AvailabilityOfTherapeutics,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Limited_Therapeutics ;
+    foundation:hasJustification "supportive care only; no approved antivirals"@en ;
+    hera:hasAssessmentCriterion hera:TherapeuticAvailabilityCriterion ;
+    skos:prefLabel "Togaviridae Availability of therapeutics assessment"@en .
+
+hera:Togaviridae_AvailabilityOfVaccines a hera:AvailabilityOfVaccines,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Available_Vaccines ;
+    foundation:hasJustification "Chikungunya vaccine authorised in EU; no licensed vaccine for EEEV/VEEV"@en ;
+    hera:hasAssessmentCriterion hera:VaccineAvailabilityCriterion ;
+    skos:prefLabel "Togaviridae Availability of vaccines assessment"@en .
+
+hera:Togaviridae_EUCrossBorderThreatPotential a hera:EUCrossBorderThreatPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_EUCrossBorderThreatPotential ;
+    foundation:hasJustification "Chikungunya autochthonous cases in southern Europe; EEEV/VEEV monitored, no EU cases to date"@en ;
+    hera:hasAssessmentCriterion hera:CrossBorderCriterion ;
+    skos:prefLabel "Togaviridae EU Cross Border Threat potential assessment"@en .
+
+hera:Togaviridae_PHEICPotential a hera:PHEICPotential,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PHEICPotential ;
+    hera:hasAssessmentCriterion hera:PHEICCriterion ;
+    skos:prefLabel "Togaviridae PHEIC potential assessment"@en .
+
+hera:Togaviridae_Pathogenicity a hera:Pathogenicity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:ModerateToHigh_Pathogenicity ;
+    foundation:hasJustification "Chikungunya causes chronic arthralgia; EEEV/VEEV may cause severe encephalitis with high CFR"@en ;
+    hera:hasAssessmentCriterion hera:PathogenicityCriterion ;
+    skos:prefLabel "Togaviridae Pathogenicity assessment"@en .
+
+hera:Togaviridae_PopulationImmunity a hera:PopulationImmunity,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Low_PopulationImmunity ;
+    foundation:hasJustification "outbreaks in naive populations; no widespread immunity or routine vaccination"@en ;
+    hera:hasAssessmentCriterion hera:ImmunityCriterion ;
+    skos:prefLabel "Togaviridae Population Immunity assessment"@en .
+
+hera:Togaviridae_Prioritisation a hera:PathogenPrioritisation,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_PathogenPrioritisation ;
+    hera:hasAssessmentCriterion hera:PrioritisationCriterion ;
+    skos:prefLabel "Togaviridae prioritisation assessment"@en .
+
+hera:Togaviridae_Transmissibility a hera:Transmissibility,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Moderate_Transmissibility ;
+    foundation:hasJustification "vector-borne; transmission depends on mosquito range, climate, and seasonality"@en ;
+    hera:hasAssessmentCriterion hera:TransmissibilityCriterion ;
+    skos:prefLabel "Togaviridae Transmissibility assessment"@en .
+
+hera:VancomycinResistantEnterococcusFaecium_BacterialPriorityGroupAssessment a hera:BacterialPriorityGroupAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:High_BacterialPriorityGroup ;
+    foundation:hasJustification "The WHO 2024 bacterial priority pathogens figure places Vancomycin-resistant Enterococcus faecium in the high group."@en ;
+    hera:hasAssessmentCriterion hera:BacterialPriorityGroupCriterion ;
+    dcterms:source hera:WHO2024BacterialPriorityGroupsFigure ;
+    skos:prefLabel "Vancomycin-resistant Enterococcus faecium bacterial priority group assessment"@en .
+
+hera:VancomycinResistantEnterococcusFaecium_PotentialFutureTreatmentAvailabilityAssessment a hera:PotentialFutureTreatmentAvailabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Unlikely_FutureTreatmentAvailability ;
+    foundation:hasJustification "Table A2.12 rates potential future treatment availability for Vancomycin-resistant Enterococcus faecium as unlikely."@en ;
+    hera:hasAssessmentCriterion hera:PotentialFutureTreatmentAvailabilityCriterion ;
+    dcterms:source hera:FutureTreatmentAvailabilityTableA212Figure ;
+    skos:prefLabel "Vancomycin-resistant Enterococcus faecium potential future treatment availability assessment"@en .
+
+hera:VancomycinResistantEnterococcusFaecium_TreatabilityAssessment a hera:TreatabilityAssessment,
+        owl:NamedIndividual ;
+    foundation:hasLevel hera:Medium_Treatability ;
+    foundation:hasJustification "Table A2.11 rates Vancomycin-resistant Enterococcus faecium as medium treatability."@en ;
+    hera:hasAssessmentCriterion hera:TreatabilityCriterion ;
+    dcterms:source hera:TreatabilityTableA211Figure ;
+    skos:prefLabel "Vancomycin-resistant Enterococcus faecium treatability assessment"@en .
+
+hera:WHO2022FungalPriorityPathogensFigure a dcterms:BibliographicResource,
+        owl:NamedIndividual ;
+    dcterms:identifier "image(10).png" ;
+    dcterms:source "World Health Organization"@en ;
+    dcterms:title "Figure 4: WHO fungal priority pathogens list, 2022"@en ;
+    skos:prefLabel "WHO fungal priority pathogens list, 2022 — Figure 4"@en .
+
+hera:FutureTreatmentAvailabilityTableA212Figure a dcterms:BibliographicResource,
+        owl:NamedIndividual ;
+    dcterms:title "Table A2.12. Resistant pathogens rated according to likelihood of potential future treatment availability"@en ;
+    skos:prefLabel "Table A2.12 — Likelihood of potential future treatment availability"@en .
+
+hera:TreatabilityTableA211Figure a dcterms:BibliographicResource,
+        owl:NamedIndividual ;
+    dcterms:title "Table A2.11. Pathogens rated according to level of treatability"@en ;
+    skos:prefLabel "Table A2.11 — Pathogens rated according to level of treatability"@en .
+
+hera:WHO2024BacterialPriorityGroupsFigure a dcterms:BibliographicResource,
+        owl:NamedIndividual ;
+    dcterms:title "WHO 2024 bacterial priority pathogen groups"@en ;
+    skos:prefLabel "WHO 2024 bacterial priority pathogen groups figure"@en .
+
+
+# --- rdfs:isDefinedBy (generated 0.3.1; one line per class/property/individual declared in this module) ---
+<http://data.europa.eu/h8v/ecmo/hera/AmpicillinResistantHaemophilusInfluenzae_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/AmpicillinResistantHaemophilusInfluenzae_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/AmpicillinResistantHaemophilusInfluenzae_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Arenaviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Arenaviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Arenaviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Arenaviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Arenaviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Arenaviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Arenaviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Arenaviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/AspergillusFumigatus_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/AssessmentCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/AvailabilityOfTherapeuticsScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/AvailabilityOfVaccinesScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Available_Therapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Available_Vaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/BacterialPriorityGroupCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/BacterialPriorityGroupScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CandidaAlbicans_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CandidaAuris_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CandidaParapsilosis_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CandidaTropicalis_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantAcinetobacterBaumannii_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantAcinetobacterBaumannii_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantAcinetobacterBaumannii_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantEnterobacterSpp_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantEnterobacterSpp_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantEnterobacterSpp_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantEscherichiaColi_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantEscherichiaColi_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantEscherichiaColi_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantKlebsiellaPneumoniae_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantKlebsiellaPneumoniae_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantKlebsiellaPneumoniae_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantPseudomonasAeruginosa_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantPseudomonasAeruginosa_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CarbapenemResistantPseudomonasAeruginosa_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Coccidioides_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Coronaviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Coronaviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Coronaviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Coronaviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Coronaviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Coronaviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Coronaviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Coronaviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Critical_BacterialPriorityGroup> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Critical_FungalPriorityGroup> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CrossBorderCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CryptococcusGattii_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/CryptococcusNeoformans_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/EUCrossBorderThreatPotentialScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/EumycetomaCausativeAgents_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Filoviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Filoviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Filoviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Filoviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Filoviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Filoviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Filoviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Filoviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Flaviviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Flaviviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Flaviviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Flaviviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Flaviviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Flaviviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Flaviviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Flaviviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantNeisseriaGonorrhoeae_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantNeisseriaGonorrhoeae_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantNeisseriaGonorrhoeae_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantNontyphoidalSalmonella_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantNontyphoidalSalmonella_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantNontyphoidalSalmonella_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantSalmonellaTyphi_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantSalmonellaTyphi_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantSalmonellaTyphi_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantShigellaSpp_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantShigellaSpp_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FluoroquinoloneResistantShigellaSpp_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FungalPriorityGroupCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FungalPriorityGroupScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Fusarium_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/FutureTreatmentAvailabilityTableA212Figure> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Hantaviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Hantaviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Hantaviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Hantaviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Hantaviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Hantaviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Hantaviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Hantaviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/HighMedium_Treatability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/HighToVeryHigh_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/High_BacterialPriorityGroup> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/High_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/High_FungalPriorityGroup> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/High_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/High_PathogenPrioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/High_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/High_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/High_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/High_Treatability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Highest_PathogenPrioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Histoplasma_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ImmunityCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Likely_FutureTreatmentAvailability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Limited_Therapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Limited_Vaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/LomentosporaProlificans_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/LowToModerate_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/LowToModerate_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/LowToModerate_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/LowToModerate_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Low_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Low_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Low_PathogenPrioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Low_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Low_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Low_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Low_Treatability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MacrolideResistantGroupAStreptococci_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MacrolideResistantGroupAStreptococci_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MacrolideResistantGroupAStreptococci_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MacrolideResistantStreptococcusPneumoniae_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MacrolideResistantStreptococcusPneumoniae_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MacrolideResistantStreptococcusPneumoniae_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MediumLow_Treatability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Medium_BacterialPriorityGroup> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Medium_FungalPriorityGroup> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Medium_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Medium_Treatability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MethicillinResistantStaphylococcusAureus_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MethicillinResistantStaphylococcusAureus_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/MethicillinResistantStaphylococcusAureus_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ModerateToHigh_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ModerateToHigh_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ModerateToLow_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ModerateToLow_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ModerateToLow_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Moderate_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Moderate_PathogenPrioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Moderate_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Moderate_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Moderate_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Mucorales_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Nairoviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Nairoviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Nairoviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Nairoviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Nairoviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Nairoviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Nairoviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Nairoviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/NakaseomycesGlabrata_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/NotAvailable_Therapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/NotAvailable_Vaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Orthomyxoviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Orthomyxoviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Orthomyxoviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Orthomyxoviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Orthomyxoviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Orthomyxoviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Orthomyxoviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Orthomyxoviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PHEICCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PHEICPotentialScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Paracoccidioides_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Paramyxoviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Paramyxoviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Paramyxoviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Paramyxoviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Paramyxoviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Paramyxoviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Paramyxoviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Paramyxoviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PathogenPrioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PathogenPrioritisationScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PathogenRiskAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PathogenRiskAssessmentLevelScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PathogenicityCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PathogenicityScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PenicillinResistantGroupBStreptococci_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PenicillinResistantGroupBStreptococci_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PenicillinResistantGroupBStreptococci_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Phenuiviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Phenuiviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Phenuiviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Phenuiviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Phenuiviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Phenuiviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Phenuiviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Phenuiviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PichiaKudriavzevii_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Picornaviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Picornaviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Picornaviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Picornaviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Picornaviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Picornaviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Picornaviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Picornaviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PneumocystisJirovecii_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PopulationImmunityScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Possible_FutureTreatmentAvailability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PotentialFutureTreatmentAvailabilityCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PotentialFutureTreatmentAvailabilityScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Poxviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Poxviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Poxviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Poxviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Poxviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Poxviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Poxviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Poxviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/PrioritisationCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/RifampicinResistantMycobacteriumTuberculosis_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/RifampicinResistantMycobacteriumTuberculosis_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/RifampicinResistantMycobacteriumTuberculosis_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Scedosporium_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/TalaromycesMarneffei_FungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/TherapeuticAvailabilityCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantCitrobacterSpp_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantCitrobacterSpp_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantCitrobacterSpp_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantEnterobacterSpp_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantEnterobacterSpp_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantEnterobacterSpp_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantEscherichiaColi_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantEscherichiaColi_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantEscherichiaColi_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantKlebsiellaPneumoniae_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantKlebsiellaPneumoniae_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantKlebsiellaPneumoniae_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantMorganellaSpp_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantMorganellaSpp_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantMorganellaSpp_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantNeisseriaGonorrhoeae_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantNeisseriaGonorrhoeae_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantNeisseriaGonorrhoeae_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantProteusSpp_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantProteusSpp_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantProteusSpp_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantSerratiaSpp_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantSerratiaSpp_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/ThirdGenerationCephalosporinResistantSerratiaSpp_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Togaviridae_AvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Togaviridae_AvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Togaviridae_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Togaviridae_PHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Togaviridae_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Togaviridae_PopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Togaviridae_Prioritisation> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Togaviridae_Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Transmissibility> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/TransmissibilityCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/TransmissibilityScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/TreatabilityCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/TreatabilityScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/TreatabilityTableA211Figure> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/Unlikely_FutureTreatmentAvailability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/VaccineAvailabilityCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/VancomycinResistantEnterococcusFaecium_BacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/VancomycinResistantEnterococcusFaecium_PotentialFutureTreatmentAvailabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/VancomycinResistantEnterococcusFaecium_TreatabilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/VeryHigh_EUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/VeryHigh_Pathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/WHO2022FungalPriorityPathogensFigure> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/WHO2024BacterialPriorityGroupsFigure> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasAssessmentCriterion> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasAvailabilityOfTherapeutics> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasAvailabilityOfVaccines> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasBacterialPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasBacterialPriorityGroupLevel> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasEUCrossBorderThreatPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasFungalPriorityGroupAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasFungalPriorityGroupLevel> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasPHEICPotential> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasPathogenRisk> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasPathogenicity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasPopulationImmunity> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasPotentialFutureTreatmentAvailability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasPotentialFutureTreatmentAvailabilityLevel> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasPriority> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasPriorityLevel> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasTransmissibilityAssessment> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasTreatability> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .
+<http://data.europa.eu/h8v/ecmo/hera/hasTreatabilityLevel> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/hera> .

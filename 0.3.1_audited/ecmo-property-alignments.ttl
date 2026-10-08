@@ -131,9 +131,9 @@ governance:involvesSector      rdfs:subPropertyOf dul:isSettingFor .
 # branch of Capacity, and on the Instrument compositional structures.
 # =============================================================================
 
-capacity:includesResource      rdfs:subPropertyOf dul:hasPart .
-capacity:includesInstitution   rdfs:subPropertyOf dul:hasPart .
-capacity:includesKnowledge     rdfs:subPropertyOf dul:hasPart .
+capacity:includesResource      rdfs:subPropertyOf dul:isSettingFor .
+capacity:includesInstitution   rdfs:subPropertyOf dul:isSettingFor .
+capacity:includesKnowledge     rdfs:subPropertyOf dul:isSettingFor .
     # StockCapacity has these as physical/social/informational parts.
 
 instruments:hasEWSComponent    rdfs:subPropertyOf dul:hasComponent .
@@ -505,7 +505,7 @@ ph:isVectorOf                              rdfs:subPropertyOf dul:sameSettingAs 
 # ---------------------------------------------------------------------------
 # dul:hasPart  (1)
 # ---------------------------------------------------------------------------
-capacity:includesCollectiveAttribute  rdfs:subPropertyOf dul:hasPart .
+capacity:includesCollectiveAttribute  rdfs:subPropertyOf dul:isSettingFor .
 
 # ---------------------------------------------------------------------------
 # dul:isPartOf  (4)

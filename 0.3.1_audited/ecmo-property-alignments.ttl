@@ -225,7 +225,7 @@ foundation:hasLocation           rdfs:subPropertyOf dul:hasLocation .
 
 disaster:hasTemporalExtent       rdfs:subPropertyOf dul:hasTimeInterval .
     # HazardousEvent → TimeInterval entity.
-foundation:hasTemporalValidity   rdfs:subPropertyOf dul:hasTimeInterval .
+foundation:hasTemporalValidity   rdfs:subPropertyOf dul:associatedWith .
     # Situation (assessment / classification / signal) → TimeInterval entity.
 
 # For datatype properties that carry xsd:dateTime directly on a TimeInterval,
@@ -510,10 +510,10 @@ capacity:includesCollectiveAttribute  rdfs:subPropertyOf dul:isSettingFor .
 # ---------------------------------------------------------------------------
 # dul:isPartOf  (4)
 # ---------------------------------------------------------------------------
-capacity:isCollectiveAttributeOf  rdfs:subPropertyOf dul:isPartOf .
-capacity:isKnowledgeOf            rdfs:subPropertyOf dul:isPartOf .
-capacity:isResourceOf             rdfs:subPropertyOf dul:isPartOf .
-governance:isSubPhaseOf           rdfs:subPropertyOf dul:isPartOf .
+capacity:isCollectiveAttributeOf  rdfs:subPropertyOf dul:hasSetting .
+capacity:isKnowledgeOf            rdfs:subPropertyOf dul:hasSetting .
+capacity:isResourceOf             rdfs:subPropertyOf dul:hasSetting .
+governance:isSubPhaseOf           rdfs:subPropertyOf dul:hasSetting .
 
 # ---------------------------------------------------------------------------
 # dul:hasComponent  (6)

@@ -176,7 +176,7 @@ risk:materializesAs            rdfs:subPropertyOf dul:isSatisfiedBy .
 # frequency, impact type, vulnerability dimension.
 # =============================================================================
 
-hazard:hasHazardCategory       rdfs:subPropertyOf dul:isClassifiedBy .
+#hazard:hasHazardCategory       rdfs:subPropertyOf dul:isClassifiedBy .
 disaster:hasOnsetType          rdfs:subPropertyOf dul:isClassifiedBy .
 disaster:hasScaleType          rdfs:subPropertyOf dul:isClassifiedBy .
 disaster:hasFrequencyType      rdfs:subPropertyOf dul:isClassifiedBy .
@@ -528,10 +528,10 @@ ph:hasActiveIngredient                 rdfs:subPropertyOf dul:hasComponent .
 # dul:isComponentOf  (5)
 # ---------------------------------------------------------------------------
 instruments:isComponentOf          rdfs:subPropertyOf dul:isComponentOf .
-risk:isCapacityDeterminantOf       rdfs:subPropertyOf dul:isComponentOf .
-risk:isExposureDeterminantOf       rdfs:subPropertyOf dul:isComponentOf .
-risk:isHazardDeterminantOf         rdfs:subPropertyOf dul:isComponentOf .
-risk:isVulnerabilityDeterminantOf  rdfs:subPropertyOf dul:isComponentOf .
+risk:isCapacityDeterminantOf       rdfs:subPropertyOf foundation:isDeterminantOf .
+risk:isExposureDeterminantOf       rdfs:subPropertyOf foundation:isDeterminantOf .
+risk:isHazardDeterminantOf         rdfs:subPropertyOf foundation:isDeterminantOf .
+risk:isVulnerabilityDeterminantOf  rdfs:subPropertyOf foundation:isDeterminantOf .
 
 # ---------------------------------------------------------------------------
 # dul:isAbout  (9)

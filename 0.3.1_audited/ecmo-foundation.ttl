@@ -536,15 +536,15 @@ foundation:hasQualitativeAssessment a owl:ObjectProperty ;
         "ha valutazione qualitativa"@it .
 
 foundation:hasDeterminant a owl:ObjectProperty ;
-    rdfs:comment "Relates a risk to one of its causal determinants (capacities, vulnerabilities, exposures, hazards)."@en ;
-    rdfs:domain risk:Risk ;
-    owl:inverseOf risk:isDeterminantOf ;
+    rdfs:comment "Relates an Eventuality to one of its causal determinants (capacities, vulnerabilities, exposures, hazards)."@en ;
+    rdfs:domain d0:Eventuality ;
+    owl:inverseOf foundation:isDeterminantOf ;
     skos:prefLabel "has determinant"@en,
         "ha determinante"@it .
 
 foundation:isDeterminantOf a owl:ObjectProperty ;
-    rdfs:comment "Relates a causal determinant to a risk."@en ;
-    rdfs:range risk:Risk ;
+    rdfs:comment "Relates a causal determinant to an eventuality."@en ;
+    rdfs:range d0:Eventuality ;
     skos:prefLabel "is determinant of"@en,
         "è un determinante di"@it .
 

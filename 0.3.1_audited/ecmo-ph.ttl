@@ -164,7 +164,7 @@ ph:Pest a owl:Class ;
     rdfs:comment "An organism (insect, rodent, plant, fungus) that causes damage to crops, livestock, stored products, or human health, constituting a biological hazard in agricultural and public health contexts."@en ;
     rdfs:subClassOf [ a owl:Restriction ;
             owl:hasValue hazard:BiologicalHazard ;
-            owl:onProperty dul:hasRole ],
+            owl:onProperty dul:isClassifiedBy ],
         dul:Agent ;
     skos:prefLabel "Pest"@en,
         "Infestante"@it .
@@ -292,7 +292,7 @@ ph:hasCaseFatalityRate a owl:ObjectProperty ;
     rdfs:domain [ a owl:Class ;
             owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
                         owl:hasValue hazard:BiologicalHazard ;
-                        owl:onProperty dul:hasRole ] ) ] ;
+                        owl:onProperty dul:isClassifiedBy ] ) ] ;
     rdfs:range ph:CaseFatalityRate ;
     rdfs:seeAlso ph:CaseFatalityRate ;
     skos:editorialNote "Shortcut property — for fully qualified observations use hasCaseFatalityRate → CaseFatalityRate."@en,
@@ -309,7 +309,7 @@ ph:hasIncubationPeriod a owl:ObjectProperty ;
     rdfs:domain [ a owl:Class ;
             owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
                         owl:hasValue hazard:BiologicalHazard ;
-                        owl:onProperty dul:hasRole ] ) ] ;
+                        owl:onProperty dul:isClassifiedBy ] ) ] ;
     rdfs:range ph:IncubationPeriod ;
     rdfs:seeAlso ph:IncubationPeriod ;
     skos:editorialNote "Shortcut property — for fully qualified observations use hasIncubationPeriod → IncubationPeriod."@en,
@@ -331,7 +331,7 @@ ph:hasInfectiousness a owl:ObjectProperty ;
     rdfs:domain [ a owl:Class ;
             owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
                         owl:hasValue hazard:BiologicalHazard ;
-                        owl:onProperty dul:hasRole ] ) ] ;
+                        owl:onProperty dul:isClassifiedBy ] ) ] ;
     rdfs:range ph:Infectiousness ;
     rdfs:seeAlso ph:Infectiousness ;
     skos:editorialNote "covered by HERA prioritisation",
@@ -349,7 +349,7 @@ ph:hasToxicity a owl:ObjectProperty ;
     rdfs:domain [ a owl:Class ;
             owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
                         owl:hasValue hazard:BiologicalHazard ;
-                        owl:onProperty dul:hasRole ] ) ] ;
+                        owl:onProperty dul:isClassifiedBy ] ) ] ;
     rdfs:range ph:Toxicity ;
     rdfs:seeAlso ph:Toxicity ;
     skos:editorialNote "Shortcut property — for fully qualified observations use hasToxicity → Toxicity."@en,
@@ -366,7 +366,7 @@ ph:hasTransmissibility a owl:ObjectProperty ;
     rdfs:domain [ a owl:Class ;
             owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
                         owl:hasValue hazard:BiologicalHazard ;
-                        owl:onProperty dul:hasRole ] ) ] ;
+                        owl:onProperty dul:isClassifiedBy ] ) ] ;
     rdfs:range ph:Transmissibility ;
     rdfs:seeAlso ph:Transmissibility ;
     skos:editorialNote "Shortcut property — for fully qualified observations use hasTransmissibility → Transmissibility."@en,
@@ -495,12 +495,12 @@ ph:hasCaseFatalityRateValue a owl:DatatypeProperty ;
 
 ph:hasIncubationPeriodValue a owl:DatatypeProperty ;
     rdfs:comment "The numeric incubation period duration value."@en ;
-    rdfs:range xsd:duration ;
+    rdfs:range rdfs:Literal ;
     skos:prefLabel "has incubation period value"@en .
 
 ph:hasInfectiousnessValue a owl:DatatypeProperty ;
     rdfs:comment "The numeric infectiousness metric value."@en ;
-    rdfs:range xsd:decimal ;
+    rdfs:range rdfs:Literal ;
     skos:prefLabel "has infectiousness value"@en .
 
 ph:hasToxicityValue a owl:DatatypeProperty ;
@@ -510,7 +510,7 @@ ph:hasToxicityValue a owl:DatatypeProperty ;
 
 ph:hasTransmissibilityValue a owl:DatatypeProperty ;
     rdfs:comment "The numeric transmissibility metric value (e.g. R0)."@en ;
-    rdfs:range xsd:decimal ;
+    rdfs:range rdfs:Literal ;
     skos:prefLabel "has transmissibility value"@en .
 
 ph:DiseaseCategory a ph:HealthConditionCategory,

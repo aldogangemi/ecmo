@@ -324,6 +324,16 @@ instruments:forecastsEvent a owl:ObjectProperty ;
     skos:prefLabel "forecasts event"@en,
         "prevede l'evento"@it .
 
+instruments:elicitsWarning a owl:ObjectProperty ;
+    rdfs:comment "Relates an EarlyWarningSystem to a Warning about a HazardousEvent."@en ;
+    rdfs:domain instruments:EarlyWarningSystem ;
+    rdfs:range hazard:HazardousEvent ;
+#    skos:editorialNote "consider generalization"@en,
+#        "possible specialization of a more general property such as 'isReferenceFor' or 'isSourceFor'"@en ;
+    skos:prefLabel "elicits warning"@en,
+        "emette un allarme"@it .
+
+
 instruments:fromParty a owl:ObjectProperty ;
     rdfs:comment "Relates a RiskTransfer arrangement to the Agent that cedes or transfers the financial risk."@en ;
     rdfs:domain instruments:RiskTransfer ;
@@ -526,7 +536,7 @@ instruments:hasEWSComponent a owl:ObjectProperty ;
 instruments:isWarningOf a owl:ObjectProperty ;
     rdfs:comment "Relates a Warning to the imminent HazardousEvent it alerts about."@en ;
     rdfs:domain instruments:Warning ;
-    rdfs:range hazard:HazardousEvent ;
+    rdfs:range dul:Entity ;
     owl:inverseOf instruments:hasWarning ;
     skos:prefLabel "is warning of"@en,
         "è allerta di"@it .

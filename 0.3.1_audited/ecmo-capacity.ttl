@@ -87,7 +87,7 @@ capacity:WarningCapacityDomain a capacity:CapacityDomainType,
 capacity:hasExceedanceDegree a owl:DatatypeProperty ;
     rdfs:comment "A qualitative or quantitative indicator of how severely the capacity was exceeded (e.g. 'moderate', 'severe', 'catastrophic', or a numeric ratio)."@en ;
     rdfs:domain capacity:CapacityExceedanceAssessment ;
-    rdfs:range xsd:string ;
+    rdfs:range xsd:decimal ;
     skos:prefLabel "has exceedance degree"@en,
         "ha grado di superamento"@it .
 
@@ -105,8 +105,7 @@ capacity:CapacityAssessment a dul:Description,
     rdfs:comment "The process by which the capacity of a group, organization or society is reviewed against desired goals, where existing capacities are identified for maintenance or strengthening and capacity gaps are identified for further action."@en ;
     rdfs:subClassOf foundation:Assessment , [ a owl:Restriction ;
             owl:onProperty capacity:assessesCapacityOf ;
-            owl:someValuesFrom capacity:Capacity ],
-        dul:Process ;
+            owl:someValuesFrom capacity:Capacity ] ;
     skos:prefLabel "Kapazitätsbewertung"@de,
         "Capacity Assessment"@en,
         "Evaluación de capacidades"@es,

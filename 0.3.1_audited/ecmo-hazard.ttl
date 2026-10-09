@@ -817,7 +817,7 @@ hazard:hasDoseResponse a owl:DatatypeProperty ;
     rdfs:domain [ a owl:Class ;
             owl:intersectionOf ( dul:Agent [ a owl:Restriction ;
                         owl:hasValue hazard:BiologicalHazard ;
-                        owl:onProperty dul:hasRole ] ) ] ;
+                        owl:onProperty dul:isClassifiedBy ] ) ] ;
     rdfs:range xsd:string ;
     skos:prefLabel "has dose-response"@en,
         "ha dose-risposta"@it .
@@ -1483,7 +1483,6 @@ hazard:HazardousEvent a owl:Class,
         [ a owl:Restriction ;
             owl:onProperty hazard:isManifestationOf ;
             owl:someValuesFrom hazard:Hazard ],
-        dul:Event,
         dul:Situation ;
     skos:broader hazard:Hazard ;
     skos:definition "The manifestation of a hazard in a particular place during a particular period of time."@en ;

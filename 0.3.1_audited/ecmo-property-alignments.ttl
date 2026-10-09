@@ -146,11 +146,11 @@ instruments:hasEWSComponent    rdfs:subPropertyOf dul:hasComponent .
 # parts. hasComponent (in DUL) sits under hasPart but is intensional.
 # =============================================================================
 
-risk:hasHazardDeterminant       rdfs:subPropertyOf dul:hasComponent .
-risk:hasExposureDeterminant     rdfs:subPropertyOf dul:hasComponent .
-risk:hasVulnerabilityDeterminant rdfs:subPropertyOf dul:hasComponent .
-risk:hasCapacityDeterminant     rdfs:subPropertyOf dul:hasComponent .
-    # Risk description is compositionally made up of these four determinant roles.
+risk:hasHazardDeterminant       rdfs:subPropertyOf foundation:hasDeterminant .
+risk:hasExposureDeterminant     rdfs:subPropertyOf foundation:hasDeterminant .
+risk:hasVulnerabilityDeterminant rdfs:subPropertyOf foundation:hasDeterminant .
+risk:hasCapacityDeterminant     rdfs:subPropertyOf foundation:hasDeterminant .
+    # Risk description is a function of these four causally determinant roles.
 
 #situation:includesEvent        rdfs:subPropertyOf dul:hasComponent .
     # Already subPropertyOf dul:includesEvent per ECMO 2.2; this extends it to hasComponent
@@ -438,7 +438,7 @@ foundation:isAssessedBy					   rdfs:subPropertyOf dul:sameSettingAs .
 situation:generatesSignal				   rdfs:subPropertyOf dul:sameSettingAs .
 situation:isSignalFrom				       rdfs:subPropertyOf dul:sameSettingAs .
 foundation:usesLevelScale				   rdfs:subPropertyOf dul:sameSettingAs .
-situation:isEvolvedAs                     rdfs:subPropertyOf dul:sameSettingAs .
+situation:isEvolvedAs                      rdfs:subPropertyOf dul:sameSettingAs .
 governance:coordinatesDRR                  rdfs:subPropertyOf dul:sameSettingAs .
 governance:hasPolicyObjective              rdfs:subPropertyOf dul:sameSettingAs .
 governance:managesResidualRisk             rdfs:subPropertyOf dul:sameSettingAs .
@@ -447,7 +447,6 @@ governance:reducesExistingRisk             rdfs:subPropertyOf dul:sameSettingAs 
 governance:respondsTo                      rdfs:subPropertyOf dul:sameSettingAs .
 governance:usesTraditionalKnowledge        rdfs:subPropertyOf dul:sameSettingAs .
 hazard:hasExposureContext                  rdfs:subPropertyOf dul:sameSettingAs .
-hazard:hasObservationSource            rdfs:subPropertyOf dul:sameSettingAs .
 hazard:hasObservationSource                rdfs:subPropertyOf dul:sameSettingAs .
 hazard:isSourceOf                		   rdfs:subPropertyOf dul:sameSettingAs .
 hazard:involvesIntervention                rdfs:subPropertyOf dul:sameSettingAs .
@@ -656,8 +655,6 @@ risk:assessesRisk                rdfs:subPropertyOf foundation:assesses .   # RE
 # ---------------------------------------------------------------------------
 capacity:hasCapacityAssessment            rdfs:subPropertyOf foundation:isAssessedBy .   # REVISED (was dul:isReferenceOf)
 disaster:hasCapacityExceedanceAssessment  rdfs:subPropertyOf foundation:isAssessedBy .   # REVISED (was dul:isReferenceOf)
-foundation:isQualitativelyAssessedBy      rdfs:subPropertyOf foundation:isAssessedBy .   # REVISED (was dul:isAbout)
-foundation:isQualitativelyAssessedBy      owl:equivalentProperty foundation:hasQualitativeAssessment .   # reviewer directive
 
 
 

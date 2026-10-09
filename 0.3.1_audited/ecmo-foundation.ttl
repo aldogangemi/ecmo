@@ -130,13 +130,6 @@ foundation:isComplementaryTo a owl:ObjectProperty,
         "est complémentaire à"@fr,
         "è complementare a"@it .
 
-foundation:hasQualitativelyAssessed a owl:ObjectProperty ;
-    rdfs:comment "Indicates the entity that is associated with a given qualitative assessment."@en ;
-    rdfs:domain dul:Entity ;
-    rdfs:range foundation:QualitativeAssessment ;
-    owl:inverseOf foundation:isQualitativelyAssessedBy ;
-    skos:prefLabel "is assessed by"@en .
-
 foundation:orderInScale a owl:DatatypeProperty ;
     rdfs:comment "Indicates the ordinal position of a qualitative assessment level value within its scale."@en ;
     rdfs:domain foundation:QualitativeAssessmentLevelValue ;
@@ -542,6 +535,18 @@ foundation:hasQualitativeAssessment a owl:ObjectProperty ;
     skos:prefLabel "has qualitative assessment"@en,
         "ha valutazione qualitativa"@it .
 
+foundation:hasDeterminant a owl:ObjectProperty ;
+    rdfs:comment "Relates a risk to one of its causal determinants (capacities, vulnerabilities, exposures, hazards)."@en ;
+    rdfs:domain risk:Risk ;
+    owl:inverseOf risk:isDeterminantOf ;
+    skos:prefLabel "has determinant"@en,
+        "ha determinante"@it .
+
+foundation:isDeterminantOf a owl:ObjectProperty ;
+    rdfs:comment "Relates a causal determinant to a risk."@en ;
+    rdfs:range risk:Risk ;
+    skos:prefLabel "is determinant of"@en,
+        "è un determinante di"@it .
 
 foundation:hasScaleValue a owl:ObjectProperty ;
     rdfs:comment "Indicates a level value belonging to this scale."@en ;
@@ -827,7 +832,6 @@ foundation:usesLevelScale a owl:ObjectProperty ;
 <http://data.europa.eu/h8v/ecmo/core/foundation/isMaxValueOf> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/foundation> .
 <http://data.europa.eu/h8v/ecmo/core/foundation/isMinValueOf> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/foundation> .
 <http://data.europa.eu/h8v/ecmo/core/foundation/isQualitativeAssessmentOf> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/foundation> .
-<http://data.europa.eu/h8v/ecmo/core/foundation/isQualitativelyAssessedBy> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/foundation> .
 <http://data.europa.eu/h8v/ecmo/core/foundation/isTemporalValidityOf> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/foundation> .
 <http://data.europa.eu/h8v/ecmo/core/foundation/nextValue> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/foundation> .
 <http://data.europa.eu/h8v/ecmo/core/foundation/orderInScale> rdfs:isDefinedBy <http://data.europa.eu/h8v/ecmo/core/foundation> .

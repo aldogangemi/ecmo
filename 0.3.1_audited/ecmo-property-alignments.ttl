@@ -207,8 +207,8 @@ situation:isReportFor           rdfs:subPropertyOf dul:isAbout .
 situation:recommendsMeasure     rdfs:subPropertyOf dul:isAbout .
     # A report is about the measures it recommends (weaker reading; open to revision).
 
-foundation:hasQualitativeAssessment rdfs:subPropertyOf dul:isAbout .
-    # An Entity has an assessment that is about it — the reverse could equally hold.
+foundation:isQualitativeAssessmentOf rdfs:subPropertyOf dul:isAbout .
+    # An Entity has an assessment that is about it.
 
 # =============================================================================
 # Group I — dul:hasLocation, dul:hasTimeInterval (spatiotemporal attachment)
@@ -613,8 +613,8 @@ foundation:isLocationOf  rdfs:subPropertyOf dul:isLocationOf .
 # ---------------------------------------------------------------------------
 # dul:isTimeIntervalOf  (2)
 # ---------------------------------------------------------------------------
-disaster:isTemporalExtentOf      rdfs:subPropertyOf dul:isTimeIntervalOf .
-foundation:isTemporalValidityOf  rdfs:subPropertyOf dul:isTimeIntervalOf .
+disaster:isTemporalExtentOf      rdfs:subPropertyOf dul:associatedWith .
+foundation:isTemporalValidityOf  rdfs:subPropertyOf dul:associatedWith .
 
 # ---------------------------------------------------------------------------
 # dul:directlyPrecedes  (2)

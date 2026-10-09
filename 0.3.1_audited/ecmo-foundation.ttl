@@ -130,11 +130,11 @@ foundation:isComplementaryTo a owl:ObjectProperty,
         "est complémentaire à"@fr,
         "è complementare a"@it .
 
-foundation:isQualitativelyAssessedBy a owl:ObjectProperty ;
+foundation:hasQualitativelyAssessed a owl:ObjectProperty ;
     rdfs:comment "Indicates the entity that is associated with a given qualitative assessment."@en ;
     rdfs:domain dul:Entity ;
     rdfs:range foundation:QualitativeAssessment ;
-    owl:inverseOf foundation:isQualitativeAssessmentOf ;
+    owl:inverseOf foundation:isQualitativelyAssessedBy ;
     skos:prefLabel "is assessed by"@en .
 
 foundation:orderInScale a owl:DatatypeProperty ;

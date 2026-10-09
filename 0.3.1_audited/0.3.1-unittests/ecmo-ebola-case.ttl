@@ -910,7 +910,7 @@ expvuln:CriticalInfrastructureType expvuln:hasAssetDomain expvuln:CriticalInfras
 :EWS_System a instruments:EarlyWarningSystem, instruments:MultiHazardEarlyWarningSystem ;
     skos:prefLabel "ECDC EWRS multi-hazard EWS"@en ;
     instruments:monitorsHazard hazard:BiologicalHazard ;
-    instruments:hasWarning :EWS_Warning_16Apr ;
+    instruments:elicitsWarning :EWS_Warning_16Apr ;
     instruments:hasEWSComponent :RKC_ECDC, :MFC_ECDC, :WDC_ECDC, :RPC_ECDC .
 
 :RKC_ECDC a instruments:RiskKnowledgeComponent ; instruments:hasComponentFunction :Function_RiskKnowledge ; skos:prefLabel "ECDC risk-knowledge component"@en .
